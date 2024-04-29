@@ -85,10 +85,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);$(ProjectDir)\Dependencies\tiny_obj_loader.h</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -113,11 +115,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;%(AdditionalDependencies);$(ProjectDir)\Dependencies\tiny_obj_loader.h</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -141,6 +144,7 @@
     <ClCompile Include="CAnimation.cpp" />
     <ClCompile Include="CCamera.cpp" />
     <ClCompile Include="CCube.cpp" />
+    <ClCompile Include="CModel.cpp" />
     <ClCompile Include="CSquare.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="CShape.cpp" />
@@ -150,9 +154,11 @@
     <ClInclude Include="CAnimation.h" />
     <ClInclude Include="CCamera.h" />
     <ClInclude Include="CCube.h" />
+    <ClInclude Include="CModel.h" />
     <ClInclude Include="CSquare.h" />
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="CShape.h" />
+    <ClInclude Include="tiny_obj_loader.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\Shaders\ClipSpace.vert.txt" />

@@ -6,6 +6,7 @@
 #include "CCamera.h"
 #include "CCube.h"
 #include "tiny_obj_loader.h"
+#include "CModel.h"
 
 // global variables
 GLFWwindow* Window = nullptr;
@@ -20,6 +21,7 @@ CSquare* Square2;
 CAnimation* Animation;
 CCamera* Camera;
 CCube* Cube;
+CModel* Model;
 
 glm::mat4 m_projMat;
 
@@ -338,6 +340,8 @@ void InitialSetup()
 	Camera = new CCamera();
 
 	Cube = new CCube();
+
+	Model = new CModel("Resources/Models/SM_Prop_Statue_02.obj");
 
 	//ProjectionMat = glm::ortho(0.0f, (float)iWindowSize, (float)iWindowSize, 0.0f, 0.1f, 100.0f);
 
