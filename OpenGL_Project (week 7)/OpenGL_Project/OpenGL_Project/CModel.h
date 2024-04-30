@@ -1,5 +1,5 @@
 #pragma once
-#include "tiny_obj_loader.h"
+#include <tiny_obj_loader.h>
 //#include <glew.h>
 //#include <glfw3.h>
 //#include <glm.hpp>
@@ -35,7 +35,7 @@ public:
 	~CModel();
 
 	virtual void Update(float DeltaTime);
-	virtual void Render();
+	virtual void Render(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat);
 
 protected:
 	GLuint VAO;

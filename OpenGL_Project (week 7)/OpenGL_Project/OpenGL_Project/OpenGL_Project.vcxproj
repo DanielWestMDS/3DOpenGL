@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)/Dependencies/GLEW;$(ProjectDir)/Dependencies/GLFW;$(ProjectDir)/Dependencies/GLM;$(ProjectDir)/Dependencies/STB;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)/Dependencies/GLFW;$(ProjectDir)/Dependencies/GLEW;$(ProjectDir)/Dependencies/GLM;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)/Dependencies/GLEW;$(ProjectDir)/Dependencies/GLFW;$(ProjectDir)/Dependencies/GLM;$(ProjectDir)/Dependencies/STB;$(ProjectDir)/Dependencies/TINY</IncludePath>
+    <LibraryPath>$(ProjectDir)/Dependencies/GLFW;$(ProjectDir)/Dependencies/GLEW;$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)/Dependencies/GLFW;$(ProjectDir)/Dependencies/GLEW;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)/Dependencies/GLEW;$(ProjectDir)/Dependencies/GLFW;$(ProjectDir)/Dependencies/GLM;$(ProjectDir)/Dependencies/STB;$(ProjectDir)/Dependencies/TINY</IncludePath>
     <LibraryPath>$(ProjectDir)/Dependencies/GLFW;$(ProjectDir)/Dependencies/GLEW;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -120,7 +120,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;%(AdditionalDependencies);$(ProjectDir)\Dependencies\tiny_obj_loader.h</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -158,7 +158,6 @@
     <ClInclude Include="CSquare.h" />
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="CShape.h" />
-    <ClInclude Include="tiny_obj_loader.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\Shaders\ClipSpace.vert.txt" />

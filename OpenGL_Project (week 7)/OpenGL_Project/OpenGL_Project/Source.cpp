@@ -1,11 +1,13 @@
 #define STB_IMAGE_IMPLEMENTATION
 
+// library define 
+#define TINYOBJLOADER_IMPLEMENTATION
+
 #include "ShaderLoader.h"
 //#include "CShape.h"
 #include "CAnimation.h"
 #include "CCamera.h"
 #include "CCube.h"
-#include "tiny_obj_loader.h"
 #include "CModel.h"
 
 // global variables
@@ -439,6 +441,7 @@ void Render()
 	//Animation->Render(Program_Quads, Texture_Animation[frame], AnimModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 
 	Cube->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+	Model->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 
 	// unbind
 	glBindVertexArray(0);

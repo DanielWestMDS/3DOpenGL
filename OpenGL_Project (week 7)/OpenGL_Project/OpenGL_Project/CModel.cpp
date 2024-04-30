@@ -1,7 +1,6 @@
 #include "CModel.h"
 
-// library define 
-#define TINYOBJLOADER_IMPLEMENTATION
+
 
 CModel::CModel(std::string FilePath)
 {
@@ -82,4 +81,42 @@ CModel::CModel(std::string FilePath)
 	// attribute pointers
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexStandard), (void*)(offsetof(VertexStandard, VertexStandard::position)));
 	glEnableVertexAttribArray(0);
+}
+
+CModel::~CModel()
+{
+}
+
+void CModel::Update(float DeltaTime)
+{
+}
+
+void CModel::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat)
+{
+	// bind program and VAO
+	glUseProgram(_program);
+	glBindVertexArray(VAO);
+
+	// send variables to shader via uniform
+	GLint ProjectionMatLoc = glGetUniformLocation(_program, "ProjectionMat");
+	glUniformMatrix4fv(ProjectionMatLoc, 1, GL_FALSE, glm::value_ptr(_projMat));
+	GLint ViewMatLoc = glGetUniformLocation(_program, "ViewMat");
+	glUniformMatrix4fv(ViewMatLoc, 1, GL_FALSE, glm::value_ptr(_viewMat));
+
+	//// Activate and bind the textures
+	//// texture 1
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, _texture);
+	//glUniform1i(glGetUniformLocation(_program, "Texture0"), 0);
+
+	// set the filtering and mipmap parameters for this texture
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
+	// render
+	glDrawArrays(DrawType, 0, DrawCount);
+
+	glBindVertexArray(0);
 }
