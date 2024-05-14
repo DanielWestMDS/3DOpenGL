@@ -178,131 +178,15 @@ void InitialSetup()
 	int ImageHeight;
 	int ImageComponents;
 
-	//animation
-	unsigned char* Frame1 = stbi_load("Resources/Textures/Frame1.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
-
-	// create and bind new texture
-	glGenTextures(1, &Texture_Animation[0]);
-	glBindTexture(GL_TEXTURE_2D, Texture_Animation[0]);
-
-	// Check if image is RGBA or RGB
-	GLint LoadedComponents = (ImageComponents == 4) ? GL_RGBA : GL_RGB;
-
-	// Populate the texture with the image
-	glTexImage2D(GL_TEXTURE_2D, 0, LoadedComponents, ImageWidth, ImageHeight, 0, LoadedComponents, GL_UNSIGNED_BYTE, Frame1);
-
-	// generate the mipmaps
-	glGenerateMipmap(GL_TEXTURE_2D);
-	// free memory
-	stbi_image_free(Frame1);
-	// unbind texture
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	unsigned char* Frame2 = stbi_load("Resources/Textures/Frame2.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
-
-	// create and bind new texture
-	glGenTextures(1, &Texture_Animation[1]);
-	glBindTexture(GL_TEXTURE_2D, Texture_Animation[1]);
-
-	// Check if image is RGBA or RGB
-	LoadedComponents = (ImageComponents == 4) ? GL_RGBA : GL_RGB;
-
-	// Populate the texture with the image
-	glTexImage2D(GL_TEXTURE_2D, 0, LoadedComponents, ImageWidth, ImageHeight, 0, LoadedComponents, GL_UNSIGNED_BYTE, Frame2);
-
-	// generate the mipmaps
-	glGenerateMipmap(GL_TEXTURE_2D);
-	// free memory
-	stbi_image_free(Frame2);
-	// unbind texture
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	unsigned char* Frame3 = stbi_load("Resources/Textures/Frame3.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
-
-	// create and bind new texture
-	glGenTextures(1, &Texture_Animation[2]);
-	glBindTexture(GL_TEXTURE_2D, Texture_Animation[2]);
-
-	// Check if image is RGBA or RGB
-	LoadedComponents = (ImageComponents == 4) ? GL_RGBA : GL_RGB;
-
-	// Populate the texture with the image
-	glTexImage2D(GL_TEXTURE_2D, 0, LoadedComponents, ImageWidth, ImageHeight, 0, LoadedComponents, GL_UNSIGNED_BYTE, Frame3);
-
-	// generate the mipmaps
-	glGenerateMipmap(GL_TEXTURE_2D);
-	// free memory
-	stbi_image_free(Frame3);
-	// unbind texture
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	unsigned char* Frame4 = stbi_load("Resources/Textures/Frame4.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
-
-	// create and bind new texture
-	glGenTextures(1, &Texture_Animation[3]);
-	glBindTexture(GL_TEXTURE_2D, Texture_Animation[3]);
-
-	// Check if image is RGBA or RGB
-	LoadedComponents = (ImageComponents == 4) ? GL_RGBA : GL_RGB;
-
-	// Populate the texture with the image
-	glTexImage2D(GL_TEXTURE_2D, 0, LoadedComponents, ImageWidth, ImageHeight, 0, LoadedComponents, GL_UNSIGNED_BYTE, Frame4);
-
-	// generate the mipmaps
-	glGenerateMipmap(GL_TEXTURE_2D);
-	// free memory
-	stbi_image_free(Frame4);
-	// unbind texture
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	unsigned char* Frame5 = stbi_load("Resources/Textures/Frame5.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
-
-	// create and bind new texture
-	glGenTextures(1, &Texture_Animation[4]);
-	glBindTexture(GL_TEXTURE_2D, Texture_Animation[4]);
-
-	// Check if image is RGBA or RGB
-	LoadedComponents = (ImageComponents == 4) ? GL_RGBA : GL_RGB;
-
-	// Populate the texture with the image
-	glTexImage2D(GL_TEXTURE_2D, 0, LoadedComponents, ImageWidth, ImageHeight, 0, LoadedComponents, GL_UNSIGNED_BYTE, Frame5);
-
-	// generate the mipmaps
-	glGenerateMipmap(GL_TEXTURE_2D);
-	// free memory
-	stbi_image_free(Frame5);
-	// unbind texture
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	unsigned char* Frame6 = stbi_load("Resources/Textures/Frame6.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
-
-	// create and bind new texture
-	glGenTextures(1, &Texture_Animation[5]);
-	glBindTexture(GL_TEXTURE_2D, Texture_Animation[5]);
-
-	// Check if image is RGBA or RGB
-	LoadedComponents = (ImageComponents == 4) ? GL_RGBA : GL_RGB;
-
-	// Populate the texture with the image
-	glTexImage2D(GL_TEXTURE_2D, 0, LoadedComponents, ImageWidth, ImageHeight, 0, LoadedComponents, GL_UNSIGNED_BYTE, Frame6);
-
-	// generate the mipmaps
-	glGenerateMipmap(GL_TEXTURE_2D);
-	// free memory
-	stbi_image_free(Frame6);
-	// unbind texture
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	unsigned char* ImageData = stbi_load("Resources/Textures/Boots.jpg",
-		&ImageWidth, &ImageHeight, &ImageComponents, 0);
-
 	// create and bind new texture
 	glGenTextures(1, &Texture_Quag);
 	glBindTexture(GL_TEXTURE_2D, Texture_Quag);
 
+	unsigned char* ImageData = stbi_load("Resources/Textures/AwesomeFace.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
+
 
 	// Check if image is RGBA or RGB
-	LoadedComponents = (ImageComponents == 4) ? GL_RGBA : GL_RGB;
+	GLint LoadedComponents = (ImageComponents == 4) ? GL_RGBA : GL_RGB;
 
 	// Populate the texture with the image
 	glTexImage2D(GL_TEXTURE_2D, 0, LoadedComponents, ImageWidth, ImageHeight, 0, LoadedComponents, GL_UNSIGNED_BYTE, ImageData);
@@ -377,7 +261,7 @@ void Update()
 	deltaTime = CurrentTime - PreviousTime;
 	PreviousTime = CurrentTime;
 
-	HexRotationAngle += 0.5;
+	//HexRotationAngle += 0.5;
 
 	//x++;
 	//y++;
@@ -425,7 +309,7 @@ void Update()
 		StartTime += 0.5;
 	}
 
-	Camera->Update(CurrentTime, iWindowSize);
+	Camera->Update(CurrentTime, iWindowSize, Window, deltaTime);
 }
 
 void Render()
