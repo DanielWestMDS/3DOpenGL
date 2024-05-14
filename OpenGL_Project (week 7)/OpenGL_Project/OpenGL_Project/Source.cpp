@@ -42,56 +42,18 @@ GLuint Program_3DModel;
 // texture
 GLuint Texture_Awesome;
 GLuint Texture_Quag;
-//GLuint Texture_Animation;
-GLuint Texture_Animation[6];
 
 // Object Matrices and Components
-glm::vec3 QuadPosition = glm::vec3(0.5f, 0.5f, -1.0f);
+glm::vec3 QuadPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::mat4 TranslationMat;
 
 float QuadRotationAngle = 0.0f;
 glm::mat4 RotationMat;
 
-glm::vec3 QuadScale = glm::vec3(1.0f, 1.0f, 1.0f);
+glm::vec3 QuadScale = glm::vec3(0.2f, 0.2f, 0.2f);
 glm::mat4 ScaleMat;
 
 glm::mat4 QuadModelMat;
-
-// Animation
-glm::vec3 HexPosition1 = glm::vec3(200.0f, 200.0f, -1.0f);
-glm::mat4 HexTranslationMat1;
-
-glm::mat4 HexRotationMat1;
-
-glm::vec3 HexScale1 = glm::vec3(200.0f, 200.0f, 1.0f);
-glm::mat4 HexScaleMat1;
-
-glm::mat4 HexModelMat1;
-
-// hex 2
-glm::vec3 HexPosition = glm::vec3(-200.0f, -200.0f, -1.0f);
-glm::mat4 HexTranslationMat;
-
-float HexRotationAngle = 0.0f;
-glm::mat4 HexRotationMat;
-
-glm::vec3 HexScale = glm::vec3(200.0f, 200.0f, 1.0f);
-glm::mat4 HexScaleMat;
-
-glm::mat4 HexModelMat;
-
-// animated quad
-// quad 2
-glm::vec3 QuadPosition2 = glm::vec3(200.0f, -200.0f, -1.0f);
-glm::mat4 TranslationMat2;
-
-float QuadRotationAngle2 = 0.0f;
-glm::mat4 RotationMat2;
-
-glm::vec3 QuadScale2 = glm::vec3(200.0f, 200.0f, 1.0f);
-glm::mat4 ScaleMat2;
-
-glm::mat4 AnimModelMat;
 
 // camera matrices
 glm::mat4 ProjectionMat;
@@ -205,6 +167,8 @@ void InitialSetup()
 
 	Model = new CModel("Resources/Models/SM_Prop_Statue_02.obj");
 
+
+
 	//ProjectionMat = glm::ortho(0.0f, (float)iWindowSize, (float)iWindowSize, 0.0f, 0.1f, 100.0f);
 
 	//glm::vec3 ObjPosition = glm::vec3(0.0f, -100.0f, 0.0f);
@@ -251,27 +215,9 @@ void Update()
 
 		// calculate model matrix
 	TranslationMat = glm::translate(glm::mat4(1.0f), QuadPosition);
-	RotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((HexRotationAngle) * 10), glm::vec3(1.0f, 1.0f, 1.0f));
+	RotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((QuadRotationAngle) * 10), glm::vec3(1.0f, 1.0f, 1.0f));
 	ScaleMat = glm::scale(glm::mat4(1.0f), QuadScale);
 	QuadModelMat = TranslationMat * RotationMat * ScaleMat;
-
-	// calculate model matrix
-	HexTranslationMat1 = glm::translate(glm::mat4(1.0f), HexPosition1 /** cos(CurrentTime)*/);
-	HexRotationMat1 = glm::rotate(glm::mat4(1.0f), glm::radians((HexRotationAngle) /** 10*/), glm::vec3(0.0f, 0.0f, 1.0f));
-	HexScaleMat1 = glm::scale(glm::mat4(1.0f), HexScale1 /** cos(CurrentTime)*/);
-	HexModelMat1 = HexTranslationMat1 * HexRotationMat1 * HexScaleMat1;
-
-	// calculate model matrix
-	TranslationMat2 = glm::translate(glm::mat4(1.0f), QuadPosition2 /** cos(CurrentTime)*/);
-	RotationMat2 = glm::rotate(glm::mat4(1.0f), glm::radians((QuadRotationAngle2) /** 10*/), glm::vec3(0.0f, 0.0f, 1.0f));
-	ScaleMat2 = glm::scale(glm::mat4(1.0f), QuadScale2 /** cos(CurrentTime)*/);
-	AnimModelMat = TranslationMat2 * RotationMat2 * ScaleMat2;
-
-	// calculate model matrix
-	HexTranslationMat = glm::translate(glm::mat4(1.0f), HexPosition /** cos(CurrentTime)*/);
-	HexRotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((HexRotationAngle) /** 10*/), glm::vec3(0.0f, 0.0f, 1.0f));
-	HexScaleMat = glm::scale(glm::mat4(1.0f), HexScale /** cos(CurrentTime)*/);
-	HexModelMat = HexTranslationMat * HexRotationMat * HexScaleMat;
 
 	if (StartTime >= CurrentTime + FrameInterval)
 	{
