@@ -21,15 +21,6 @@
     <ClCompile Include="ShaderLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CShape.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CSquare.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CAnimation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,15 +33,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CShape.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CSquare.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CAnimation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CCamera.h">
@@ -101,6 +83,12 @@
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="Resources\Shaders\Squares.vert.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Resources\Shaders\3DModel.frag.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Resources\Shaders\3DModel.vert.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

@@ -6,7 +6,7 @@
 //#include <gtc/matrix_transform.hpp>
 //#include <gtc/type_ptr.hpp>
 //#include <stb_image.h>
-#include "CShape.h"
+#include "CCamera.h"
 #include <iostream>
 
 struct VertexStandard

@@ -5,8 +5,8 @@ CCamera::CCamera()
 	m_position = glm::vec3(1.0f, 1.0f, 10.0f);
 
 	// orbit values
-	m_radius = 10.0f;
-	m_angle = 25.0f;
+	m_radius = 60.0f;
+	m_angle = 90.0f;
 	m_lookPos = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
@@ -64,6 +64,11 @@ void CCamera::Input(GLFWwindow* _Window, float _dt)
 	if (glfwGetKey(_Window, GLFW_KEY_D))
 	{
 		m_position += glm::vec3(1.0f, 0.0f, 0.0f) * _dt;
+	}
+
+	if (glfwGetKey(_Window, GLFW_KEY_1))
+	{
+		m_radius += 0.1f;
 	}
 }
 

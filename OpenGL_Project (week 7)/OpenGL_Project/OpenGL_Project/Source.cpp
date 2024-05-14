@@ -5,7 +5,6 @@
 
 #include "ShaderLoader.h"
 //#include "CShape.h"
-#include "CAnimation.h"
 #include "CCamera.h"
 #include "CCube.h"
 #include "CModel.h"
@@ -16,15 +15,11 @@ GLuint Program_FixedTri;
 int iWindowSize = 800;
 
 // pointer to shape objects
-CShape* Hex1;
-CShape* Hex2;
-CSquare* Square1;
-CSquare* Square2;
-CAnimation* Animation;
 CCamera* Camera;
 CCube* Cube;
 CModel* Model;
 
+// camera vars
 glm::mat4 m_projMat;
 
 glm::vec3 m_lookDir;
@@ -32,22 +27,6 @@ glm::vec3 m_upDir;
 glm::vec3 m_position;
 
 glm::mat4 m_viewMat;
-
-// VAO vars
-GLuint VAO_Tri;
-GLuint VAO_Tri2;
-GLuint VAO_Quad;
-GLuint VAO_Quad1;
-
-// VBO vars
-GLuint VBO_Tri;
-GLuint VBO_Tri2;
-GLuint VBO_Quad;
-GLuint VBO_Quad1;
-
-// EBO vars
-GLuint EBO_Quad;
-GLuint EBO_Quad1;
 
 // programs
 GLuint Program_Color;
@@ -58,6 +37,7 @@ GLuint Program_Texture;
 GLuint Program_Animation;
 GLuint Program_ClipSpace;
 GLuint Program_Quads;
+GLuint Program_3DModel;
 
 // texture
 GLuint Texture_Awesome;
@@ -170,6 +150,10 @@ void InitialSetup()
 	Program_Quads = ShaderLoader::CreateProgram("Resources/Shaders/Squares.vert.txt",
 		"Resources/Shaders/Texture.frag.txt");
 
+	// program for 3d model
+	Program_3DModel = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert.txt",
+		"Resources/Shaders/3DModel.frag.txt");
+
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
 
@@ -182,7 +166,7 @@ void InitialSetup()
 	glGenTextures(1, &Texture_Quag);
 	glBindTexture(GL_TEXTURE_2D, Texture_Quag);
 
-	unsigned char* ImageData = stbi_load("Resources/Textures/AwesomeFace.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
+	unsigned char* ImageData = stbi_load("Resources/Textures/PolygonAncientWorlds_Statue_01.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
 
 
 	// Check if image is RGBA or RGB
@@ -215,14 +199,6 @@ void InitialSetup()
 	// unbind texture
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	Hex1 = new CShape();
-	Hex2 = new CShape();
-
-	Square1 = new CSquare();
-	Square2 = new CSquare();
-
-	Animation = new CAnimation();
-
 	Camera = new CCamera();
 
 	Cube = new CCube();
@@ -250,6 +226,12 @@ void InitialSetup()
 	m_upDir = glm::vec3(0.0f, 1.0f, 0.0f);
 	m_position = glm::vec3(0.0f, 0.0f, 0.0f);
 	m_viewMat = glm::lookAt(m_position, m_position + m_lookDir, m_upDir);
+
+	// 
+
+	// depth buffer
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_CCW);
 }
 
 void Update()
@@ -314,15 +296,7 @@ void Update()
 
 void Render()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	//Hex1->Render(Program_ClipSpace, Texture_Quag, HexModelMat1, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), glm::vec3(0.0f, 1.0f, 1.0f));
-	//Hex2->Render(Program_ClipSpace, Texture_Quag, HexModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), glm::vec3(0.0f, 1.0f, 1.0f));
-
-	//Square1->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime);
-	//Square2->Render(Program_Texture, Texture_Awesome, QuadModelMat, CurrentTime);
-
-	//Animation->Render(Program_Quads, Texture_Animation[frame], AnimModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	Cube->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 	Model->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
