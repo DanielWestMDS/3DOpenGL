@@ -67,22 +67,62 @@ glm::vec3 CameraUpDir = glm::vec3(0.0f, 1.0f, 0.0f);
 int x = 0;
 int y = 0;
 
-int frame = 0;
-float FrameInterval = 1;
-float StartTime;
-
 // time
 float CurrentTime;
 float PreviousTime;
 float deltaTime;
 
-void AnimateTexture(GLuint _texture)
+// toggle bools
+bool g_bShowMousePosition = false;
+bool g_bWireFrame = false;
+bool g_bShowMouse = true;
+
+// for position callback
+void CursorPositionInput(GLFWwindow* _Window, double _PosX, double _PosY)
 {
-	if (CurrentTime >= 3)
+	// toggle whether to show mouse position
+	if (g_bShowMousePosition)
 	{
-		glfwSetTime(0);
+		std::cout << "Cursor Coords: " << _PosX << ", " << _PosY << std::endl;
 	}
-};
+}
+
+// for single key press
+void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mods)
+{
+	// toggle show mouse position in console
+	if (_Key == GLFW_KEY_1 && _Action == GLFW_PRESS)
+	{
+		g_bShowMousePosition = !g_bShowMousePosition;
+	}
+
+	// toggle wireframe
+	if (_Key == GLFW_KEY_2 && _Action == GLFW_PRESS)
+	{
+		g_bWireFrame = !g_bWireFrame;
+	}
+
+	// toggle show mouse
+	if (_Key == GLFW_KEY_3 && _Action == GLFW_PRESS)
+	{
+		g_bShowMouse = !g_bShowMouse;
+		// show mouse
+		if (g_bShowMouse)
+		{
+			glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		}
+		else
+		{
+			glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		}
+	}
+
+	// toggle automatic orbit
+	if (_Key == GLFW_KEY_4 && _Action == GLFW_PRESS)
+	{
+		Camera->SetAutoCircle();
+	}
+}
 
 // custom functions for tidy code
 void InitialSetup()
@@ -167,8 +207,6 @@ void InitialSetup()
 
 	Model = new CModel("Resources/Models/SM_Prop_Statue_02.obj");
 
-
-
 	//ProjectionMat = glm::ortho(0.0f, (float)iWindowSize, (float)iWindowSize, 0.0f, 0.1f, 100.0f);
 
 	//glm::vec3 ObjPosition = glm::vec3(0.0f, -100.0f, 0.0f);
@@ -191,7 +229,10 @@ void InitialSetup()
 	m_position = glm::vec3(0.0f, 0.0f, 0.0f);
 	m_viewMat = glm::lookAt(m_position, m_position + m_lookDir, m_upDir);
 
-	// 
+	// Mouse Callback
+	glfwSetCursorPosCallback(Window, CursorPositionInput);
+	// Toggle Callback
+	glfwSetKeyCallback(Window, KeyInput);
 
 	// depth buffer
 	glEnable(GL_DEPTH_TEST);
@@ -219,25 +260,13 @@ void Update()
 	ScaleMat = glm::scale(glm::mat4(1.0f), QuadScale);
 	QuadModelMat = TranslationMat * RotationMat * ScaleMat;
 
-	if (StartTime >= CurrentTime + FrameInterval)
-	{
-		if (frame >= 5)
-		{
-			frame = 0;
-		}
-		else
-		{
-			frame++;
-		}
-
-		StartTime = CurrentTime;
-	}
-	else
-	{
-		StartTime += 0.5;
-	}
-
 	Camera->Update(CurrentTime, iWindowSize, Window, deltaTime);
+	Camera->PrintCamPos();
+
+	//system("CLS");
+
+	// INPUTS
+
 }
 
 void Render()
@@ -249,7 +278,19 @@ void Render()
 
 	// unbind
 	glBindVertexArray(0);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	// show wireframe
+	if (g_bWireFrame)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+
+	
 	glUseProgram(0);
 
 	glfwSwapBuffers(Window);
@@ -262,11 +303,6 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-
-	//// Request OpenGL 3.3 core profile
-	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Make a GLFW window
 	Window = glfwCreateWindow(iWindowSize, iWindowSize, "First OpenGL Window", NULL, NULL);

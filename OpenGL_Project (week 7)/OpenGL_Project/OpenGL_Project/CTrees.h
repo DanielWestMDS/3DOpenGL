@@ -15,6 +15,6 @@ private:
 	CModel* Tree;
 	glm::mat4 m_InstancedMVPs[256];
 	// number of models
-	int m_CountInstanced
+	int m_CountInstanced;
 };
 

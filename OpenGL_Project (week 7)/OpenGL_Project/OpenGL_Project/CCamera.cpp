@@ -5,9 +5,14 @@ CCamera::CCamera()
 	m_position = glm::vec3(1.0f, 1.0f, 10.0f);
 
 	// orbit values
+	m_orbiting = false;
+	m_automaticOrbit = false;
 	m_radius = 60.0f;
 	m_angle = 90.0f;
 	m_lookPos = glm::vec3(0.0f, 0.0f, 0.0f);
+
+	// set movespeed
+	m_moveSpeed = 10.0f;
 }
 
 CCamera::~CCamera()
@@ -25,13 +30,16 @@ void CCamera::Update(float _currentTime, int _iWindowSize, GLFWwindow* _Window, 
 	m_upDir = glm::vec3(0.0f, 1.0f, 0.0f);
 	//m_position = glm::vec3(1.0f, 1.0f, 10.0f);
 
-	m_viewMat = glm::lookAt(m_position, m_position + m_lookDir, m_upDir);
+	m_viewMat = glm::lookAt(m_position, m_lookPos + m_lookDir, m_upDir);
 
 	// update input for movement every frame
 	Input(_Window, _dt);
 
 	// orbit around a point
-	CameraOrbit(_Window, _dt);
+	if (m_orbiting)
+	{
+		CameraOrbit(_Window, _dt);
+	}
 }
 
 glm::mat4 CCamera::GetViewMat()
@@ -46,39 +54,84 @@ glm::mat4 CCamera::GetProjMat()
 
 void CCamera::Input(GLFWwindow* _Window, float _dt)
 {
+
 	if (glfwGetKey(_Window, GLFW_KEY_W))
 	{
-		m_position += glm::vec3(0.0f, 1.0f, 0.0f) * _dt;
+		m_position += glm::vec3(0.0f, m_moveSpeed, 0.0f) * _dt;
+		m_orbiting = false;
 	}
 
 	if (glfwGetKey(_Window, GLFW_KEY_S))
 	{
-		m_position += glm::vec3(0.0f, -1.0f, 0.0f) * _dt;
+		m_position += glm::vec3(0.0f, -m_moveSpeed, 0.0f) * _dt;
+		m_orbiting = false;
 	}
 
 	if (glfwGetKey(_Window, GLFW_KEY_A))
 	{
-		m_position += glm::vec3(-1.0f, 0.0f, 0.0f) * _dt;
+		m_position += glm::vec3(-m_moveSpeed, 0.0f, 0.0f) * _dt;
+		m_orbiting = false;
 	}
 
 	if (glfwGetKey(_Window, GLFW_KEY_D))
 	{
-		m_position += glm::vec3(1.0f, 0.0f, 0.0f) * _dt;
+		m_position += glm::vec3(m_moveSpeed, 0.0f, 0.0f) * _dt;
+		m_orbiting = false;
 	}
 
-	if (glfwGetKey(_Window, GLFW_KEY_1))
+	if (glfwGetKey(_Window, GLFW_KEY_Q))
 	{
-		m_radius += 0.1f;
+		m_position += glm::vec3(0.0f, 0.0f, -m_moveSpeed) * _dt;
+		m_orbiting = false;
 	}
+
+	if (glfwGetKey(_Window, GLFW_KEY_E))
+	{
+		m_position += glm::vec3(0.0f, 0.0f, m_moveSpeed) * _dt;
+		m_orbiting = false;
+	}
+
+	// switch to orbiting for arrow keys
+	if (glfwGetKey(_Window, GLFW_KEY_UP))
+	{
+		m_orbiting = true;
+	}
+
+	if (glfwGetKey(_Window, GLFW_KEY_DOWN))
+	{
+		m_orbiting = true;
+	}
+
+	//if (glfwGetKey(_Window, GLFW_KEY_1))
+	//{
+	//	m_radius += 0.1f;
+	//}
 }
 
 void CCamera::CameraOrbit(GLFWwindow* _Window, float _dt)
 {
-	m_angle += TriHoriz(_Window) * _dt;
+	if (m_automaticOrbit)
+	{
+		m_angle += 1 * _dt;
+	}
+	else
+	{
+		m_angle += TriHoriz(_Window) * _dt;
+	}
 
 	m_position = glm::vec3(m_radius * cosf(m_angle), 2, m_radius * sinf(m_angle));
 
 	m_position += m_lookPos;
+}
+
+void CCamera::PrintCamPos()
+{
+	std::cout << "X: " << m_position.x << "Y: " << m_position.y << "Z: " << m_position.z << std::endl;
+}
+
+void CCamera::SetAutoCircle()
+{
+	m_automaticOrbit = !m_automaticOrbit;
 }
 
 signed char CCamera::TriHoriz(GLFWwindow* _Window)

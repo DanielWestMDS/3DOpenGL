@@ -1,5 +1,6 @@
 #pragma once
 #include "CCube.h"
+#include <iostream>
 
 class CCamera
 {
@@ -13,6 +14,8 @@ public:
 
 	void Input(GLFWwindow* _Window, float _dt);
 	void CameraOrbit(GLFWwindow* _Window, float _dt);
+	void PrintCamPos();
+	void SetAutoCircle();
 
 private:
 	glm::mat4 m_viewMat;
@@ -22,7 +25,12 @@ private:
 	glm::vec3 m_lookDir;
 	glm::vec3 m_upDir;
 
+	// how fast WASDQE moves camera
+	float m_moveSpeed;
+
 	// obrital camera
+	bool m_orbiting;
+	bool m_automaticOrbit;
 	float m_radius;
 	float m_angle;
 	glm::vec3 m_lookPos;
