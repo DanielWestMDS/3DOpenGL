@@ -36,6 +36,5 @@ private:
 	glm::vec3 m_lookPos;
 
 	signed char TriHoriz(GLFWwindow* _Window);
-	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 };
 

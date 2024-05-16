@@ -17,7 +17,10 @@ int iWindowSize = 800;
 // pointer to shape objects
 CCamera* Camera;
 CCube* Cube;
+// statue
 CModel* Model;
+
+
 
 // camera vars
 glm::mat4 m_projMat;
