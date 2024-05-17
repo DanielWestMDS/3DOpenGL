@@ -3,6 +3,12 @@
 CTrees::CTrees()
 {
 	LoadTree();
+
+	// randomize the position of trees
+	for (int i = 0; i < 100; i++)
+	{
+
+	}
 }
 
 CTrees::~CTrees()

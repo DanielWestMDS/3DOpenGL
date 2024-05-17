@@ -36,7 +36,7 @@ public:
 
 	virtual void Update(float DeltaTime);
 	virtual void Render(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat);
-	virtual void RenderInstanced(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat);
+	virtual void RenderInstanced(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat, const std::vector<glm::mat4>& _MatVec);
 
 protected:
 	GLuint VAO;
