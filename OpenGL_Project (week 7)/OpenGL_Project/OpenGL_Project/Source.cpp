@@ -58,6 +58,9 @@ glm::mat4 ScaleMat;
 
 glm::mat4 QuadModelMat;
 
+// for soldier
+glm::mat4 QuadModelMatArr[1] = { QuadModelMat };
+
 // camera matrices
 glm::mat4 ProjectionMat;
 glm::mat4 ViewMat;
@@ -208,7 +211,7 @@ void InitialSetup()
 
 	Cube = new CCube();
 
-	Model = new CModel("Resources/Models/SM_Prop_Statue_02.obj");
+	Model = new CModel("Resources/Models/SM_Prop_Statue_02.obj", QuadModelMatArr);
 
 	Trees = new CTrees();
 
