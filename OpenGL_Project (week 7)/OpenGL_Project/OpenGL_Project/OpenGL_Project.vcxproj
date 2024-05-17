@@ -143,7 +143,6 @@
   <ItemGroup>
     <ClCompile Include="CCamera.cpp" />
     <ClCompile Include="CCube.cpp" />
-    <ClCompile Include="CInput.cpp" />
     <ClCompile Include="CModel.cpp" />
     <ClCompile Include="CTrees.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
@@ -152,7 +151,6 @@
   <ItemGroup>
     <ClInclude Include="CCamera.h" />
     <ClInclude Include="CCube.h" />
-    <ClInclude Include="CInput.h" />
     <ClInclude Include="CModel.h" />
     <ClInclude Include="CTrees.h" />
     <ClInclude Include="ShaderLoader.h" />

@@ -40,6 +40,8 @@ public:
 protected:
 	GLuint VAO;
 	GLuint DrawCount;
+	GLuint VBO_Instanced;
 	int DrawType;
+	int Count_Instanced;
 };
 

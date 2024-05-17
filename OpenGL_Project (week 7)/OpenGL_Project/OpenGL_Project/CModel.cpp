@@ -2,11 +2,12 @@
 
 
 
-CModel::CModel(std::string FilePath)
+CModel::CModel(std::string FilePath/*, glm::mat4 _InstancedMVPs[]*/)
 {
 	std::vector<VertexStandard> Vertices;
 	tinyobj::ObjReader Reader;
 	tinyobj::ObjReaderConfig ReaderConfig;
+	Count_Instanced = 0;
 
 	if (!Reader.ParseFromFile(FilePath, ReaderConfig))
 	{
@@ -74,9 +75,14 @@ CModel::CModel(std::string FilePath)
 	GLuint VBO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(VertexStandard) * Vertices.size(), Vertices.data(), GL_STATIC_DRAW);
+
+	glGenBuffers(1, &VBO_Instanced);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_Instanced);
+	glBufferData(GL_ARRAY_BUFFER, Count_Instanced * sizeof(glm::mat4), _InstancedMVPs->data(), GL_DYNAMIC_DRAW);
+
+	//glGenBuffers(1, &VBO);
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(VertexStandard) * Vertices.size(), Vertices.data(), GL_STATIC_DRAW);
 
 	// attribute pointers
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexStandard), (void*)(offsetof(VertexStandard, VertexStandard::position)));
@@ -99,7 +105,10 @@ void CModel::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cur
 	glUseProgram(_program);
 	glBindVertexArray(VAO);
 
+
+
 	// send variables to shader via uniform
+	// camera
 	GLint ProjectionMatLoc = glGetUniformLocation(_program, "ProjectionMat");
 	glUniformMatrix4fv(ProjectionMatLoc, 1, GL_FALSE, glm::value_ptr(_projMat));
 	GLint ViewMatLoc = glGetUniformLocation(_program, "ViewMat");
@@ -118,7 +127,7 @@ void CModel::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cur
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
 	// render
-	glDrawArrays(DrawType, 0, DrawCount);
+	glDrawArraysInstanced(DrawType, 0, DrawCount, Count_Instanced);
 
 	glBindVertexArray(0);
 }

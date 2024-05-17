@@ -7,7 +7,7 @@
 //#include "CShape.h"
 #include "CCamera.h"
 #include "CCube.h"
-#include "CModel.h"
+#include "CTrees.h"
 
 // global variables
 GLFWwindow* Window = nullptr;
@@ -19,8 +19,8 @@ CCamera* Camera;
 CCube* Cube;
 // statue
 CModel* Model;
-
-
+// Trees
+CTrees* Trees;
 
 // camera vars
 glm::mat4 m_projMat;
@@ -185,7 +185,7 @@ void InitialSetup()
 
 	// second image 
 	// Load Image data
-	unsigned char* ImageData1 = stbi_load("Resources/Textures/Capguy_Walk.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
+	unsigned char* ImageData1 = stbi_load("Resources/Textures/PolygonAncientWorlds_Texture_01_A.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
 
 	// create and bind new texture
 	glGenTextures(1, &Texture_Awesome);
@@ -209,6 +209,8 @@ void InitialSetup()
 	Cube = new CCube();
 
 	Model = new CModel("Resources/Models/SM_Prop_Statue_02.obj");
+
+	Trees = new CTrees();
 
 	//ProjectionMat = glm::ortho(0.0f, (float)iWindowSize, (float)iWindowSize, 0.0f, 0.1f, 100.0f);
 
@@ -278,6 +280,7 @@ void Render()
 
 	Cube->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 	Model->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+	Trees->Render(Program_3DModel, Texture_Awesome, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 
 	// unbind
 	glBindVertexArray(0);

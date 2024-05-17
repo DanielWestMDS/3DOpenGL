@@ -7,9 +7,9 @@ public:
 	CTrees();
 	~CTrees();
 
-	void Loadtree();
+	void LoadTree();
 
-	void Render(GLint _program, GLint _texture);
+	void Render(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat);
 
 private:
 	CModel* Tree;
