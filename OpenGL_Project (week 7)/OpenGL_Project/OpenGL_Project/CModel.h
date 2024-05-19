@@ -45,6 +45,7 @@ public:
 protected:
 	GLuint VAO;
 	GLuint DrawCount;
+	GLuint InstanceBuffer;
 	int DrawType;
 	int m_CountInstanced;
 };

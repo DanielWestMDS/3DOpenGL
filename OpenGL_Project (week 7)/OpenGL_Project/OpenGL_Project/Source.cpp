@@ -269,11 +269,12 @@ void InitialSetup()
 	for (unsigned int i = 0; i < g_objCount; i++)
 	{
 		//glm::mat4 newModelMat;
-		RandomLocations.push_back(glm::vec3(rand() % 10000, 0, rand() % 10000));
+		RandomLocations.push_back(glm::vec3(rand() % 1000, 0, rand() % 1000));
 		//glm::mat4 randPosMatrix = glm::translate(glm::mat4(1.0f), RandomLocations[i]);
 		//newModelMat = randPosMatrix * RotationMat * ScaleMat;
 		//std::cout << randPos.x << randPos.z << std::endl;
 		//MVPVec.push_back(newModelMat);
+		MVPVec.push_back(QuadModelMat);
 	}
 	//std::cout << MVPVec.size();
 
@@ -331,7 +332,7 @@ void Update()
 		glm::mat4 newModelMat;
 		glm::mat4 randPosMatrix = glm::translate(glm::mat4(1.0f), RandomLocations[i]);
 		newModelMat = randPosMatrix * RotationMat * ScaleMat;
-		MVPVec.push_back(newModelMat);
+		MVPVec[i] = newModelMat;
 	}
 
 	for (auto& matrix : MVPVec)

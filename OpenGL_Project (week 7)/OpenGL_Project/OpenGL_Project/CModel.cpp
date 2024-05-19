@@ -85,10 +85,13 @@ CModel::CModel(std::string FilePath)
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexStandard), (void*)(offsetof(VertexStandard, VertexStandard::texcoord)));
 	glEnableVertexAttribArray(1);
+
+	glGenBuffers(1, &InstanceBuffer);
 }
 
 CModel::~CModel()
 {
+	glDeleteBuffers(1, &InstanceBuffer);
 }
 
 void CModel::Update(float DeltaTime)
@@ -137,7 +140,7 @@ void CModel::RenderInstanced(GLint _program, GLint _texture,std::vector<glm::mat
 
 	//Model matrix
 	GLint ModelMatrix = glGetUniformLocation(_program, "ModelMat");
-	glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_matrixVec[0]));
+	glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_modelMat));
 
 	// Activate and bind the textures
 	// texture 1
