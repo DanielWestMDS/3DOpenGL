@@ -31,18 +31,22 @@ class CModel
 {
 
 public:
-	CModel(std::string FilePath, const std::vector<glm::mat4>& _InstancedMVPs);
+	CModel(std::string FilePath);
 	~CModel();
 
 	virtual void Update(float DeltaTime);
 	virtual void Render(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat);
-	virtual void RenderInstanced(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat, const std::vector<glm::mat4>& _MatVec);
+	virtual void RenderInstanced(GLint _program, GLint _texture, std::vector<glm::mat4> _matrixVec, float CurrentTime, glm::mat4 _ModelMat);
+
+	GLuint GetVAO() { return VAO; };
+
+	void Input();
 
 protected:
 	GLuint VAO;
 	GLuint DrawCount;
-	GLuint VBO_Instanced;
+	GLuint InstanceBuffer;
 	int DrawType;
-	int Count_Instanced;
+	int m_CountInstanced;
 };
 

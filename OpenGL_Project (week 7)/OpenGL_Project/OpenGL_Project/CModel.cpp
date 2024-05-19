@@ -2,12 +2,13 @@
 
 
 
-CModel::CModel(std::string FilePath, const std::vector<glm::mat4>& _InstancedMVPs)
+CModel::CModel(std::string FilePath)
 {
 	std::vector<VertexStandard> Vertices;
 	tinyobj::ObjReader Reader;
 	tinyobj::ObjReaderConfig ReaderConfig;
-	Count_Instanced = 0;
+
+	m_CountInstanced = 0;
 
 	if (!Reader.ParseFromFile(FilePath, ReaderConfig))
 	{
@@ -75,24 +76,22 @@ CModel::CModel(std::string FilePath, const std::vector<glm::mat4>& _InstancedMVP
 	GLuint VBO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
-
-	glGenBuffers(1, &VBO_Instanced);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_Instanced);
-	glBufferData(GL_ARRAY_BUFFER, Count_Instanced * sizeof(glm::mat4), &_InstancedMVPs[0], GL_DYNAMIC_DRAW);
-
-	//glGenBuffers(1, &VBO);
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(VertexStandard) * Vertices.size(), Vertices.data(), GL_STATIC_DRAW);
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(VertexStandard) * Vertices.size(), Vertices.data(), GL_STATIC_DRAW);
 
 	// attribute pointers
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexStandard), (void*)(offsetof(VertexStandard, VertexStandard::position)));
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexStandard), (void*)(offsetof(VertexStandard, VertexStandard::texcoord)));
 	glEnableVertexAttribArray(1);
+
+	glGenBuffers(1, &InstanceBuffer);
 }
 
 CModel::~CModel()
 {
+	glDeleteBuffers(1, &InstanceBuffer);
 }
 
 void CModel::Update(float DeltaTime)
@@ -106,11 +105,12 @@ void CModel::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cur
 	glBindVertexArray(VAO);
 
 	// send variables to shader via uniform
-	GLint ProjectionMatLoc = glGetUniformLocation(_program, "ProjectionMat");
-	glUniformMatrix4fv(ProjectionMatLoc, 1, GL_FALSE, glm::value_ptr(_projMat));
-	GLint ViewMatLoc = glGetUniformLocation(_program, "ViewMat");
-	glUniformMatrix4fv(ViewMatLoc, 1, GL_FALSE, glm::value_ptr(_viewMat));
-	// model matrix
+	//GLint ProjectionMatLoc = glGetUniformLocation(_program, "ProjectionMat");
+	//glUniformMatrix4fv(ProjectionMatLoc, 1, GL_FALSE, glm::value_ptr(_projMat));
+	//GLint ViewMatLoc = glGetUniformLocation(_program, "ViewMat");
+	//glUniformMatrix4fv(ViewMatLoc, 1, GL_FALSE, glm::value_ptr(_viewMat));
+
+	//Model matrix
 	GLint ModelMatrix = glGetUniformLocation(_program, "QuadModelMat");
 	glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_matrix));
 
@@ -132,11 +132,15 @@ void CModel::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cur
 	glBindVertexArray(0);
 }
 
-void CModel::RenderInstanced(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat, const std::vector<glm::mat4>& _MatVec)
+void CModel::RenderInstanced(GLint _program, GLint _texture,std::vector<glm::mat4> _matrixVec, float CurrentTime, glm::mat4 _modelMat)
 {
 	// bind program and VAO
 	glUseProgram(_program);
 	glBindVertexArray(VAO);
+
+	//Model matrix
+	GLint ModelMatrix = glGetUniformLocation(_program, "ModelMat");
+	glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_modelMat));
 
 	// Activate and bind the textures
 	// texture 1
@@ -144,10 +148,26 @@ void CModel::RenderInstanced(GLint _program, GLint _texture, glm::mat4 _matrix, 
 	glBindTexture(GL_TEXTURE_2D, _texture);
 	glUniform1i(glGetUniformLocation(_program, "Texture0"), 0);
 
+	//instanced VBO
+	GLuint VBO_Instanced;
+
 	// set matrices as instanced vertex attribute
 	glGenBuffers(1, &VBO_Instanced);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_Instanced);
-	glBufferData(GL_ARRAY_BUFFER, Count_Instanced * sizeof(glm::mat4), _MatVec.data(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, _matrixVec.size() * sizeof(glm::mat4), _matrixVec.data(), GL_DYNAMIC_DRAW);
+
+
+	// send variables to shader via uniform
+	// camera
+	//GLint ProjectionMatLoc = glGetUniformLocation(_program, "ProjectionMat");
+	//glUniformMatrix4fv(ProjectionMatLoc, 1, GL_FALSE, glm::value_ptr(_projMat));
+	//GLint ViewMatLoc = glGetUniformLocation(_program, "ViewMat");
+	//glUniformMatrix4fv(ViewMatLoc, 1, GL_FALSE, glm::value_ptr(_viewMat));
+
+	// Model matrix
+	//glUniformMatrix4fv(glGetUniformLocation(_program, "MVPs[0]"), _matrixVec.size(), GL_FALSE, glm::value_ptr(_matrixVec[0]));
+	//GLint InstancedMVP = glGetUniformLocation(_program, "MVPs[]");
+	//glUniformMatrix4fv(InstancedMVP, 1, GL_FALSE, glm::value_ptr(_matrixVec[1]));
 
 	// turn attributes into a model matrix
 	for (GLuint i = 0; i < 4; i++)
@@ -157,17 +177,6 @@ void CModel::RenderInstanced(GLint _program, GLint _texture, glm::mat4 _matrix, 
 		glVertexAttribDivisor(i + 3, 1);
 	}
 
-	// send variables to shader via uniform
-	// camera
-	GLint ProjectionMatLoc = glGetUniformLocation(_program, "ProjectionMat");
-	glUniformMatrix4fv(ProjectionMatLoc, 1, GL_FALSE, glm::value_ptr(_projMat));
-	GLint ViewMatLoc = glGetUniformLocation(_program, "ViewMat");
-	glUniformMatrix4fv(ViewMatLoc, 1, GL_FALSE, glm::value_ptr(_viewMat));
-
-	// Model matrix
-	GLint InstancedMVP = glGetUniformLocation(_program, "InstancedMVP");
-	glUniformMatrix4fv(InstancedMVP, 1, GL_FALSE, glm::value_ptr(_matrix));
-
 	// set the filtering and mipmap parameters for this texture
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -175,7 +184,9 @@ void CModel::RenderInstanced(GLint _program, GLint _texture, glm::mat4 _matrix, 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
 	// render
-	glDrawArraysInstanced(DrawType, 0, DrawCount, _MatVec.size());
+	glDrawArraysInstanced(DrawType, 0, DrawCount, _matrixVec.size());
 
 	glBindVertexArray(0);
+
+
 }

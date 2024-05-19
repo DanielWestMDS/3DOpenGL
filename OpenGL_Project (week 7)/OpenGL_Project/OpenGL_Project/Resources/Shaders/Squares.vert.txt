@@ -21,7 +21,7 @@ out vec2 FragTexCoords;
 // Shader Functionality
 void main()
 {
-	gl_Position = ProjectionMat * ViewMat * QuadModelMat * vec4(Position, 1.0f);
+	gl_Position = QuadModelMat * vec4(Position, 1.0f);
 	FragColor = Color;
 	FragTexCoords = TexCoords;
 	//FragColor = mix(Color, SecondColor, (sin(CurrentTime) * cos(CurrentTime) + 0.5);
