@@ -122,3 +122,8 @@ void CModel::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cur
 
 	glBindVertexArray(0);
 }
+
+void CModel::RenderInstanced(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat)
+{
+
+}
