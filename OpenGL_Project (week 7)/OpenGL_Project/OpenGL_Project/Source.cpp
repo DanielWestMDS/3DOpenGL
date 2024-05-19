@@ -19,6 +19,8 @@ CCamera* Camera;
 CCube* Cube;
 // statue
 CModel* Model;
+// tree
+CModel* Tree;
 
 
 
@@ -53,7 +55,7 @@ glm::mat4 TranslationMat;
 float QuadRotationAngle = 0.0f;
 glm::mat4 RotationMat;
 
-glm::vec3 QuadScale = glm::vec3(0.05f, 0.05f, 0.2f);
+glm::vec3 QuadScale = glm::vec3(0.05f, 0.05f, 0.05f);
 glm::mat4 ScaleMat;
 
 glm::mat4 QuadModelMat;
@@ -69,6 +71,9 @@ glm::vec3 CameraUpDir = glm::vec3(0.0f, 1.0f, 0.0f);
 
 // Vector for instanced matrices
 std::vector<glm::mat4> MVPVec;
+// for random tree positions
+std::vector<glm::vec3> RandomLocations;
+//glm::mat4 MVPVec[256];
 
 int x = 0;
 int y = 0;
@@ -80,6 +85,9 @@ int g_objCount = 100;
 float CurrentTime;
 float PreviousTime;
 float deltaTime;
+
+// for input object
+float MoveSpeed = 1.0f;
 
 // toggle bools
 bool g_bShowMousePosition = false;
@@ -130,6 +138,37 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 	if (_Key == GLFW_KEY_4 && _Action == GLFW_PRESS)
 	{
 		Camera->SetAutoCircle();
+	}
+
+	// for object
+	if (glfwGetKey(_Window, GLFW_KEY_W))
+	{
+		QuadPosition += glm::vec3(0.0f, MoveSpeed, 0.0f) * deltaTime;
+	}
+
+	if (glfwGetKey(_Window, GLFW_KEY_S))
+	{
+		QuadPosition += glm::vec3(0.0f, -MoveSpeed, 0.0f) * deltaTime;
+	}
+
+	if (glfwGetKey(_Window, GLFW_KEY_A))
+	{
+		QuadPosition += glm::vec3(-MoveSpeed, 0.0f, 0.0f) * deltaTime;
+	}
+
+	if (glfwGetKey(_Window, GLFW_KEY_D))
+	{
+		QuadPosition += glm::vec3(MoveSpeed, 0.0f, 0.0f) * deltaTime;
+	}
+
+	if (glfwGetKey(_Window, GLFW_KEY_Q))
+	{
+		QuadPosition += glm::vec3(0.0f, 0.0f, -MoveSpeed) * deltaTime;
+	}
+
+	if (glfwGetKey(_Window, GLFW_KEY_E))
+	{
+		QuadPosition += glm::vec3(0.0f, 0.0f, MoveSpeed) * deltaTime;
 	}
 }
 
@@ -216,13 +255,7 @@ void InitialSetup()
 
 	Model = new CModel("Resources/Models/SM_Prop_Statue_02.obj");
 
-	//ProjectionMat = glm::ortho(0.0f, (float)iWindowSize, (float)iWindowSize, 0.0f, 0.1f, 100.0f);
-
-	//glm::vec3 ObjPosition = glm::vec3(0.0f, -100.0f, 0.0f);
-	//float ObjRotationAngle = 0.0f;
-	//glm::vec3 ObjScale = glm::vec3(400.0f, 400.0f, 1.0f);
-
-	//ViewMat = glm::lookAt(CameraPos, CameraPos + CameraLookDir, CameraUpDir);
+	Tree = new CModel("Resources/Models/SM_Env_Tree_Palm_01.obj");
 
 	// set background colour
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
@@ -230,12 +263,33 @@ void InitialSetup()
 	// Map the ange of the window for when the buffer clears
 	glViewport(0, 0, iWindowSize, iWindowSize);
 
+	// clear vector just in case
+	MVPVec.clear();
 	// add matrices to matrix vec
 	for (unsigned int i = 0; i < g_objCount; i++)
 	{
-		glm::mat4 newModelMat;
-		MVPVec.push_back(newModelMat);
+		//glm::mat4 newModelMat;
+		RandomLocations.push_back(glm::vec3(rand() % 10000, 0, rand() % 10000));
+		//glm::mat4 randPosMatrix = glm::translate(glm::mat4(1.0f), RandomLocations[i]);
+		//newModelMat = randPosMatrix * RotationMat * ScaleMat;
+		//std::cout << randPos.x << randPos.z << std::endl;
+		//MVPVec.push_back(newModelMat);
 	}
+	//std::cout << MVPVec.size();
+
+	// set matrices as instanced vertex attribute
+	GLuint VBO_Instanced;
+	glGenBuffers(1, &VBO_Instanced);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_Instanced);
+	glBufferData(GL_ARRAY_BUFFER, 100 * sizeof(glm::mat4), &RandomLocations[0], GL_STATIC_DRAW);
+
+	// bind instance buffer to attribue location
+	glBindVertexArray(Tree->GetVAO());
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+	glVertexAttribDivisor(2, 1);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 
 	// Mouse Callback
 	glfwSetCursorPosCallback(Window, CursorPositionInput);
@@ -268,12 +322,21 @@ void Update()
 	ScaleMat = glm::scale(glm::mat4(1.0f), QuadScale);
 	QuadModelMat = TranslationMat * RotationMat * ScaleMat;
 
-	// instanced MVPs
-	for (auto& matrix : MVPVec) 
+	QuadModelMat = Camera->GetProjMat() * Camera->GetViewMat() * QuadModelMat;
+
+	// for instanced matrices
+
+	for (unsigned int i = 0; i < g_objCount; i++)
 	{
-		glm::vec3 randPos = glm::vec3(rand() % 100, rand() % 100, 0);
-		glm::mat4 randPosMatrix = glm::translate(glm::mat4(1.0f), randPos);
-		matrix = TranslationMat * RotationMat * ScaleMat;
+		glm::mat4 newModelMat;
+		glm::mat4 randPosMatrix = glm::translate(glm::mat4(1.0f), RandomLocations[i]);
+		newModelMat = randPosMatrix * RotationMat * ScaleMat;
+		MVPVec.push_back(newModelMat);
+	}
+
+	for (auto& matrix : MVPVec)
+	{
+		matrix = Camera->GetProjMat() * Camera->GetViewMat() * matrix;
 	}
 
 	// camera update
@@ -290,13 +353,12 @@ void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	Cube->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+	//Cube->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 	Model->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 
-	for (unsigned int i = 0; i < g_objCount; i++)
-	{
-		Model->RenderInstanced(Program_Quads, Texture_Quag, MVPVec, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
-	}
+	// many trees
+	Tree->RenderInstanced(Program_3DModel, Texture_Quag, MVPVec, CurrentTime, QuadModelMat);
+	
 
 	// unbind
 	glBindVertexArray(0);
@@ -310,8 +372,6 @@ void Render()
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
-
-
 	
 	glUseProgram(0);
 

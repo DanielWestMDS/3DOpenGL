@@ -55,42 +55,6 @@ glm::mat4 CCamera::GetProjMat()
 void CCamera::Input(GLFWwindow* _Window, float _dt)
 {
 
-	if (glfwGetKey(_Window, GLFW_KEY_W))
-	{
-		m_position += glm::vec3(0.0f, m_moveSpeed, 0.0f) * _dt;
-		m_orbiting = false;
-	}
-
-	if (glfwGetKey(_Window, GLFW_KEY_S))
-	{
-		m_position += glm::vec3(0.0f, -m_moveSpeed, 0.0f) * _dt;
-		m_orbiting = false;
-	}
-
-	if (glfwGetKey(_Window, GLFW_KEY_A))
-	{
-		m_position += glm::vec3(-m_moveSpeed, 0.0f, 0.0f) * _dt;
-		m_orbiting = false;
-	}
-
-	if (glfwGetKey(_Window, GLFW_KEY_D))
-	{
-		m_position += glm::vec3(m_moveSpeed, 0.0f, 0.0f) * _dt;
-		m_orbiting = false;
-	}
-
-	if (glfwGetKey(_Window, GLFW_KEY_Q))
-	{
-		m_position += glm::vec3(0.0f, 0.0f, -m_moveSpeed) * _dt;
-		m_orbiting = false;
-	}
-
-	if (glfwGetKey(_Window, GLFW_KEY_E))
-	{
-		m_position += glm::vec3(0.0f, 0.0f, m_moveSpeed) * _dt;
-		m_orbiting = false;
-	}
-
 	// switch to orbiting for arrow keys
 	if (glfwGetKey(_Window, GLFW_KEY_UP))
 	{
