@@ -53,7 +53,7 @@ glm::mat4 TranslationMat;
 float QuadRotationAngle = 0.0f;
 glm::mat4 RotationMat;
 
-glm::vec3 QuadScale = glm::vec3(0.2f, 0.2f, 0.2f);
+glm::vec3 QuadScale = glm::vec3(0.05f, 0.05f, 0.2f);
 glm::mat4 ScaleMat;
 
 glm::mat4 QuadModelMat;
@@ -67,8 +67,14 @@ glm::vec3 CameraPos;
 glm::vec3 CameraLookDir;
 glm::vec3 CameraUpDir = glm::vec3(0.0f, 1.0f, 0.0f);
 
+// Vector for instanced matrices
+std::vector<glm::mat4> MVPVec;
+
 int x = 0;
 int y = 0;
+
+// obj count 
+int g_objCount = 100;
 
 // time
 float CurrentTime;
@@ -224,13 +230,12 @@ void InitialSetup()
 	// Map the ange of the window for when the buffer clears
 	glViewport(0, 0, iWindowSize, iWindowSize);
 
-	float HalfWindow = (float)iWindowSize * 0.5;
-
-	m_projMat = glm::ortho(-HalfWindow, HalfWindow, -HalfWindow, HalfWindow, 0.1f, 100.0f);
-	m_lookDir = glm::vec3(0.0f, 0.0f, -1.0f);
-	m_upDir = glm::vec3(0.0f, 1.0f, 0.0f);
-	m_position = glm::vec3(0.0f, 0.0f, 0.0f);
-	m_viewMat = glm::lookAt(m_position, m_position + m_lookDir, m_upDir);
+	// add matrices to matrix vec
+	for (unsigned int i = 0; i < g_objCount; i++)
+	{
+		glm::mat4 newModelMat;
+		MVPVec.push_back(newModelMat);
+	}
 
 	// Mouse Callback
 	glfwSetCursorPosCallback(Window, CursorPositionInput);
@@ -263,6 +268,15 @@ void Update()
 	ScaleMat = glm::scale(glm::mat4(1.0f), QuadScale);
 	QuadModelMat = TranslationMat * RotationMat * ScaleMat;
 
+	// instanced MVPs
+	for (auto& matrix : MVPVec) 
+	{
+		glm::vec3 randPos = glm::vec3(rand() % 100, rand() % 100, 0);
+		glm::mat4 randPosMatrix = glm::translate(glm::mat4(1.0f), randPos);
+		matrix = TranslationMat * RotationMat * ScaleMat;
+	}
+
+	// camera update
 	Camera->Update(CurrentTime, iWindowSize, Window, deltaTime);
 	Camera->PrintCamPos();
 
@@ -278,6 +292,11 @@ void Render()
 
 	Cube->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 	Model->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+
+	for (unsigned int i = 0; i < g_objCount; i++)
+	{
+		Model->RenderInstanced(Program_Quads, Texture_Quag, MVPVec, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+	}
 
 	// unbind
 	glBindVertexArray(0);
