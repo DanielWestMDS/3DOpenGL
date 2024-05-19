@@ -31,7 +31,7 @@ class CModel
 {
 
 public:
-	CModel(std::string FilePath, glm::mat4 _InstancedMVPs[]);
+	CModel(std::string FilePath, const std::vector<glm::mat4>& _InstancedMVPs);
 	~CModel();
 
 	virtual void Update(float DeltaTime);

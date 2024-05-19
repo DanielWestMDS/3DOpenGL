@@ -2,7 +2,7 @@
 
 
 
-CModel::CModel(std::string FilePath, glm::mat4 _InstancedMVPs[])
+CModel::CModel(std::string FilePath, const std::vector<glm::mat4>& _InstancedMVPs)
 {
 	std::vector<VertexStandard> Vertices;
 	tinyobj::ObjReader Reader;
@@ -110,6 +110,9 @@ void CModel::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cur
 	glUniformMatrix4fv(ProjectionMatLoc, 1, GL_FALSE, glm::value_ptr(_projMat));
 	GLint ViewMatLoc = glGetUniformLocation(_program, "ViewMat");
 	glUniformMatrix4fv(ViewMatLoc, 1, GL_FALSE, glm::value_ptr(_viewMat));
+	// model matrix
+	GLint ModelMatrix = glGetUniformLocation(_program, "QuadModelMat");
+	glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_matrix));
 
 	//// Activate and bind the textures
 	//// texture 1

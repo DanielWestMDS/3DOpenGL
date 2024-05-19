@@ -59,7 +59,7 @@ glm::mat4 ScaleMat;
 glm::mat4 QuadModelMat;
 
 // for soldier
-glm::mat4 QuadModelMatArr[1] = { QuadModelMat };
+const std::vector<glm::mat4>& QuadModelMatArr = { QuadModelMat };
 
 // camera matrices
 glm::mat4 ProjectionMat;
@@ -283,7 +283,7 @@ void Render()
 
 	Cube->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 	Model->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
-	Trees->Render(Program_3DModel, Texture_Awesome, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+	//Trees->Render(Program_3DModel, Texture_Awesome, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 
 	// unbind
 	glBindVertexArray(0);
