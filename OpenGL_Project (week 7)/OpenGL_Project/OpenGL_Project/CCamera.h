@@ -15,6 +15,8 @@ public:
 	glm::mat4 GetProjMat();
 	// projection matrix for UI
 	glm::mat4 GetUIProjMat() { return m_UIprojMat; };
+	// view matrix for UI
+	glm::mat4 GetUIViewMat() { return m_UIviewMat; };
 
 	void Input(GLFWwindow* _Window, float _dt);
 	void CameraOrbit(GLFWwindow* _Window, float _dt);
@@ -40,6 +42,7 @@ private:
 
 	// for UI
 	glm::mat4 m_UIprojMat;
+	glm::mat4 m_UIviewMat;
 	//glm::mat4 m_UIviewMat;
 	//glm::vec3 m_UIposition;
 	//glm::vec3 m_UIlookDir;

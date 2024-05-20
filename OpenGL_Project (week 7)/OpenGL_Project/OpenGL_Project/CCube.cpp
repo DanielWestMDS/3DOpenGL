@@ -1,3 +1,4 @@
+
 #include "CCube.h"
 
 CCube::CCube()

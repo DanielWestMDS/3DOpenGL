@@ -23,7 +23,8 @@ void CCamera::Update(float _currentTime, int _iWindowSize, GLFWwindow* _Window, 
 {
 	float HalfWindow = (float)_iWindowSize * 0.5;
 	m_projMat = glm::perspective(glm::radians(45.0f), (HalfWindow * 2) / (HalfWindow * 2), 0.1f, 1000.0f);
-	m_UIprojMat = glm::ortho(0.0f, (float)_iWindowSize, (float)_iWindowSize, 0.0f, 0.1f, 100.0f);
+	// orthographic
+	m_UIprojMat = glm::ortho(0.0f, (float)_iWindowSize, (float)_iWindowSize, 0.0f, 0.1f, 1000.0f);
 
 	//m_projMat = glm::perspective(glm::radians(45.0f), (HalfWindow * 2) / (HalfWindow * 2), 0.1f, 100.0f);
 
@@ -31,7 +32,11 @@ void CCamera::Update(float _currentTime, int _iWindowSize, GLFWwindow* _Window, 
 	m_upDir = glm::vec3(0.0f, 1.0f, 0.0f);
 	//m_position = glm::vec3(1.0f, 1.0f, 10.0f);
 
+	// view matrix for 3d objects
 	m_viewMat = glm::lookAt(m_position, m_lookPos + m_lookDir, m_upDir);
+
+	// view matrix for UI button
+	m_UIviewMat = glm::lookAt(m_position, m_position + m_lookDir, m_upDir);
 
 	// update input for movement every frame
 	Input(_Window, _dt);

@@ -1,3 +1,15 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CButton.cpp
+// Description : Contains vertex information for UI button. Passes in uniforms for MVP for the shader.
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #include "CButton.h"
 
 CButton::CButton()
@@ -12,14 +24,6 @@ CButton::CButton()
                 0.5f, -0.875f, 0.0f,    0.0f, 1.0f, 1.0f, // D
                 1.0f, 0.0f, 0.0f,       1.0f, 1.0f, 0.0f, // E
                  0.5f, 0.875f, 0.0f,    1.0f, 0.0f, 1.0f, // F
-
-                 /*            //	// position		   // color			  // texture coords
-                 -0.5f, 0.75f, 0.0f,  1.0f, 0.0f, 0.0f,    -0.5f, 0.75f,  // A
-                 0.5f, 0.75f, 0.0f,   0.0f, 1.0f, 0.0f,    0.5f, 0.75f,   // B
-                 1.0f, -0.125f, 0.0f,  1.0f, 0.0f, 1.0f,   1.0f, -0.125f, // C
-                 0.5f, -0.75f, 0.0f,   0.0f, 1.0f, 1.0f,   0.5f, -0.75f,  // D
-                 - 0.5f, -0.75f, 0.0f,   0.0f, 1.0f, 1.0f, -0.5f, -0.75f, // E
-                 -1.0f, -0.125f, 0.0f,   0.0f, 1.0f, 1.0f, -1.0f, -0.125f,// F*/
         };
 
         // Define indices for the triangle vertices
@@ -66,13 +70,16 @@ void CButton::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cu
     glUseProgram(_program);
     glBindVertexArray(VAO);
 
+
+    // send variables to shader via uniform
+    GLint ProjectionMatLoc = glGetUniformLocation(_program, "ProjectionMat");
+    glUniformMatrix4fv(ProjectionMatLoc, 1, GL_FALSE, glm::value_ptr(_projMat));
+    GLint ViewMatLoc = glGetUniformLocation(_program, "ViewMat");
+    glUniformMatrix4fv(ViewMatLoc, 1, GL_FALSE, glm::value_ptr(_viewMat));
+
     //Model matrix
     GLint ModelMatrix = glGetUniformLocation(_program, "QuadModelMat");
     glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_matrix));
-
-    // send variables to the shader with uniform for color change
-    GLint CurrentTimeLoc = glGetUniformLocation(_program, "CurrentTime");
-    glUniform1f(CurrentTimeLoc, CurrentTime + 1);
 
     // render
     glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);

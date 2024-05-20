@@ -1,3 +1,15 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : Source.cpp
+// Description : Main file for project. Contains all classes and runs an initial setup on startup and an update and a render each frame.
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #define STB_IMAGE_IMPLEMENTATION
 
 // library define 
@@ -79,13 +91,13 @@ glm::mat4 TreeScaleMat;
 glm::mat4 TreeModelMat;
 
 // Quad Model Mat values
-glm::vec3 QuadPosition = glm::vec3(-0.5f, 0.5f, 0.0f);
+glm::vec3 QuadPosition = glm::vec3(100.0f, 100.0f, 0.0f);
 glm::mat4 QuadTranslationMat;
 
 float QuadRotationAngle = 0.0f;
 glm::mat4 QuadRotationMat;
 
-glm::vec3 QuadScale = glm::vec3(0.5f, 0.5f, 1.0f);
+glm::vec3 QuadScale = glm::vec3(100.0f, 100.0f, 1.0f);
 glm::mat4 QuadScaleMat;
 
 glm::mat4 QuadModelMat;
@@ -383,23 +395,18 @@ void Update()
 	QuadScaleMat = glm::scale(glm::mat4(1.0f), QuadScale);
 	QuadModelMat = QuadTranslationMat * QuadRotationMat * QuadScaleMat;
 
-	SoldierModelMat = Camera->GetProjMat() * Camera->GetViewMat() * SoldierModelMat;
+	QuadModelMat = Camera->GetUIProjMat() * Camera->GetUIViewMat() * QuadModelMat;
 
 	// camera update
 	Camera->Update(CurrentTime, iWindowSize, Window, deltaTime);
 	Camera->PrintCamPos();
-
-	//system("CLS");
-
-	// INPUTS
-
 }
 
 void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//Cube->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+	// single soldier model
 	Model->Render(Program_Quads, Texture_Quag, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 
 	// many trees

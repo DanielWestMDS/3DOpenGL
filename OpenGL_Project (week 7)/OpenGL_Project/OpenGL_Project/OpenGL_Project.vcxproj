@@ -160,6 +160,7 @@
   <ItemGroup>
     <Text Include="Resources\Shaders\3DModel.frag.txt" />
     <Text Include="Resources\Shaders\3DModel.vert.txt" />
+    <Text Include="Resources\Shaders\Button.vert.txt" />
     <Text Include="Resources\Shaders\ClipSpace.vert.txt" />
     <Text Include="Resources\Shaders\FixedColor.frag.txt" />
     <Text Include="Resources\Shaders\FixedTriangle.vert.txt" />
