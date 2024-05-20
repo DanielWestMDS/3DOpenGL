@@ -101,7 +101,7 @@ float PreviousTime;
 float deltaTime;
 
 // for input object
-float MoveSpeed = 1.0f;
+float MoveSpeed = 4.0f;
 
 // toggle bools
 bool g_bShowMousePosition = false;

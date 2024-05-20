@@ -16,6 +16,15 @@ public:
 	void CameraOrbit(GLFWwindow* _Window, float _dt);
 	void PrintCamPos();
 	void SetAutoCircle();
+
+	// for model movement related to camera
+	// forward vector
+	glm::vec3 GetForward() { return glm::normalize(-m_lookDir); };
+	// right vector
+	glm::vec3 GetRight() { return glm::normalize(glm::cross(GetForward(), glm::vec3(0, 1, 0))); };
+	// up vector
+	glm::vec3 GetUp() { return glm::normalize(glm::cross(GetRight(), GetForward())); };
+
 private:
 	glm::mat4 m_viewMat;
 	glm::mat4 m_projMat;

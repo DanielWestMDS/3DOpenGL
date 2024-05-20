@@ -112,12 +112,26 @@ signed char CCamera::TriHoriz(GLFWwindow* _Window)
 {
 	signed char retVal = 0;
 
+	// zoom in with up key
 	if (glfwGetKey(_Window, GLFW_KEY_UP))
+	{
+		m_radius -= 1;
+	}
+
+	// zoom out with down key
+	if (glfwGetKey(_Window, GLFW_KEY_DOWN))
+	{
+		m_radius += 1;
+	}
+
+	// go left with left key
+	if (glfwGetKey(_Window, GLFW_KEY_LEFT))
 	{
 		retVal += 1;
 	}
 
-	if (glfwGetKey(_Window, GLFW_KEY_DOWN))
+	// go right with right key
+	if (glfwGetKey(_Window, GLFW_KEY_RIGHT))
 	{
 		retVal -= 1;
 	}
