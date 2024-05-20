@@ -66,6 +66,15 @@ void CCamera::Input(GLFWwindow* _Window, float _dt)
 		m_orbiting = true;
 	}
 
+	// alter the camera move speed if shift is being held
+	if (glfwGetKey(_Window, GLFW_KEY_LEFT_SHIFT))
+	{
+		m_moveSpeed = 20.0f;
+	}
+	else
+	{
+		m_moveSpeed = 10.0f;
+	}
 	//if (glfwGetKey(_Window, GLFW_KEY_1))
 	//{
 	//	m_radius += 0.1f;
@@ -97,6 +106,7 @@ void CCamera::SetAutoCircle()
 {
 	m_automaticOrbit = !m_automaticOrbit;
 }
+
 
 signed char CCamera::TriHoriz(GLFWwindow* _Window)
 {

@@ -60,6 +60,20 @@ glm::mat4 ScaleMat;
 
 glm::mat4 QuadModelMat;
 
+
+// Tree Model mat
+// translation
+glm::vec3 TreePosition = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::mat4 TreeTranslationMat;
+//rotation
+float TreeRotationAngle = 0.0f;
+glm::mat4 TreeRotationMat;
+// scale
+glm::vec3 TreeScale = glm::vec3(0.005f, 0.005f, 0.005f);
+glm::mat4 TreeScaleMat;
+// model matrix
+glm::mat4 TreeModelMat;
+
 // camera matrices
 glm::mat4 ProjectionMat;
 glm::mat4 ViewMat;
@@ -79,7 +93,7 @@ int x = 0;
 int y = 0;
 
 // obj count 
-int g_objCount = 100;
+int g_objCount = 1000;
 
 // time
 float CurrentTime;
@@ -216,7 +230,7 @@ void InitialSetup()
 	glGenTextures(1, &Texture_Quag);
 	glBindTexture(GL_TEXTURE_2D, Texture_Quag);
 
-	unsigned char* ImageData = stbi_load("Resources/Textures/PolygonAncientWorlds_Statue_01.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
+	unsigned char* ImageData = stbi_load("Resources/Textures/PolygonAncientWorlds_Texture_01_A.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
 
 
 	// Check if image is RGBA or RGB
@@ -265,15 +279,12 @@ void InitialSetup()
 
 	// clear vector just in case
 	MVPVec.clear();
-	// add matrices to matrix vec
+	// add matrices to matrix vec for each tree
 	for (unsigned int i = 0; i < g_objCount; i++)
 	{
-		//glm::mat4 newModelMat;
-		RandomLocations.push_back(glm::vec3(rand() % 1000, 0, rand() % 1000));
-		//glm::mat4 randPosMatrix = glm::translate(glm::mat4(1.0f), RandomLocations[i]);
-		//newModelMat = randPosMatrix * RotationMat * ScaleMat;
-		//std::cout << randPos.x << randPos.z << std::endl;
-		//MVPVec.push_back(newModelMat);
+		// randomize x and z positions to disperse trees
+		RandomLocations.push_back(glm::vec3((rand() % 5000) - 2500, 0, (rand() % 5000) - 2500)); // random square around 0, 0, 0
+		// add random matrix to MVP so that the size is correct
 		MVPVec.push_back(QuadModelMat);
 	}
 	//std::cout << MVPVec.size();
@@ -326,12 +337,20 @@ void Update()
 	QuadModelMat = Camera->GetProjMat() * Camera->GetViewMat() * QuadModelMat;
 
 	// for instanced matrices
+	TreeTranslationMat = glm::translate(glm::mat4(1.0f), TreePosition);
+	TreeRotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((TreeRotationAngle) * 10), glm::vec3(1.0f, 1.0f, 1.0f));
+	TreeScaleMat = glm::scale(glm::mat4(1.0f), TreeScale);
+	// multiply translation rotation scale for model matrix
+	TreeModelMat = TreeTranslationMat * TreeRotationMat * TreeScaleMat;
+	// get MVP by multiplying by camera projection and view matrices
+	TreeModelMat = Camera->GetProjMat() * Camera->GetViewMat() * TreeModelMat;
 
+	// apply random position to every matrix in the vector
 	for (unsigned int i = 0; i < g_objCount; i++)
 	{
 		glm::mat4 newModelMat;
 		glm::mat4 randPosMatrix = glm::translate(glm::mat4(1.0f), RandomLocations[i]);
-		newModelMat = randPosMatrix * RotationMat * ScaleMat;
+		newModelMat = randPosMatrix * TreeRotationMat * TreeScaleMat;
 		MVPVec[i] = newModelMat;
 	}
 
@@ -358,7 +377,7 @@ void Render()
 	Model->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 
 	// many trees
-	Tree->RenderInstanced(Program_3DModel, Texture_Quag, MVPVec, CurrentTime, QuadModelMat);
+	Tree->RenderInstanced(Program_3DModel, Texture_Quag, MVPVec, CurrentTime, TreeModelMat);
 	
 
 	// unbind
