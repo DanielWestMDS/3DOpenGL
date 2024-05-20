@@ -86,6 +86,13 @@ CModel::CModel(std::string FilePath)
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexStandard), (void*)(offsetof(VertexStandard, VertexStandard::texcoord)));
 	glEnableVertexAttribArray(1);
 
+	//instanced VBO
+	GLuint VBO_Instanced;
+
+	// set matrices as instanced vertex attribute
+	glGenBuffers(1, &VBO_Instanced);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_Instanced);
+
 	glGenBuffers(1, &InstanceBuffer);
 }
 
@@ -113,6 +120,8 @@ void CModel::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cur
 	//Model matrix
 	GLint ModelMatrix = glGetUniformLocation(_program, "QuadModelMat");
 	glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_matrix));
+
+
 
 	//// Activate and bind the textures
 	//// texture 1
@@ -142,12 +151,7 @@ void CModel::RenderInstanced(GLint _program, GLint _texture,std::vector<glm::mat
 	glBindTexture(GL_TEXTURE_2D, _texture);
 	glUniform1i(glGetUniformLocation(_program, "Texture0"), 0);
 
-	//instanced VBO
-	GLuint VBO_Instanced;
 
-	// set matrices as instanced vertex attribute
-	glGenBuffers(1, &VBO_Instanced);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_Instanced);
 	glBufferData(GL_ARRAY_BUFFER, _matrixVec.size() * sizeof(glm::mat4), _matrixVec.data(), GL_DYNAMIC_DRAW);
 
 

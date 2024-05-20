@@ -22,8 +22,6 @@ CModel* Model;
 // tree
 CModel* Tree;
 
-
-
 // camera vars
 glm::mat4 m_projMat;
 
@@ -155,34 +153,35 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 	}
 
 	// for object
+	// move forward
 	if (glfwGetKey(_Window, GLFW_KEY_W))
 	{
-		QuadPosition += glm::vec3(0.0f, MoveSpeed, 0.0f) * deltaTime;
+		QuadPosition += Camera->GetForward() * deltaTime * MoveSpeed;
 	}
 
 	if (glfwGetKey(_Window, GLFW_KEY_S))
 	{
-		QuadPosition += glm::vec3(0.0f, -MoveSpeed, 0.0f) * deltaTime;
+		QuadPosition -= Camera->GetForward() * deltaTime * MoveSpeed;
 	}
 
 	if (glfwGetKey(_Window, GLFW_KEY_A))
 	{
-		QuadPosition += glm::vec3(-MoveSpeed, 0.0f, 0.0f) * deltaTime;
+		QuadPosition -= Camera->GetRight() * deltaTime * MoveSpeed;
 	}
 
 	if (glfwGetKey(_Window, GLFW_KEY_D))
 	{
-		QuadPosition += glm::vec3(MoveSpeed, 0.0f, 0.0f) * deltaTime;
+		QuadPosition += Camera->GetRight() * deltaTime * MoveSpeed;
 	}
 
 	if (glfwGetKey(_Window, GLFW_KEY_Q))
 	{
-		QuadPosition += glm::vec3(0.0f, 0.0f, -MoveSpeed) * deltaTime;
+		QuadPosition -= Camera->GetUp() * deltaTime * MoveSpeed;
 	}
 
 	if (glfwGetKey(_Window, GLFW_KEY_E))
 	{
-		QuadPosition += glm::vec3(0.0f, 0.0f, MoveSpeed) * deltaTime;
+		QuadPosition += Camera->GetUp() * deltaTime * MoveSpeed;
 	}
 }
 
@@ -287,7 +286,6 @@ void InitialSetup()
 		// add random matrix to MVP so that the size is correct
 		MVPVec.push_back(QuadModelMat);
 	}
-	//std::cout << MVPVec.size();
 
 	// set matrices as instanced vertex attribute
 	GLuint VBO_Instanced;
