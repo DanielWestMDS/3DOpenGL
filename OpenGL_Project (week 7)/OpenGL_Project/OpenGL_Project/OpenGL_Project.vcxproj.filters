@@ -33,6 +33,9 @@
     <ClCompile Include="CTrees.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderLoader.h">
@@ -48,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CTrees.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

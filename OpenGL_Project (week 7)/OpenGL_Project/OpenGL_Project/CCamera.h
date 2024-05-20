@@ -9,8 +9,12 @@ public:
 	~CCamera();
 
 	void Update(float _deltaTime, int _iWindowSize, GLFWwindow* _Window, float _dt);
+	// view matrix passed into object render functions for MVP matrixs
 	glm::mat4 GetViewMat();
+	// projection matrix passed into object render functions for MVP matrixs
 	glm::mat4 GetProjMat();
+	// projection matrix for UI
+	glm::mat4 GetUIProjMat() { return m_UIprojMat; };
 
 	void Input(GLFWwindow* _Window, float _dt);
 	void CameraOrbit(GLFWwindow* _Window, float _dt);
@@ -26,12 +30,20 @@ public:
 	glm::vec3 GetUp() { return glm::normalize(glm::cross(GetRight(), GetForward())); };
 
 private:
+	// for main camera
 	glm::mat4 m_viewMat;
 	glm::mat4 m_projMat;
 
 	glm::vec3 m_position;
 	glm::vec3 m_lookDir;
 	glm::vec3 m_upDir;
+
+	// for UI
+	glm::mat4 m_UIprojMat;
+	//glm::mat4 m_UIviewMat;
+	//glm::vec3 m_UIposition;
+	//glm::vec3 m_UIlookDir;
+	//glm::vec3 m_UIupDir;
 
 	// how fast WASDQE moves camera
 	float m_moveSpeed;

@@ -60,7 +60,7 @@ CButton::CButton()
     }
 }
 
-void CButton::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime)
+void CButton::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat)
 {
     // bind program and VAO
     glUseProgram(_program);
@@ -73,18 +73,6 @@ void CButton::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cu
     // send variables to the shader with uniform for color change
     GLint CurrentTimeLoc = glGetUniformLocation(_program, "CurrentTime");
     glUniform1f(CurrentTimeLoc, CurrentTime + 1);
-
-    // Activate and bind the textures
-    //// texture 1
-    //glActiveTexture(GL_TEXTURE0);
-    //glBindTexture(GL_TEXTURE_2D, _texture);
-    //glUniform1i(glGetUniformLocation(_program, "Texture0"), 0);
-
-    //// set the filtering and mipmap parameters for this texture
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
     // render
     glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);

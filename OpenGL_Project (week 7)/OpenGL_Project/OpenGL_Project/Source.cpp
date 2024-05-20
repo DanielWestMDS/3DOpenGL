@@ -4,10 +4,10 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 
 #include "ShaderLoader.h"
-//#include "CShape.h"
 #include "CCamera.h"
 #include "CCube.h"
 #include "CModel.h"
+#include "CButton.h"
 
 // global variables
 GLFWwindow* Window = nullptr;
@@ -21,6 +21,8 @@ CCube* Cube;
 CModel* Model;
 // tree
 CModel* Tree;
+// UI input button
+CButton* Button;
 
 // camera vars
 glm::mat4 m_projMat;
@@ -47,16 +49,20 @@ GLuint Texture_Awesome;
 GLuint Texture_Quag;
 
 // Object Matrices and Components
-glm::vec3 QuadPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+// translation
+glm::vec3 SoldierPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::mat4 TranslationMat;
 
-float QuadRotationAngle = 0.0f;
+// rotation
+float SoldierRotationAngle = 0.0f;
 glm::mat4 RotationMat;
 
-glm::vec3 QuadScale = glm::vec3(0.05f, 0.05f, 0.05f);
+// scale
+glm::vec3 SoldierScale = glm::vec3(0.05f, 0.05f, 0.05f);
 glm::mat4 ScaleMat;
 
-glm::mat4 QuadModelMat;
+// model to be combined with view and projection
+glm::mat4 SoldierModelMat;
 
 
 // Tree Model mat
@@ -72,20 +78,22 @@ glm::mat4 TreeScaleMat;
 // model matrix
 glm::mat4 TreeModelMat;
 
-// camera matrices
-glm::mat4 ProjectionMat;
-glm::mat4 ViewMat;
-glm::mat4 ObjModelMat;
+// Quad Model Mat values
+glm::vec3 QuadPosition = glm::vec3(-0.5f, 0.5f, 0.0f);
+glm::mat4 QuadTranslationMat;
 
-glm::vec3 CameraPos;
-glm::vec3 CameraLookDir;
-glm::vec3 CameraUpDir = glm::vec3(0.0f, 1.0f, 0.0f);
+float QuadRotationAngle = 0.0f;
+glm::mat4 QuadRotationMat;
+
+glm::vec3 QuadScale = glm::vec3(0.5f, 0.5f, 1.0f);
+glm::mat4 QuadScaleMat;
+
+glm::mat4 QuadModelMat;
 
 // Vector for instanced matrices
 std::vector<glm::mat4> MVPVec;
 // for random tree positions
 std::vector<glm::vec3> RandomLocations;
-//glm::mat4 MVPVec[256];
 
 int x = 0;
 int y = 0;
@@ -156,32 +164,43 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 	// move forward
 	if (glfwGetKey(_Window, GLFW_KEY_W))
 	{
-		QuadPosition += Camera->GetForward() * deltaTime * MoveSpeed;
+		// use camera forward
+		SoldierPosition += Camera->GetForward() * deltaTime * MoveSpeed;
 	}
 
+	// move back
 	if (glfwGetKey(_Window, GLFW_KEY_S))
 	{
-		QuadPosition -= Camera->GetForward() * deltaTime * MoveSpeed;
+		// use camera forward but reverse
+		SoldierPosition -= Camera->GetForward() * deltaTime * MoveSpeed;
 	}
 
+	// move left
 	if (glfwGetKey(_Window, GLFW_KEY_A))
 	{
-		QuadPosition -= Camera->GetRight() * deltaTime * MoveSpeed;
+		// use camera right but reverse
+		SoldierPosition -= Camera->GetRight() * deltaTime * MoveSpeed;
 	}
 
+	// move right
 	if (glfwGetKey(_Window, GLFW_KEY_D))
 	{
-		QuadPosition += Camera->GetRight() * deltaTime * MoveSpeed;
+		// use camera forward
+		SoldierPosition += Camera->GetRight() * deltaTime * MoveSpeed;
 	}
 
+	// move up
 	if (glfwGetKey(_Window, GLFW_KEY_Q))
 	{
-		QuadPosition -= Camera->GetUp() * deltaTime * MoveSpeed;
+		// use camera up but reverse
+		SoldierPosition -= Camera->GetUp() * deltaTime * MoveSpeed;
 	}
 
+	// move down
 	if (glfwGetKey(_Window, GLFW_KEY_E))
 	{
-		QuadPosition += Camera->GetUp() * deltaTime * MoveSpeed;
+		// use camera up 
+		SoldierPosition += Camera->GetUp() * deltaTime * MoveSpeed;
 	}
 }
 
@@ -270,6 +289,8 @@ void InitialSetup()
 
 	Tree = new CModel("Resources/Models/SM_Env_Tree_Palm_01.obj");
 
+	Button = new CButton();
+
 	// set background colour
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 
@@ -284,7 +305,7 @@ void InitialSetup()
 		// randomize x and z positions to disperse trees
 		RandomLocations.push_back(glm::vec3((rand() % 8000) - 4000, 0, (rand() % 8000) - 4000)); // random square around 0, 0, 0
 		// add random matrix to MVP so that the size is correct
-		MVPVec.push_back(QuadModelMat);
+		MVPVec.push_back(SoldierModelMat);
 	}
 
 	// set matrices as instanced vertex attribute
@@ -324,19 +345,14 @@ void Update()
 	deltaTime = CurrentTime - PreviousTime;
 	PreviousTime = CurrentTime;
 
-	//HexRotationAngle += 0.5;
 
-	//x++;
-	//y++;
-	//QuadPosition1 = glm::vec3(((x^2) % 2) - 0.5, ((y^2) % 2) - 0.5, 0);
+	// calculate model matrix
+	TranslationMat = glm::translate(glm::mat4(1.0f), SoldierPosition);
+	RotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((SoldierRotationAngle) * 10), glm::vec3(1.0f, 1.0f, 1.0f));
+	ScaleMat = glm::scale(glm::mat4(1.0f), SoldierScale);
+	SoldierModelMat = TranslationMat * RotationMat * ScaleMat;
 
-		// calculate model matrix
-	TranslationMat = glm::translate(glm::mat4(1.0f), QuadPosition);
-	RotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((QuadRotationAngle) * 10), glm::vec3(1.0f, 1.0f, 1.0f));
-	ScaleMat = glm::scale(glm::mat4(1.0f), QuadScale);
-	QuadModelMat = TranslationMat * RotationMat * ScaleMat;
-
-	QuadModelMat = Camera->GetProjMat() * Camera->GetViewMat() * QuadModelMat;
+	SoldierModelMat = Camera->GetProjMat() * Camera->GetViewMat() * SoldierModelMat;
 
 	// for instanced matrices
 	TreeTranslationMat = glm::translate(glm::mat4(1.0f), TreePosition);
@@ -361,6 +377,14 @@ void Update()
 		matrix = Camera->GetProjMat() * Camera->GetViewMat() * matrix;
 	}
 
+	// calculate quad model matrix
+	QuadTranslationMat = glm::translate(glm::mat4(1.0f), QuadPosition);
+	QuadRotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((QuadRotationAngle) /** 10*/), glm::vec3(0.0f, 0.0f, 1.0f));
+	QuadScaleMat = glm::scale(glm::mat4(1.0f), QuadScale);
+	QuadModelMat = QuadTranslationMat * QuadRotationMat * QuadScaleMat;
+
+	SoldierModelMat = Camera->GetProjMat() * Camera->GetViewMat() * SoldierModelMat;
+
 	// camera update
 	Camera->Update(CurrentTime, iWindowSize, Window, deltaTime);
 	Camera->PrintCamPos();
@@ -376,11 +400,13 @@ void Render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Cube->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
-	Model->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+	Model->Render(Program_Quads, Texture_Quag, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 
 	// many trees
 	Tree->RenderInstanced(Program_3DModel, Texture_Quag, MVPVec, CurrentTime, TreeModelMat);
 	
+	// UI button
+	Button->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
 
 	// unbind
 	glBindVertexArray(0);
