@@ -12,7 +12,7 @@ CCamera::CCamera()
 	m_lookPos = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	// set movespeed
-	m_moveSpeed = 10.0f;
+	m_moveSpeed = 5.0f;
 }
 
 CCamera::~CCamera()
@@ -69,11 +69,11 @@ void CCamera::Input(GLFWwindow* _Window, float _dt)
 	// alter the camera move speed if shift is being held
 	if (glfwGetKey(_Window, GLFW_KEY_LEFT_SHIFT))
 	{
-		m_moveSpeed = 20.0f;
+		m_moveSpeed = 10.0f;
 	}
 	else
 	{
-		m_moveSpeed = 10.0f;
+		m_moveSpeed = 5.0f;
 	}
 	//if (glfwGetKey(_Window, GLFW_KEY_1))
 	//{
@@ -85,11 +85,11 @@ void CCamera::CameraOrbit(GLFWwindow* _Window, float _dt)
 {
 	if (m_automaticOrbit)
 	{
-		m_angle += 1 * _dt;
+		m_angle += m_moveSpeed * _dt;
 	}
 	else
 	{
-		m_angle += TriHoriz(_Window) * _dt;
+		m_angle += TriHoriz(_Window) * m_moveSpeed * _dt;
 	}
 
 	m_position = glm::vec3(m_radius * cosf(m_angle), 2, m_radius * sinf(m_angle));

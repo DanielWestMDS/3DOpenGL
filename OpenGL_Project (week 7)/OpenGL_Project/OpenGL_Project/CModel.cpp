@@ -120,12 +120,6 @@ void CModel::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cur
 	//glBindTexture(GL_TEXTURE_2D, _texture);
 	//glUniform1i(glGetUniformLocation(_program, "Texture0"), 0);
 
-	// set the filtering and mipmap parameters for this texture
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-
 	// render
 	glDrawArrays(DrawType, 0, DrawCount);
 

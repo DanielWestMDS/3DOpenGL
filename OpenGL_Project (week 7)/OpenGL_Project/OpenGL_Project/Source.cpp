@@ -283,7 +283,7 @@ void InitialSetup()
 	for (unsigned int i = 0; i < g_objCount; i++)
 	{
 		// randomize x and z positions to disperse trees
-		RandomLocations.push_back(glm::vec3((rand() % 5000) - 2500, 0, (rand() % 5000) - 2500)); // random square around 0, 0, 0
+		RandomLocations.push_back(glm::vec3((rand() % 8000) - 4000, 0, (rand() % 8000) - 4000)); // random square around 0, 0, 0
 		// add random matrix to MVP so that the size is correct
 		MVPVec.push_back(QuadModelMat);
 	}
@@ -307,6 +307,10 @@ void InitialSetup()
 	glfwSetCursorPosCallback(Window, CursorPositionInput);
 	// Toggle Callback
 	glfwSetKeyCallback(Window, KeyInput);
+
+	// anti aliasing 
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glEnable(GL_MULTISAMPLE);
 
 	// depth buffer
 	glEnable(GL_DEPTH_TEST);
