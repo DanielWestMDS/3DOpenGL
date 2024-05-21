@@ -1,8 +1,20 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CCamera.cpp
+// Description : Sets view and projection matrices
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #include "CCamera.h"
 
 CCamera::CCamera()
 {
-	m_position = glm::vec3(1.0f, 1.0f, 10.0f);
+	m_position = glm::vec3(1.0f, 4.0f, 10.0f);
 
 	// orbit values
 	m_orbiting = false;
@@ -98,7 +110,7 @@ void CCamera::CameraOrbit(GLFWwindow* _Window, float _dt)
 		m_angle += TriHoriz(_Window) * m_moveSpeed * _dt;
 	}
 
-	m_position = glm::vec3(m_radius * cosf(m_angle), 2, m_radius * sinf(m_angle));
+	m_position = glm::vec3(m_radius * cosf(m_angle), 4, m_radius * sinf(m_angle));
 
 	m_position += m_lookPos;
 }

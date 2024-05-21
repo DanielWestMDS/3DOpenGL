@@ -24,13 +24,7 @@
     <ClCompile Include="CCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CCube.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CTrees.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CButton.cpp">
@@ -44,13 +38,7 @@
     <ClInclude Include="CCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CCube.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CModel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CTrees.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CButton.h">

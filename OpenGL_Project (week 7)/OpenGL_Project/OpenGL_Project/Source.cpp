@@ -17,7 +17,6 @@
 
 #include "ShaderLoader.h"
 #include "CCamera.h"
-#include "CCube.h"
 #include "CModel.h"
 #include "CButton.h"
 
@@ -28,7 +27,6 @@ int iWindowSize = 800;
 
 // pointer to shape objects
 CCamera* Camera;
-CCube* Cube;
 // statue
 CModel* Model;
 // tree
@@ -119,7 +117,7 @@ float PreviousTime;
 float deltaTime;
 
 // for input object
-float MoveSpeed = 4.0f;
+float MoveSpeed = 10.0f;
 
 // toggle bools
 bool g_bShowMousePosition = false;
@@ -219,28 +217,7 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 // custom functions for tidy code
 void InitialSetup()
 {
-	// load programs
-	Program_FixedTri = ShaderLoader::CreateProgram("Resources/Shaders/FixedTriangle.vert.txt",
-		"Resources/Shaders/FixedColor.frag.txt");
-
-	Program_PositionOnly = ShaderLoader::CreateProgram("Resources/Shaders/PositionOnly.vert.txt",
-		"Resources/Shaders/FixedColor.frag.txt");
-
-	Program_Color = ShaderLoader::CreateProgram("Resources/Shaders/VertexColor.vert.txt",
-		"Resources/Shaders/VertexColor.frag.txt");
-
-	Program_ColorFade = ShaderLoader::CreateProgram("Resources/Shaders/VertexColor.vert.txt",
-		"Resources/Shaders/VertexColorFade.frag.txt");
-
-	Program_WorldSpace = ShaderLoader::CreateProgram("Resources/Shaders/WorldSpace.vert.txt",
-		"Resources/Shaders/VertexColorFade.frag.txt");
-
-	Program_Texture = ShaderLoader::CreateProgram("Resources/Shaders/Texture.vert.txt",
-		"Resources/Shaders/TextureMix.frag.txt");
-
-	Program_ClipSpace = ShaderLoader::CreateProgram("Resources/Shaders/HexOne.vert.txt",
-		"Resources/Shaders/VertexColorFade.frag.txt");
-
+	// load program for single model / UI
 	Program_Quads = ShaderLoader::CreateProgram("Resources/Shaders/Squares.vert.txt",
 		"Resources/Shaders/Texture.frag.txt");
 
@@ -294,8 +271,6 @@ void InitialSetup()
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	Camera = new CCamera();
-
-	Cube = new CCube();
 
 	Model = new CModel("Resources/Models/SM_Prop_Statue_02.obj");
 

@@ -1,5 +1,22 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CCamera.h
+// Description : Camera object which contians projection and view matrices for perspective and orthographic. 
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #pragma once
-#include "CCube.h"
+#include <glew.h>
+#include <glfw3.h>
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
+#include <stb_image.h>
 #include <iostream>
 
 class CCamera

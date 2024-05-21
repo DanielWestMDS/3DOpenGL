@@ -1,6 +1,16 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CModel.cpp
+// Description : uses tinyobjloader for model loading. Passes uniforms for mvp into shader
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #include "CModel.h"
-
-
 
 CModel::CModel(std::string FilePath)
 {
@@ -111,23 +121,9 @@ void CModel::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cur
 	glUseProgram(_program);
 	glBindVertexArray(VAO);
 
-	// send variables to shader via uniform
-	//GLint ProjectionMatLoc = glGetUniformLocation(_program, "ProjectionMat");
-	//glUniformMatrix4fv(ProjectionMatLoc, 1, GL_FALSE, glm::value_ptr(_projMat));
-	//GLint ViewMatLoc = glGetUniformLocation(_program, "ViewMat");
-	//glUniformMatrix4fv(ViewMatLoc, 1, GL_FALSE, glm::value_ptr(_viewMat));
-
 	//Model matrix
 	GLint ModelMatrix = glGetUniformLocation(_program, "QuadModelMat");
 	glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_matrix));
-
-
-
-	//// Activate and bind the textures
-	//// texture 1
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, _texture);
-	//glUniform1i(glGetUniformLocation(_program, "Texture0"), 0);
 
 	// render
 	glDrawArrays(DrawType, 0, DrawCount);
@@ -153,19 +149,6 @@ void CModel::RenderInstanced(GLint _program, GLint _texture,std::vector<glm::mat
 
 
 	glBufferData(GL_ARRAY_BUFFER, _matrixVec.size() * sizeof(glm::mat4), _matrixVec.data(), GL_DYNAMIC_DRAW);
-
-
-	// send variables to shader via uniform
-	// camera
-	//GLint ProjectionMatLoc = glGetUniformLocation(_program, "ProjectionMat");
-	//glUniformMatrix4fv(ProjectionMatLoc, 1, GL_FALSE, glm::value_ptr(_projMat));
-	//GLint ViewMatLoc = glGetUniformLocation(_program, "ViewMat");
-	//glUniformMatrix4fv(ViewMatLoc, 1, GL_FALSE, glm::value_ptr(_viewMat));
-
-	// Model matrix
-	//glUniformMatrix4fv(glGetUniformLocation(_program, "MVPs[0]"), _matrixVec.size(), GL_FALSE, glm::value_ptr(_matrixVec[0]));
-	//GLint InstancedMVP = glGetUniformLocation(_program, "MVPs[]");
-	//glUniformMatrix4fv(InstancedMVP, 1, GL_FALSE, glm::value_ptr(_matrixVec[1]));
 
 	// turn attributes into a model matrix
 	for (GLuint i = 0; i < 4; i++)

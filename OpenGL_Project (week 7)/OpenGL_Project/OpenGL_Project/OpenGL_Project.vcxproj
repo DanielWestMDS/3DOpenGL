@@ -143,18 +143,14 @@
   <ItemGroup>
     <ClCompile Include="CButton.cpp" />
     <ClCompile Include="CCamera.cpp" />
-    <ClCompile Include="CCube.cpp" />
     <ClCompile Include="CModel.cpp" />
-    <ClCompile Include="CTrees.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CButton.h" />
     <ClInclude Include="CCamera.h" />
-    <ClInclude Include="CCube.h" />
     <ClInclude Include="CModel.h" />
-    <ClInclude Include="CTrees.h" />
     <ClInclude Include="ShaderLoader.h" />
   </ItemGroup>
   <ItemGroup>

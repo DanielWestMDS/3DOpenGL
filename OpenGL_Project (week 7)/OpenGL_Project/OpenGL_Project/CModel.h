@@ -1,11 +1,17 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CModel.h
+// Description : Loads a model from an obj file. Contains Render for a single object and Render instanced for instanced model loading.
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #pragma once
 #include <tiny_obj_loader.h>
-//#include <glew.h>
-//#include <glfw3.h>
-//#include <glm.hpp>
-//#include <gtc/matrix_transform.hpp>
-//#include <gtc/type_ptr.hpp>
-//#include <stb_image.h>
 #include "CCamera.h"
 #include <iostream>
 
