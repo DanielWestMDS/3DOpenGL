@@ -17,7 +17,7 @@ CCamera::CCamera()
 	m_position = glm::vec3(1.0f, 4.0f, 10.0f);
 
 	// orbit values
-	m_orbiting = false;
+	m_orbiting = true;
 	m_automaticOrbit = false;
 	m_radius = 60.0f;
 	m_angle = 90.0f;
@@ -25,6 +25,17 @@ CCamera::CCamera()
 
 	// set movespeed
 	m_moveSpeed = 5.0f;
+
+	// initialise stuff to stop warnings 
+	m_viewMat = glm::mat4(1.0f);
+	m_projMat = glm::mat4(1.0f);
+
+	m_position = glm::vec3(0.0f, 0.0f, 0.0f);
+	m_lookDir = glm::vec3(0.0f, 0.0f, 0.0f);
+	m_upDir = glm::vec3(0.0f, 0.0f, 0.0f);
+
+	m_UIprojMat = glm::mat4(1.0f);
+	m_UIviewMat = glm::mat4(1.0f);
 }
 
 CCamera::~CCamera()

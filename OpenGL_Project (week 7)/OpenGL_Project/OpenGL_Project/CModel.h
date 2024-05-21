@@ -46,8 +46,6 @@ public:
 
 	GLuint GetVAO() { return VAO; };
 
-	void Input();
-
 protected:
 	GLuint VAO;
 	GLuint DrawCount;
