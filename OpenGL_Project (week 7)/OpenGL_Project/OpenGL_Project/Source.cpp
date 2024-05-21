@@ -175,28 +175,28 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 	if (glfwGetKey(_Window, GLFW_KEY_W))
 	{
 		// use camera forward
-		SoldierPosition += Camera->GetForward() * deltaTime * MoveSpeed;
+		SoldierPosition -= Camera->GetForward() * deltaTime * MoveSpeed;
 	}
 
 	// move back
 	if (glfwGetKey(_Window, GLFW_KEY_S))
 	{
 		// use camera forward but reverse
-		SoldierPosition -= Camera->GetForward() * deltaTime * MoveSpeed;
+		SoldierPosition += Camera->GetForward() * deltaTime * MoveSpeed;
 	}
 
 	// move left
 	if (glfwGetKey(_Window, GLFW_KEY_A))
 	{
 		// use camera right but reverse
-		SoldierPosition -= Camera->GetRight() * deltaTime * MoveSpeed;
+		SoldierPosition += Camera->GetRight() * deltaTime * MoveSpeed;
 	}
 
 	// move right
 	if (glfwGetKey(_Window, GLFW_KEY_D))
 	{
 		// use camera forward
-		SoldierPosition += Camera->GetRight() * deltaTime * MoveSpeed;
+		SoldierPosition -= Camera->GetRight() * deltaTime * MoveSpeed;
 	}
 
 	// move up
@@ -350,6 +350,14 @@ void Update()
 	// get MVP by multiplying by camera projection and view matrices
 	TreeModelMat = Camera->GetProjMat() * Camera->GetViewMat() * TreeModelMat;
 
+	// calculate quad model matrix once
+	QuadTranslationMat = glm::translate(glm::mat4(1.0f), QuadPosition);
+	QuadRotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((QuadRotationAngle) /** 10*/), glm::vec3(0.0f, 0.0f, 1.0f));
+	QuadScaleMat = glm::scale(glm::mat4(1.0f), QuadScale);
+	QuadModelMat = QuadTranslationMat * QuadRotationMat * QuadScaleMat;
+
+	QuadModelMat = Camera->GetUIProjMat() * Camera->GetUIViewMat() * QuadModelMat;
+
 	// apply random position to every matrix in the vector
 	for (unsigned int i = 0; i < g_objCount; i++)
 	{
@@ -363,14 +371,6 @@ void Update()
 	{
 		matrix = Camera->GetProjMat() * Camera->GetViewMat() * matrix;
 	}
-
-	// calculate quad model matrix
-	QuadTranslationMat = glm::translate(glm::mat4(1.0f), QuadPosition);
-	QuadRotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((QuadRotationAngle) /** 10*/), glm::vec3(0.0f, 0.0f, 1.0f));
-	QuadScaleMat = glm::scale(glm::mat4(1.0f), QuadScale);
-	QuadModelMat = QuadTranslationMat * QuadRotationMat * QuadScaleMat;
-
-	QuadModelMat = Camera->GetUIProjMat() * Camera->GetUIViewMat() * QuadModelMat;
 
 	// camera update
 	Camera->Update(CurrentTime, iWindowSize, Window, deltaTime);
@@ -386,8 +386,8 @@ void Render()
 
 	// many trees
 	Tree->RenderInstanced(Program_3DModel, Texture_Quag, MVPVec, CurrentTime, TreeModelMat);
-	
-	// UI button
+
+	// UI button (does not need to be updated
 	Button->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
 
 	// unbind

@@ -42,7 +42,7 @@ public:
 
 	// for model movement related to camera
 	// forward vector
-	glm::vec3 GetForward() { return glm::normalize(-m_lookDir); };
+	glm::vec3 GetForward() { return glm::normalize(m_position - m_lookPos); };
 	// right vector
 	glm::vec3 GetRight() { return glm::normalize(glm::cross(GetForward(), glm::vec3(0, 1, 0))); };
 	// up vector
