@@ -17,21 +17,17 @@ CButton::CButton()
     {
         // Define vertices for two triangles
         GLfloat m_vertices[] = {
-            //	// position		   // color			  
-                 -0.5f, 0.875f, 0.0f,   1.0f, 0.0f, 0.0f, // A
-                -1.0f, 0.0f, 0.0f,      0.0f, 1.0f, 0.0f, // B
-                -0.5f, -0.875f,         0.0f, 0.0f, 0.0f, 1.0f, // C
-                0.5f, -0.875f, 0.0f,    0.0f, 1.0f, 1.0f, // D
-                1.0f, 0.0f, 0.0f,       1.0f, 1.0f, 0.0f, // E
-                 0.5f, 0.875f, 0.0f,    1.0f, 0.0f, 1.0f, // F
+            // position		   // color			  // texture coords
+            -0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  -2.0f, 2.0f, // top left
+            -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  -2.0f, -2.0f, // bottom left
+            0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 1.0f,  2.0f, -2.0f, // bottom right
+            0.5f, 0.5f, 0.0f,   0.0f, 1.0f, 1.0f,  2.0f, 2.0f, // top right
         };
 
         // Define indices for the triangle vertices
         GLuint m_indices[] = {
-            0, 2, 4, // Triangle 1
-            0, 1, 2,  // Triangle 2
-            2, 4, 3, // Triangle 3
-            0, 4, 5, // Triangle 4
+            0, 2, 3, // second triangle
+            0, 1, 2, // first triangle
         };
 
         // Generate and bind a VAO
@@ -50,14 +46,14 @@ CButton::CButton()
 
         // Set vertex attribute pointers
         // Position 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
         // Color 
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
-        //// Texture
-        //glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-        //glEnableVertexAttribArray(2);
+        // Texture
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+        glEnableVertexAttribArray(2);
 
         // Unbind the VAO
         glBindVertexArray(0);
@@ -70,7 +66,6 @@ void CButton::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cu
     glUseProgram(_program);
     glBindVertexArray(VAO);
 
-
     // send variables to shader via uniform
     GLint ProjectionMatLoc = glGetUniformLocation(_program, "ProjectionMat");
     glUniformMatrix4fv(ProjectionMatLoc, 1, GL_FALSE, glm::value_ptr(_projMat));
@@ -82,7 +77,7 @@ void CButton::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cu
     glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_matrix));
 
     // render
-    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     glBindVertexArray(0);
 }

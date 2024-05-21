@@ -36,7 +36,7 @@ void CCamera::Update(float _currentTime, int _iWindowSize, GLFWwindow* _Window, 
 	float HalfWindow = (float)_iWindowSize * 0.5;
 	m_projMat = glm::perspective(glm::radians(45.0f), (HalfWindow * 2) / (HalfWindow * 2), 0.1f, 1000.0f);
 	// orthographic
-	m_UIprojMat = glm::ortho(0.0f, (float)_iWindowSize, (float)_iWindowSize, 0.0f, 0.1f, 1000.0f);
+	m_UIprojMat = glm::ortho(0.0f, (float)_iWindowSize, (float)_iWindowSize, 0.0f, 0.0f, 1000.0f);
 
 	//m_projMat = glm::perspective(glm::radians(45.0f), (HalfWindow * 2) / (HalfWindow * 2), 0.1f, 100.0f);
 

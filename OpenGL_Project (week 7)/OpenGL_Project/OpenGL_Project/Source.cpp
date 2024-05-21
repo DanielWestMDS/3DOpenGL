@@ -123,6 +123,7 @@ float MoveSpeed = 10.0f;
 bool g_bShowMousePosition = false;
 bool g_bWireFrame = false;
 bool g_bShowMouse = true;
+bool g_UIChange = false;
 
 // for position callback
 void CursorPositionInput(GLFWwindow* _Window, double _PosX, double _PosY)
@@ -131,6 +132,15 @@ void CursorPositionInput(GLFWwindow* _Window, double _PosX, double _PosY)
 	if (g_bShowMousePosition)
 	{
 		std::cout << "Cursor Coords: " << _PosX << ", " << _PosY << std::endl;
+	}
+
+	if ((_PosX > 50 && _PosX < 150) && (_PosY > 50 && _PosY < 150))
+	{
+		g_UIChange = true;
+	}
+	else
+	{
+		g_UIChange = false;
 	}
 }
 
@@ -251,7 +261,7 @@ void InitialSetup()
 
 	// second image 
 	// Load Image data
-	unsigned char* ImageData1 = stbi_load("Resources/Textures/Capguy_Walk.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
+	unsigned char* ImageData1 = stbi_load("Resources/Textures/PolygonAncientWorlds_Statue_01.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
 
 	// create and bind new texture
 	glGenTextures(1, &Texture_Awesome);
@@ -352,11 +362,12 @@ void Update()
 
 	// calculate quad model matrix once
 	QuadTranslationMat = glm::translate(glm::mat4(1.0f), QuadPosition);
-	QuadRotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((QuadRotationAngle) /** 10*/), glm::vec3(0.0f, 0.0f, 1.0f));
+	QuadRotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((QuadRotationAngle)), glm::vec3(0.0f, 0.0f, 1.0f));
 	QuadScaleMat = glm::scale(glm::mat4(1.0f), QuadScale);
 	QuadModelMat = QuadTranslationMat * QuadRotationMat * QuadScaleMat;
 
-	QuadModelMat = Camera->GetUIProjMat() * Camera->GetUIViewMat() * QuadModelMat;
+	// combine for MVP
+	QuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
 
 	// apply random position to every matrix in the vector
 	for (unsigned int i = 0; i < g_objCount; i++)
@@ -381,14 +392,29 @@ void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// single soldier model
-	Model->Render(Program_Quads, Texture_Quag, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+	// UI button 
+	// change texture if mouse overlapping
+	if (g_UIChange)
+	{
+		// single soldier model
+		Model->Render(Program_Quads, Texture_Awesome, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 
-	// many trees
-	Tree->RenderInstanced(Program_3DModel, Texture_Quag, MVPVec, CurrentTime, TreeModelMat);
+		// many trees
+		Tree->RenderInstanced(Program_3DModel, Texture_Awesome, MVPVec, CurrentTime, TreeModelMat);
 
-	// UI button (does not need to be updated
-	Button->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
+		// Button
+		Button->Render(Program_Quads, Texture_Awesome, QuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
+	}
+	else
+	{
+		// single soldier model
+		Model->Render(Program_Quads, Texture_Quag, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+
+		// many trees
+		Tree->RenderInstanced(Program_3DModel, Texture_Quag, MVPVec, CurrentTime, TreeModelMat);
+		// Button
+		Button->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
+	}
 
 	// unbind
 	glBindVertexArray(0);
