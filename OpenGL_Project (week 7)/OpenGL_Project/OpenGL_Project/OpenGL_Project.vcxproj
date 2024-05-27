@@ -161,6 +161,8 @@
     <Text Include="Resources\Shaders\FixedColor.frag.txt" />
     <Text Include="Resources\Shaders\FixedTriangle.vert.txt" />
     <Text Include="Resources\Shaders\HexOne.vert.txt" />
+    <Text Include="Resources\Shaders\InstancedArray_Standard.vert.txt" />
+    <Text Include="Resources\Shaders\Lighting_BlinnPhong.frag.txt" />
     <Text Include="Resources\Shaders\PositionOnly.vert.txt" />
     <Text Include="Resources\Shaders\Squares.vert.txt" />
     <Text Include="Resources\Shaders\Texture.frag.txt" />

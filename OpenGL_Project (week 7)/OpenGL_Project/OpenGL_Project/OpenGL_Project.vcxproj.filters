@@ -94,5 +94,11 @@
     <Text Include="Resources\Shaders\Button.vert.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="Resources\Shaders\InstancedArray_Standard.vert.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Resources\Shaders\Lighting_BlinnPhong.frag.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

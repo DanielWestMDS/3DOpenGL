@@ -63,15 +63,14 @@ CModel::CModel(std::string FilePath)
 						Attrib.texcoords[2 * size_t(TinyObjVertex.texcoord_index) + 1],
 					};
 				}
-				/*if (TinyObjVertex.normal_index>= 0) // Negative states no Normal data
+				if (TinyObjVertex.normal_index>= 0) // Negative states no Normal data
 				{
-					Vertex.Normal = {
-
+					Vertex.normal = {
 					Attrib.normals[3 * size_t(TinyObjVertex.normal_index) + 0],
 					Attrib.normals[3 * size_t(TinyObjVertex.normal_index) + 1],
 					Attrib.normals[3 * size_t(TinyObjVertex.normal_index) + 2],
 					};
-				}*/
+				}
 				Vertices.push_back(Vertex);
 			}
 			ReadIndexOffset += FaceVertexCount;
@@ -95,6 +94,8 @@ CModel::CModel(std::string FilePath)
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexStandard), (void*)(offsetof(VertexStandard, VertexStandard::texcoord)));
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(VertexStandard), (void*)(offsetof(VertexStandard, VertexStandard::normal)));
+	glEnableVertexAttribArray(2);
 
 	//instanced VBO
 	GLuint VBO_Instanced;

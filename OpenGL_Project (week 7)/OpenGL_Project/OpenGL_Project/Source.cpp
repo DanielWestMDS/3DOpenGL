@@ -44,15 +44,9 @@ glm::vec3 m_position;
 glm::mat4 m_viewMat;
 
 // programs
-GLuint Program_Color;
-GLuint Program_ColorFade;
-GLuint Program_PositionOnly;
-GLuint Program_WorldSpace;
-GLuint Program_Texture;
-GLuint Program_Animation;
-GLuint Program_ClipSpace;
 GLuint Program_Quads;
 GLuint Program_3DModel;
+GLuint Program_Lighting;
 
 // texture
 GLuint Texture_Awesome;
@@ -235,6 +229,10 @@ void InitialSetup()
 	Program_3DModel = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert.txt",
 		"Resources/Shaders/3DModel.frag.txt");
 
+	// program for lighting
+	Program_Lighting = ShaderLoader::CreateProgram("Resources/Shaders/InstancedArray_Standard.vert.txt",
+		"Resources/Shaders/Lighting_BlinnPhong.frag.txt");
+
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
 
@@ -400,7 +398,7 @@ void Render()
 		Model->Render(Program_Quads, Texture_Awesome, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 
 		// many trees
-		Tree->RenderInstanced(Program_3DModel, Texture_Awesome, MVPVec, CurrentTime, TreeModelMat);
+		Tree->RenderInstanced(Program_Lighting, Texture_Awesome, MVPVec, CurrentTime, TreeModelMat);
 
 		// Button
 		Button->Render(Program_Quads, Texture_Awesome, QuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
@@ -411,7 +409,7 @@ void Render()
 		Model->Render(Program_Quads, Texture_Quag, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 
 		// many trees
-		Tree->RenderInstanced(Program_3DModel, Texture_Quag, MVPVec, CurrentTime, TreeModelMat);
+		Tree->RenderInstanced(Program_Lighting, Texture_Quag, MVPVec, CurrentTime, TreeModelMat);
 		// Button
 		Button->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
 	}
