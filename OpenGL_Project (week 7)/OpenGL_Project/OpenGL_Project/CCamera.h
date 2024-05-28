@@ -71,6 +71,12 @@ private:
 
 	// how fast WASDQE moves camera
 	float m_moveSpeed;
+	float m_mouseSpeed;
+
+	// for free camera
+	glm::vec2 m_lastMouse;
+	float m_yaw = 0;
+	float m_pitch = 0;
 
 	// obrital camera
 	bool m_orbiting;
@@ -80,7 +86,8 @@ private:
 	glm::vec3 m_lookPos;
 
 	// movement
-	signed char TriHoriz(GLFWwindow* _Window, float _dt);
-	signed char TriVerti(GLFWwindow* _Window, float _dt);
+	signed char TriHoriz(GLFWwindow* _Window);
+	signed char TriVerti(GLFWwindow* _Window);
+	void ChangeHeight(GLFWwindow* _Window, float _dt);
 };
 

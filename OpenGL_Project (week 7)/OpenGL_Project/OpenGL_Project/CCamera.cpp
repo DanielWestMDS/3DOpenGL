@@ -63,11 +63,8 @@ void CCamera::Update(float _currentTime, int _iWindowSize, GLFWwindow* _Window, 
 
 	// update input for movement every frame
 	Input(_Window, _dt);
-	// WASD
-	TriHoriz(_Window, _dt);
-	// QE
-	TriVerti(_Window, _dt);
-	//m_position += (GetMove(_Window, _dt) * _dt * m_moveSpeed);
+	ChangeHeight(_Window, _dt);
+	m_position += (GetMove(_Window, _dt) * _dt * m_moveSpeed);
 }
 
 glm::mat4 CCamera::GetViewMat()
@@ -116,55 +113,58 @@ void CCamera::PrintCamPos()
 
 glm::vec3 CCamera::GetMove(GLFWwindow* _Window, float _dt)
 {
-	return ((float)(TriHoriz(_Window, _dt)) * -GetRight()) + ((float)(-TriVerti(_Window, _dt)) * GetForward());
+	return ((float)(TriHoriz(_Window)) * -GetRight()) + ((float)(-TriVerti(_Window)) * GetForward());
 }
 
-signed char CCamera::TriHoriz(GLFWwindow* _Window, float _dt)
+signed char CCamera::TriHoriz(GLFWwindow* _Window)
+{
+	signed char retVal = 0;
+
+	// go left with A key
+	if (glfwGetKey(_Window, GLFW_KEY_A))
+	{
+		m_position += 1;
+	}
+
+	// go right with d key
+	if (glfwGetKey(_Window, GLFW_KEY_D))
+	{
+		m_position -= 1;
+	}
+
+	return retVal;
+}
+
+signed char CCamera::TriVerti(GLFWwindow* _Window)
 {
 	signed char retVal = 0;
 
 	// move forward with w key
 	if (glfwGetKey(_Window, GLFW_KEY_W))
 	{
-		m_position -= GetForward() * m_moveSpeed * _dt;
+		m_position -= 1;
 	}
 
 	// move backwards with s key
 	if (glfwGetKey(_Window, GLFW_KEY_S))
 	{
-		m_position += GetForward() * m_moveSpeed * _dt;
-	}
-
-	// go left with A key
-	if (glfwGetKey(_Window, GLFW_KEY_A))
-	{
-		m_position += GetRight() * _dt * m_moveSpeed;
-	}
-
-	// go right with d key
-	if (glfwGetKey(_Window, GLFW_KEY_D))
-	{
-		m_position -= GetRight() * _dt * m_moveSpeed;
+		m_position += 1;
 	}
 
 	return retVal;
 }
 
-signed char CCamera::TriVerti(GLFWwindow* _Window, float _dt)
+void CCamera::ChangeHeight(GLFWwindow* _Window, float _dt)
 {
-	signed char retVal = 0;
-
-	// go up with q key
-	if (glfwGetKey(_Window, GLFW_KEY_Q))
-	{
-		m_position += glm::vec3(0.0f, 1.0f, 0.0f) * _dt;
-	}
-
 	// go down with e key
 	if (glfwGetKey(_Window, GLFW_KEY_E))
 	{
-		m_position += glm::vec3(0.0f, -1.0f, 0.0f) * _dt;
+		m_position += glm::vec3(0.0f, -1.0f, 0.0f) * _dt * m_moveSpeed;
 	}
 
-	return retVal;
+	// go up with Q key
+	if (glfwGetKey(_Window, GLFW_KEY_Q))
+	{
+		m_position += glm::vec3(0.0f, 1.0f, 0.0f) * _dt * m_moveSpeed;
+	}
 }
