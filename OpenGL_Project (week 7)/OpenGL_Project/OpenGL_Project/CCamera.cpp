@@ -56,19 +56,18 @@ void CCamera::Update(float _currentTime, int _iWindowSize, GLFWwindow* _Window, 
 	//m_position = glm::vec3(1.0f, 1.0f, 10.0f);
 
 	// view matrix for 3d objects
-	m_viewMat = glm::lookAt(m_position, m_lookPos + m_lookDir, m_upDir);
+	m_viewMat = glm::lookAt(m_position, m_lookDir, m_upDir);
 
 	// view matrix for UI button
 	m_UIviewMat = glm::lookAt(m_position, m_position + m_lookDir, m_upDir);
 
 	// update input for movement every frame
 	Input(_Window, _dt);
-
-	// orbit around a point
-	if (m_orbiting)
-	{
-		CameraOrbit(_Window, _dt);
-	}
+	// WASD
+	TriHoriz(_Window, _dt);
+	// QE
+	TriVerti(_Window, _dt);
+	//m_position += (GetMove(_Window, _dt) * _dt * m_moveSpeed);
 }
 
 glm::mat4 CCamera::GetViewMat()
@@ -110,59 +109,61 @@ void CCamera::Input(GLFWwindow* _Window, float _dt)
 	//}
 }
 
-void CCamera::CameraOrbit(GLFWwindow* _Window, float _dt)
-{
-	if (m_automaticOrbit)
-	{
-		m_angle += m_moveSpeed * _dt;
-	}
-	else
-	{
-		m_angle += TriHoriz(_Window) * m_moveSpeed * _dt;
-	}
-
-	m_position = glm::vec3(m_radius * cosf(m_angle), 4, m_radius * sinf(m_angle));
-
-	m_position += m_lookPos;
-}
-
 void CCamera::PrintCamPos()
 {
 	std::cout << "X: " << m_position.x << "Y: " << m_position.y << "Z: " << m_position.z << std::endl;
 }
 
-void CCamera::SetAutoCircle()
+glm::vec3 CCamera::GetMove(GLFWwindow* _Window, float _dt)
 {
-	m_automaticOrbit = !m_automaticOrbit;
+	return ((float)(TriHoriz(_Window, _dt)) * -GetRight()) + ((float)(-TriVerti(_Window, _dt)) * GetForward());
 }
 
-
-signed char CCamera::TriHoriz(GLFWwindow* _Window)
+signed char CCamera::TriHoriz(GLFWwindow* _Window, float _dt)
 {
 	signed char retVal = 0;
 
-	// zoom in with up key
-	if (glfwGetKey(_Window, GLFW_KEY_UP))
+	// move forward with w key
+	if (glfwGetKey(_Window, GLFW_KEY_W))
 	{
-		m_radius -= 1;
+		m_position -= GetForward() * m_moveSpeed * _dt;
 	}
 
-	// zoom out with down key
-	if (glfwGetKey(_Window, GLFW_KEY_DOWN))
+	// move backwards with s key
+	if (glfwGetKey(_Window, GLFW_KEY_S))
 	{
-		m_radius += 1;
+		m_position += GetForward() * m_moveSpeed * _dt;
 	}
 
-	// go left with left key
-	if (glfwGetKey(_Window, GLFW_KEY_LEFT))
+	// go left with A key
+	if (glfwGetKey(_Window, GLFW_KEY_A))
 	{
-		retVal += 1;
+		m_position += GetRight() * _dt * m_moveSpeed;
 	}
 
-	// go right with right key
-	if (glfwGetKey(_Window, GLFW_KEY_RIGHT))
+	// go right with d key
+	if (glfwGetKey(_Window, GLFW_KEY_D))
 	{
-		retVal -= 1;
+		m_position -= GetRight() * _dt * m_moveSpeed;
+	}
+
+	return retVal;
+}
+
+signed char CCamera::TriVerti(GLFWwindow* _Window, float _dt)
+{
+	signed char retVal = 0;
+
+	// go up with q key
+	if (glfwGetKey(_Window, GLFW_KEY_Q))
+	{
+		m_position += glm::vec3(0.0f, 1.0f, 0.0f) * _dt;
+	}
+
+	// go down with e key
+	if (glfwGetKey(_Window, GLFW_KEY_E))
+	{
+		m_position += glm::vec3(0.0f, -1.0f, 0.0f) * _dt;
 	}
 
 	return retVal;

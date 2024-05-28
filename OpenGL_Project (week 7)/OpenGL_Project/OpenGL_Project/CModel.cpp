@@ -123,7 +123,7 @@ void CModel::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cur
 	glBindVertexArray(VAO);
 
 	//Model matrix
-	GLint ModelMatrix = glGetUniformLocation(_program, "QuadModelMat");
+	GLint ModelMatrix = glGetUniformLocation(_program, "ModelMat");
 	glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_matrix));
 
 	// render

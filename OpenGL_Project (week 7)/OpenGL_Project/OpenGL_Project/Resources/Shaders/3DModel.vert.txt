@@ -2,21 +2,28 @@
 
 // Vertex Data Interpretation
 layout (location = 0) in vec3 Position;
+layout (location = 2) in vec3 Normal;
 layout (location = 1) in vec2 TexCoords;
-layout (location = 2) in vec3 instancePosition;
 
+// Inputs
 uniform mat4 ModelMat;
+uniform mat4 ProjectionMat;
+uniform mat4 ViewMat;
+
+uniform vec3 SecondColor;
+uniform float CurrentTime;
 
 // Outputs to Fragment Shader
-out vec3 FragColor;
+out vec3 FragPos;
 out vec2 FragTexCoords;
+out vec3 FragNormal;
 
 // Shader Functionality
 void main()
 {
-	//gl_Position = ProjectionMat * ViewMat * QuadModelMat * vec4(Position, 1.0f);
-	// Apply 
-	vec3 finalPosition = Position + instancePosition;
-	gl_Position = ModelMat * vec4(finalPosition, 1.0f);
+	gl_Position = ModelMat * vec4(Position, 1.0f);
 	FragTexCoords = TexCoords;
+	FragPos = vec3(ModelMat * vec4(Position, 1.0f));
+	FragNormal = mat3(transpose(inverse(ModelMat))) * Normal;
+	//FragColor = mix(Color, SecondColor, (sin(CurrentTime) * cos(CurrentTime) + 0.5);
 } 

@@ -62,7 +62,7 @@ float SoldierRotationAngle = 0.0f;
 glm::mat4 RotationMat;
 
 // scale
-glm::vec3 SoldierScale = glm::vec3(1.0f, 1.0f, 1.0f);
+glm::vec3 SoldierScale = glm::vec3(0.15f, 0.15f, 0.15f);
 glm::mat4 ScaleMat;
 
 // model to be combined with view and projection
@@ -141,81 +141,54 @@ void CursorPositionInput(GLFWwindow* _Window, double _PosX, double _PosY)
 // for single key press
 void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mods)
 {
-	// toggle show mouse position in console
-	if (_Key == GLFW_KEY_1 && _Action == GLFW_PRESS)
-	{
-		g_bShowMousePosition = !g_bShowMousePosition;
-	}
-
 	// toggle wireframe
-	if (_Key == GLFW_KEY_2 && _Action == GLFW_PRESS)
+	if (_Key == GLFW_KEY_1 && _Action == GLFW_PRESS)
 	{
 		g_bWireFrame = !g_bWireFrame;
 	}
 
-	// toggle show mouse
-	if (_Key == GLFW_KEY_3 && _Action == GLFW_PRESS)
-	{
-		g_bShowMouse = !g_bShowMouse;
-		// show mouse
-		if (g_bShowMouse)
-		{
-			glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		}
-		else
-		{
-			glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		}
-	}
+	//// for object
+	//// move forward
+	//if (glfwGetKey(_Window, GLFW_KEY_W))
+	//{
+	//	// use camera forward
+	//	SoldierPosition -= Camera->GetForward() * deltaTime * MoveSpeed;
+	//}
 
-	// toggle automatic orbit
-	if (_Key == GLFW_KEY_4 && _Action == GLFW_PRESS)
-	{
-		Camera->SetAutoCircle();
-	}
+	//// move back
+	//if (glfwGetKey(_Window, GLFW_KEY_S))
+	//{
+	//	// use camera forward but reverse
+	//	SoldierPosition += Camera->GetForward() * deltaTime * MoveSpeed;
+	//}
 
-	// for object
-	// move forward
-	if (glfwGetKey(_Window, GLFW_KEY_W))
-	{
-		// use camera forward
-		SoldierPosition -= Camera->GetForward() * deltaTime * MoveSpeed;
-	}
+	//// move left
+	//if (glfwGetKey(_Window, GLFW_KEY_A))
+	//{
+	//	// use camera right but reverse
+	//	SoldierPosition += Camera->GetRight() * deltaTime * MoveSpeed;
+	//}
 
-	// move back
-	if (glfwGetKey(_Window, GLFW_KEY_S))
-	{
-		// use camera forward but reverse
-		SoldierPosition += Camera->GetForward() * deltaTime * MoveSpeed;
-	}
+	//// move right
+	//if (glfwGetKey(_Window, GLFW_KEY_D))
+	//{
+	//	// use camera forward
+	//	SoldierPosition -= Camera->GetRight() * deltaTime * MoveSpeed;
+	//}
 
-	// move left
-	if (glfwGetKey(_Window, GLFW_KEY_A))
-	{
-		// use camera right but reverse
-		SoldierPosition += Camera->GetRight() * deltaTime * MoveSpeed;
-	}
+	//// move up
+	//if (glfwGetKey(_Window, GLFW_KEY_Q))
+	//{
+	//	// use camera up but reverse
+	//	SoldierPosition -= Camera->GetUp() * deltaTime * MoveSpeed;
+	//}
 
-	// move right
-	if (glfwGetKey(_Window, GLFW_KEY_D))
-	{
-		// use camera forward
-		SoldierPosition -= Camera->GetRight() * deltaTime * MoveSpeed;
-	}
-
-	// move up
-	if (glfwGetKey(_Window, GLFW_KEY_Q))
-	{
-		// use camera up but reverse
-		SoldierPosition -= Camera->GetUp() * deltaTime * MoveSpeed;
-	}
-
-	// move down
-	if (glfwGetKey(_Window, GLFW_KEY_E))
-	{
-		// use camera up 
-		SoldierPosition += Camera->GetUp() * deltaTime * MoveSpeed;
-	}
+	//// move down
+	//if (glfwGetKey(_Window, GLFW_KEY_E))
+	//{
+	//	// use camera up 
+	//	SoldierPosition += Camera->GetUp() * deltaTime * MoveSpeed;
+	//}
 }
 
 // custom functions for tidy code
@@ -395,7 +368,7 @@ void Render()
 	if (g_UIChange)
 	{
 		// single soldier model
-		Model->Render(Program_Lighting, Texture_Awesome, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+		Model->Render(Program_3DModel, Texture_Awesome, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 
 		// many trees
 		Tree->RenderInstanced(Program_Lighting, Texture_Awesome, MVPVec, CurrentTime, TreeModelMat);
@@ -406,7 +379,7 @@ void Render()
 	else
 	{
 		// single soldier model
-		Model->Render(Program_Lighting, Texture_Quag, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+		Model->Render(Program_3DModel, Texture_Quag, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 
 		// many trees
 		Tree->RenderInstanced(Program_Lighting, Texture_Quag, MVPVec, CurrentTime, TreeModelMat);

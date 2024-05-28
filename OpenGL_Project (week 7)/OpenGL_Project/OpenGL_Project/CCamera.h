@@ -35,18 +35,20 @@ public:
 	// view matrix for UI
 	glm::mat4 GetUIViewMat() { return m_UIviewMat; };
 
+	// Free camera
 	void Input(GLFWwindow* _Window, float _dt);
-	void CameraOrbit(GLFWwindow* _Window, float _dt);
 	void PrintCamPos();
-	void SetAutoCircle();
 
 	// for model movement related to camera
 	// forward vector
-	glm::vec3 GetForward() { return glm::normalize(m_position - m_lookPos); };
+	glm::vec3 GetForward() { return glm::normalize(-m_lookDir); };
 	// right vector
 	glm::vec3 GetRight() { return glm::normalize(glm::cross(GetForward(), glm::vec3(0, 1, 0))); };
 	// up vector
 	glm::vec3 GetUp() { return glm::normalize(glm::cross(GetRight(), GetForward())); };
+	// move vector 
+	glm::vec3 GetMove(GLFWwindow* _Window, float _dt);
+
 
 private:
 	// for main camera
@@ -56,6 +58,8 @@ private:
 	glm::vec3 m_position;
 	glm::vec3 m_lookDir;
 	glm::vec3 m_upDir;
+
+	// free camera
 
 	// for UI
 	glm::mat4 m_UIprojMat;
@@ -75,6 +79,8 @@ private:
 	float m_angle;
 	glm::vec3 m_lookPos;
 
-	signed char TriHoriz(GLFWwindow* _Window);
+	// movement
+	signed char TriHoriz(GLFWwindow* _Window, float _dt);
+	signed char TriVerti(GLFWwindow* _Window, float _dt);
 };
 
