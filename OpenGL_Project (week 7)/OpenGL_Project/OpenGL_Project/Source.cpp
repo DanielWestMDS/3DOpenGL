@@ -62,7 +62,7 @@ float SoldierRotationAngle = 0.0f;
 glm::mat4 RotationMat;
 
 // scale
-glm::vec3 SoldierScale = glm::vec3(0.05f, 0.05f, 0.05f);
+glm::vec3 SoldierScale = glm::vec3(1.0f, 1.0f, 1.0f);
 glm::mat4 ScaleMat;
 
 // model to be combined with view and projection
@@ -395,7 +395,7 @@ void Render()
 	if (g_UIChange)
 	{
 		// single soldier model
-		Model->Render(Program_Quads, Texture_Awesome, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+		Model->Render(Program_Lighting, Texture_Awesome, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 
 		// many trees
 		Tree->RenderInstanced(Program_Lighting, Texture_Awesome, MVPVec, CurrentTime, TreeModelMat);
@@ -406,7 +406,7 @@ void Render()
 	else
 	{
 		// single soldier model
-		Model->Render(Program_Quads, Texture_Quag, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+		Model->Render(Program_Lighting, Texture_Quag, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
 
 		// many trees
 		Tree->RenderInstanced(Program_Lighting, Texture_Quag, MVPVec, CurrentTime, TreeModelMat);

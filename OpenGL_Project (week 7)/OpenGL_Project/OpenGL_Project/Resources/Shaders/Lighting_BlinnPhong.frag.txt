@@ -1,12 +1,13 @@
 #version 460 core
 
 // Inputs from Vertex Shader
-in vec2 FragTexCoords;
 in vec3 FragNormal;
+in vec2 FragTexCoords;
 in vec3 FragPos;
 
 // Uniform Inputs
 uniform sampler2D Texture0;
+// how strong ambient light is
 uniform float AmbientStrength = 0.15f;
 uniform vec3 AmbientColor = vec3(1.0f, 1.0f, 1.0f);
 
