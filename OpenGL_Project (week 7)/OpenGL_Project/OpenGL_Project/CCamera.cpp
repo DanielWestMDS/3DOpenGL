@@ -21,7 +21,6 @@ CCamera::CCamera()
 	m_automaticOrbit = false;
 	m_radius = 60.0f;
 	m_angle = 90.0f;
-	m_lookPos = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	// set movespeed
 	m_moveSpeed = 5.0f;
@@ -32,17 +31,21 @@ CCamera::CCamera()
 
 	m_position = glm::vec3(0.0f, 0.0f, 0.0f);
 	m_lookDir = glm::vec3(0.0f, 0.0f, 0.0f);
-	m_upDir = glm::vec3(0.0f, 0.0f, 0.0f);
+	m_upDir = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	m_UIprojMat = glm::mat4(1.0f);
 	m_UIviewMat = glm::mat4(1.0f);
+
+	// mouse values
+	m_lastMouse = glm::vec2(0.0f, 0.0f);
+	m_mouseSpeed = 100.0f;
 }
 
 CCamera::~CCamera()
 {
 }
 
-void CCamera::Update(float _currentTime, int _iWindowSize, GLFWwindow* _Window, float _dt)
+void CCamera::Update(float _currentTime, int _iWindowSize, GLFWwindow* _Window, glm::vec2 _MousePos, float _dt)
 {
 	float HalfWindow = (float)_iWindowSize * 0.5;
 	m_projMat = glm::perspective(glm::radians(45.0f), (HalfWindow * 2) / (HalfWindow * 2), 0.1f, 1000.0f);
@@ -51,12 +54,46 @@ void CCamera::Update(float _currentTime, int _iWindowSize, GLFWwindow* _Window, 
 
 	//m_projMat = glm::perspective(glm::radians(45.0f), (HalfWindow * 2) / (HalfWindow * 2), 0.1f, 100.0f);
 
-	m_lookDir = glm::vec3(0.0f, 0.0f, -1.0f);
-	m_upDir = glm::vec3(0.0f, 1.0f, 0.0f);
+	//m_lookDir = glm::vec3(0.0f, 0.0f, -1.0f);
 	//m_position = glm::vec3(1.0f, 1.0f, 10.0f);
 
+		// for mouse movement
+	glm::vec2 mouseDelta = _MousePos - m_lastMouse;
+	mouseDelta.y = -mouseDelta.y;
+	m_lastMouse = _MousePos;
+
+	// only update lookDir if left mouse pressed
+	if (m_bMousePressed)
+	{
+		mouseDelta *= _dt;
+		m_yaw += mouseDelta.x * m_mouseSpeed;
+		m_pitch += mouseDelta.y * m_mouseSpeed;
+
+		if (m_pitch > 89.0f)
+		{
+			m_pitch = 89.0f;
+		}
+		else if (m_pitch < -89.0f)
+		{
+			m_pitch = -89.0f;
+		}
+	}
+
+	// change look dir based on mouse
+	glm::vec3 dir;
+
+	float fRyaw = glm::radians(m_yaw);
+	float fRpitch = glm::radians(m_pitch);
+
+	dir.x = (cos(fRyaw) * cos(fRpitch));
+	dir.y = (sin(fRpitch));
+	dir.z = (sin(fRyaw) * cos(fRpitch));
+	m_lookDir = glm::normalize(dir);
+
+	m_upDir = glm::normalize(glm::cross(GetRight(), GetForward()));
+
 	// view matrix for 3d objects
-	m_viewMat = glm::lookAt(m_position, m_lookDir, m_upDir);
+	m_viewMat = glm::lookAt(m_position, m_position + m_lookDir, m_upDir);
 
 	// view matrix for UI button
 	m_UIviewMat = glm::lookAt(m_position, m_position + m_lookDir, m_upDir);
@@ -64,6 +101,8 @@ void CCamera::Update(float _currentTime, int _iWindowSize, GLFWwindow* _Window, 
 	// update input for movement every frame
 	Input(_Window, _dt);
 	ChangeHeight(_Window, _dt);
+	glm::vec3 move = ((float)(TriHoriz(_Window)) * -GetRight()) 
+				   + ((float)(-TriVerti(_Window)) * GetForward());
 	m_position += (GetMove(_Window, _dt) * _dt * m_moveSpeed);
 }
 
@@ -79,7 +118,16 @@ glm::mat4 CCamera::GetProjMat()
 
 void CCamera::Input(GLFWwindow* _Window, float _dt)
 {
-
+	// get mouse input
+	if (glfwGetMouseButton(_Window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	{
+		m_bMousePressed = true;
+	}
+	else
+	{
+		m_bMousePressed = false;
+	}
+	
 	// switch to orbiting for arrow keys
 	if (glfwGetKey(_Window, GLFW_KEY_UP))
 	{
@@ -123,13 +171,13 @@ signed char CCamera::TriHoriz(GLFWwindow* _Window)
 	// go left with A key
 	if (glfwGetKey(_Window, GLFW_KEY_A))
 	{
-		m_position += 1;
+		retVal -= 1;
 	}
 
 	// go right with d key
 	if (glfwGetKey(_Window, GLFW_KEY_D))
 	{
-		m_position -= 1;
+		retVal += 1;
 	}
 
 	return retVal;
@@ -142,13 +190,13 @@ signed char CCamera::TriVerti(GLFWwindow* _Window)
 	// move forward with w key
 	if (glfwGetKey(_Window, GLFW_KEY_W))
 	{
-		m_position -= 1;
+		retVal += 1;
 	}
 
 	// move backwards with s key
 	if (glfwGetKey(_Window, GLFW_KEY_S))
 	{
-		m_position += 1;
+		retVal -= 1;
 	}
 
 	return retVal;

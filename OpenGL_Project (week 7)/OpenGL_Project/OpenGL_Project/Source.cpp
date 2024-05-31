@@ -119,6 +119,9 @@ bool g_bWireFrame = false;
 bool g_bShowMouse = true;
 bool g_UIChange = false;
 
+// mouse position
+glm::vec2 g_MousePos;
+
 // for position callback
 void CursorPositionInput(GLFWwindow* _Window, double _PosX, double _PosY)
 {
@@ -127,6 +130,8 @@ void CursorPositionInput(GLFWwindow* _Window, double _PosX, double _PosY)
 	{
 		std::cout << "Cursor Coords: " << _PosX << ", " << _PosY << std::endl;
 	}
+
+	g_MousePos = glm::vec2(_PosX, _PosY);
 
 	if ((_PosX > 50 && _PosX < 150) && (_PosY > 50 && _PosY < 150))
 	{
@@ -355,7 +360,7 @@ void Update()
 	}
 
 	// camera update
-	Camera->Update(CurrentTime, iWindowSize, Window, deltaTime);
+	Camera->Update(CurrentTime, iWindowSize, Window, g_MousePos, deltaTime);	
 	Camera->PrintCamPos();
 }
 

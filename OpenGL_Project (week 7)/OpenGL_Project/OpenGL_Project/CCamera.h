@@ -25,7 +25,7 @@ public:
 	CCamera();
 	~CCamera();
 
-	void Update(float _deltaTime, int _iWindowSize, GLFWwindow* _Window, float _dt);
+	void Update(float _deltaTime, int _iWindowSize, GLFWwindow* _Window, glm::vec2 _MousePos, float _dt);
 	// view matrix passed into object render functions for MVP matrixs
 	glm::mat4 GetViewMat();
 	// projection matrix passed into object render functions for MVP matrixs
@@ -59,8 +59,6 @@ private:
 	glm::vec3 m_lookDir;
 	glm::vec3 m_upDir;
 
-	// free camera
-
 	// for UI
 	glm::mat4 m_UIprojMat;
 	glm::mat4 m_UIviewMat;
@@ -77,13 +75,14 @@ private:
 	glm::vec2 m_lastMouse;
 	float m_yaw = 0;
 	float m_pitch = 0;
+	bool m_bMousePressed = false;
 
 	// obrital camera
 	bool m_orbiting;
 	bool m_automaticOrbit;
 	float m_radius;
 	float m_angle;
-	glm::vec3 m_lookPos;
+	//glm::vec3 m_lookPos;
 
 	// movement
 	signed char TriHoriz(GLFWwindow* _Window);
