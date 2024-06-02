@@ -42,8 +42,8 @@ public:
 	~CModel();
 
 	virtual void Update(float DeltaTime);
-	virtual void Render(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat);
-	virtual void RenderInstanced(GLint _program, GLint _texture, std::vector<glm::mat4> _matrixVec, float CurrentTime, glm::mat4 _ModelMat);
+	virtual void Render(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos);
+	virtual void RenderInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos);
 
 	GLuint GetVAO() { return VAO; };
 

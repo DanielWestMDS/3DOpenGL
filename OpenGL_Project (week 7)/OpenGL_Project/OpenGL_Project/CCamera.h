@@ -34,6 +34,8 @@ public:
 	glm::mat4 GetUIProjMat() { return m_UIprojMat; };
 	// view matrix for UI
 	glm::mat4 GetUIViewMat() { return m_UIviewMat; };
+	// get position
+	glm::vec3 GetPosition() { return m_position; };
 
 	// Free camera
 	void Input(GLFWwindow* _Window, float _dt);

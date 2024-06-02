@@ -285,7 +285,7 @@ void InitialSetup()
 	GLuint VBO_Instanced;
 	glGenBuffers(1, &VBO_Instanced);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_Instanced);
-	glBufferData(GL_ARRAY_BUFFER, 100 * sizeof(glm::mat4), &RandomLocations[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 1000 * sizeof(glm::mat4), &RandomLocations[0], GL_STATIC_DRAW);
 
 	// bind instance buffer to attribue location
 	glBindVertexArray(Tree->GetVAO());
@@ -373,10 +373,10 @@ void Render()
 	if (g_UIChange)
 	{
 		// single soldier model
-		Model->Render(Program_3DModel, Texture_Awesome, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+		Model->Render(Program_3DModel, Texture_Awesome, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
 
 		// many trees
-		Tree->RenderInstanced(Program_Lighting, Texture_Awesome, MVPVec, CurrentTime, TreeModelMat);
+		Tree->RenderInstanced(Program_Lighting, Texture_Awesome, RandomLocations, TreeModelMat, Camera->GetPosition());
 
 		// Button
 		Button->Render(Program_Quads, Texture_Awesome, QuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
@@ -384,10 +384,10 @@ void Render()
 	else
 	{
 		// single soldier model
-		Model->Render(Program_3DModel, Texture_Quag, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat());
+		Model->Render(Program_3DModel, Texture_Quag, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
 
 		// many trees
-		Tree->RenderInstanced(Program_Lighting, Texture_Quag, MVPVec, CurrentTime, TreeModelMat);
+		Tree->RenderInstanced(Program_Lighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition());
 		// Button
 		Button->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
 	}
