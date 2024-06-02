@@ -19,6 +19,7 @@
 #include "CCamera.h"
 #include "CModel.h"
 #include "CButton.h"
+#include "CSkyBox.h"
 
 // global variables
 GLFWwindow* Window = nullptr;
@@ -33,6 +34,8 @@ CModel* Model;
 CModel* Tree;
 // UI input button
 CButton* Button;
+// skybox
+CSkyBox* Skybox;
 
 // camera vars
 glm::mat4 m_projMat;
@@ -47,6 +50,7 @@ glm::mat4 m_viewMat;
 GLuint Program_Quads;
 GLuint Program_3DModel;
 GLuint Program_Lighting;
+GLuint Program_Skybox;
 
 // texture
 GLuint Texture_Awesome;
@@ -121,6 +125,16 @@ bool g_UIChange = false;
 
 // mouse position
 glm::vec2 g_MousePos;
+
+// Define the six faces of the cube map in a vector
+std::vector<std::string> sFaces = {
+	"Resources/Textures/SkyboxRight.jpg",
+	"Resources/Textures/SkyboxLeft.jpg",
+	"Resources/Textures/SkyboxTop.jpg",
+	"Resources/Textures/SkyboxBottom.jpg",
+	"Resources/Textures/SkyboxFront.jpg",
+	"Resources/Textures/SkyboxBack.jpg"
+};
 
 // for position callback
 void CursorPositionInput(GLFWwindow* _Window, double _PosX, double _PosY)
@@ -211,6 +225,10 @@ void InitialSetup()
 	Program_Lighting = ShaderLoader::CreateProgram("Resources/Shaders/InstancedArray_Standard.vert.txt",
 		"Resources/Shaders/Lighting_BlinnPhong.frag.txt");
 
+	// program for skybox
+	Program_Skybox = ShaderLoader::CreateProgram("Resources/Shaders/Skybox.vert.txt",
+		"Resources/Shaders/Skybox.frag.txt");
+
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
 
@@ -263,6 +281,8 @@ void InitialSetup()
 	Tree = new CModel("Resources/Models/SM_Env_Tree_Palm_01.obj");
 
 	Button = new CButton();
+
+	Skybox = new CSkyBox(sFaces, "Resources/Models/cube.obj");
 
 	// set background colour
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
@@ -391,6 +411,11 @@ void Render()
 		// Button
 		Button->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
 	}
+
+	// skybox
+	glm::mat4 view = Camera->GetViewMat();
+	glm::mat4 projection = Camera->GetProjMat();
+	Skybox->Render(Program_Skybox, view, projection);
 
 	// unbind
 	glBindVertexArray(0);

@@ -143,14 +143,18 @@
   <ItemGroup>
     <ClCompile Include="CButton.cpp" />
     <ClCompile Include="CCamera.cpp" />
+    <ClCompile Include="CLightManager.cpp" />
     <ClCompile Include="CModel.cpp" />
+    <ClCompile Include="CSkyBox.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CButton.h" />
     <ClInclude Include="CCamera.h" />
+    <ClInclude Include="CLightManager.h" />
     <ClInclude Include="CModel.h" />
+    <ClInclude Include="CSkyBox.h" />
     <ClInclude Include="ShaderLoader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -164,6 +168,8 @@
     <Text Include="Resources\Shaders\InstancedArray_Standard.vert.txt" />
     <Text Include="Resources\Shaders\Lighting_BlinnPhong.frag.txt" />
     <Text Include="Resources\Shaders\PositionOnly.vert.txt" />
+    <Text Include="Resources\Shaders\Skybox.frag.txt" />
+    <Text Include="Resources\Shaders\Skybox.vert.txt" />
     <Text Include="Resources\Shaders\Squares.vert.txt" />
     <Text Include="Resources\Shaders\Texture.frag.txt" />
     <Text Include="Resources\Shaders\Texture.vert.txt" />

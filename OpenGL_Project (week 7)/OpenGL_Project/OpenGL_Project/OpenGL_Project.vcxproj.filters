@@ -30,6 +30,12 @@
     <ClCompile Include="CButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CLightManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CSkyBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderLoader.h">
@@ -42,6 +48,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CLightManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CSkyBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -98,6 +110,12 @@
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="Resources\Shaders\Lighting_BlinnPhong.frag.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Resources\Shaders\Skybox.frag.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Resources\Shaders\Skybox.vert.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

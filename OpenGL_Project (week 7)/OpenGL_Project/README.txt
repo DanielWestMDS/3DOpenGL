@@ -1,20 +1,6 @@
-Controls: 
-1 - Show mouse position in console // Stop showing mouse position in console
-2 - Change to wireframe view // Change to full model face view
-3 - Disable mouse view // Enable mouse view
-4 - Automatically circle the world centre
 
- - Camera - 
-Left Shift - Speed up camera
-Left Arrow - Rotate left around world origin
-Right Arrow - Rotate right around world origin
-Up Arrow - move closer to world origin
-Down Arrow - move further from world origin
+Cubemap texture: 
+https://www.cleanpng.com/png-skybox-texture-mapping-cube-mapping-desktop-wallpa-6020000/
 
- - Object - 
-W - Move object forwards
-S - Move object backwards
-A - Move object left
-D - Move object right
-Q - Move object up
-E - Move object down
+cube obj (didn't wanna download blender and make my own):
+https://gist.github.com/MaikKlein/0b6d6bb58772c13593d0a0add6004c1c#file-cube-obj
