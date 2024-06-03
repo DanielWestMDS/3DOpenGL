@@ -60,14 +60,22 @@ GLuint CSkyBox::LoadCubeMap(std::vector<std::string> faces)
     GLuint textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+    stbi_set_flip_vertically_on_load(false);
 
-    int width, height, nrChannels;
-    for (GLuint i = 0; i < faces.size(); i++)
+    // storage variables
+    int iWidth, iHeight, iComponents;
+
+    for (GLuint i = 0; i < 6; i++)
     {
-        unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
+        // load each image seperately
+        unsigned char* data = stbi_load(faces[i].c_str(), &iWidth, &iHeight, &iComponents, 0);
+
+        // 
+
         if (data)
         {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            // enum for texture side
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, iWidth, iHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);
         }
         else
