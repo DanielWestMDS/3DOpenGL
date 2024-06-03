@@ -65,23 +65,24 @@ GLuint CSkyBox::LoadCubeMap(std::vector<std::string> faces)
     // storage variables
     int iWidth, iHeight, iComponents;
 
-    for (GLuint i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
     {
         // load each image seperately
-        unsigned char* data = stbi_load(faces[i].c_str(), &iWidth, &iHeight, &iComponents, 0);
+        unsigned char* imageData = stbi_load(faces[i].c_str(), &iWidth, &iHeight, &iComponents, 0);
 
-        // 
+        // cubemap should be full color
+        GLint LoadedComponents = (iComponents == 4) ? GL_RGBA : GL_RGB;
 
-        if (data)
+        if (imageData)
         {
             // enum for texture side
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, iWidth, iHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-            stbi_image_free(data);
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, LoadedComponents, iWidth, iHeight, 0, LoadedComponents, GL_UNSIGNED_BYTE, imageData);
+            stbi_image_free(imageData);
         }
         else
         {
             std::cerr << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
-            stbi_image_free(data);
+            stbi_image_free(imageData);
         }
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
