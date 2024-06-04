@@ -37,6 +37,26 @@ uniform int PointLightCount;
 // Output
 out vec4 FinalColor;
 
+// function to calculate point light, outputs result of lighting calculations
+vec3 CalculateLight_Point(int i)
+{
+    // Light Direction
+    vec3 Normal = normalize(FragNormal);
+    vec3 LightDir = normalize(FragPos - PointLightArray[i].Position);
+
+    // diffuse component
+    float DiffuseStrength = max(dot(Normal, -LightDir), 0.0f);
+    vec3 Diffuse = DiffuseStrength * PointLightArray[i].Color;
+
+    // specular component
+    vec3 ReverseViewDir = normalize(CameraPos - FragPos);
+    vec3 HalfwayVector = normalize(-LightDir + ReverseViewDir);
+    float SpecularReflectivity = pow(max(dot(Normal, HalfwayVector), 0.0f), ObjectShininess);
+    vec3 Specular = PointLightArray[i].SpecularStrength * SpecularReflectivity * LightColor;
+
+    return vec3 Light = (Diffuse + Specular);
+}
+
 void main()
 {
     // Ambient component

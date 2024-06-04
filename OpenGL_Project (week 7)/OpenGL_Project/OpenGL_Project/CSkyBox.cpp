@@ -45,7 +45,9 @@ void CSkyBox::Render(GLint _program, glm::mat4 _viewMat, glm::mat4 _projMat)
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubeMapTexture);
     glUniform1i(glGetUniformLocation(_program, "skybox"), 0);
 
+    glDepthFunc(GL_LEQUAL);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDepthFunc(GL_LESS);
 
     // Unbind
     glBindVertexArray(0);
@@ -85,11 +87,14 @@ GLuint CSkyBox::LoadCubeMap(std::vector<std::string> faces)
             stbi_image_free(imageData);
         }
     }
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
     return textureID;
 }

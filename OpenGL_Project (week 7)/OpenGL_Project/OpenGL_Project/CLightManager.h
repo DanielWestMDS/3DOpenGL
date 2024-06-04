@@ -16,7 +16,7 @@
 #include <vector>
 #include <string>
 
-#define MAX_POINT_LIGHTS 4
+//#define MAX_POINT_LIGHTS 4
 
 struct PointLight
 {
@@ -35,5 +35,12 @@ public:
     void UpdateShader(GLuint program);
 
 private:
+    // lights
+    float AmbientStrength;
+    glm::vec3 AmbientColor;
+    static const int MAX_POINT_LIGHTS = 4;
+    PointLight PointLightArray[4];
+    unsigned int PointLightCount;
+
     std::vector<PointLight> m_PointLights;
 };

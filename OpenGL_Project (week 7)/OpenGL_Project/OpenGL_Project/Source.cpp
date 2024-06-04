@@ -20,6 +20,7 @@
 #include "CModel.h"
 #include "CButton.h"
 #include "CSkyBox.h"
+#include "CLightManager.h"
 
 // global variables
 GLFWwindow* Window = nullptr;
@@ -36,6 +37,8 @@ CModel* Tree;
 CButton* Button;
 // skybox
 CSkyBox* Skybox;
+// light manager
+CLightManager* LightManager;
 
 // camera vars
 glm::mat4 m_projMat;
@@ -128,13 +131,14 @@ glm::vec2 g_MousePos;
 
 // Define the six faces of the cube map in a vector
 std::vector<std::string> sFaces = {
-	"Resources/Textures/SkyboxRight.jpg",
-	"Resources/Textures/SkyboxLeft.jpg",
-	"Resources/Textures/SkyboxTop.jpg",
-	"Resources/Textures/SkyboxBottom.jpg",
-	"Resources/Textures/SkyboxFront.jpg",
-	"Resources/Textures/SkyboxBack.jpg"
+	"Resources/Textures/Right.png",
+	"Resources/Textures/Left.png",
+	"Resources/Textures/Top.png",
+	"Resources/Textures/Bottom.png",
+	"Resources/Textures/Back.png",
+	"Resources/Textures/Front.png"
 };
+
 
 // for position callback
 void CursorPositionInput(GLFWwindow* _Window, double _PosX, double _PosY)
@@ -284,6 +288,11 @@ void InitialSetup()
 
 	Skybox = new CSkyBox(sFaces, "Resources/Models/cube.obj");
 
+	LightManager = new CLightManager();
+
+	LightManager->AddPointLight(glm::vec3(25.0f, 15.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), 1.0f);
+	LightManager->AddPointLight(glm::vec3(-25.0f, 15.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 1.0f);
+
 	// set background colour
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 
@@ -416,6 +425,9 @@ void Render()
 	glm::mat4 view = Camera->GetViewMat();
 	glm::mat4 projection = Camera->GetProjMat();
 	Skybox->Render(Program_Skybox, view, projection);
+
+	// point lights
+	LightManager->UpdateShader(Program_Lighting);
 
 	// unbind
 	glBindVertexArray(0);
