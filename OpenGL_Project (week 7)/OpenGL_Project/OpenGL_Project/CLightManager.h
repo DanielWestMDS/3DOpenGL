@@ -39,7 +39,7 @@ private:
     float AmbientStrength;
     glm::vec3 AmbientColor;
     static const int MAX_POINT_LIGHTS = 4;
-    PointLight PointLightArray[4];
+    PointLight PointLightArray[MAX_POINT_LIGHTS];
     unsigned int PointLightCount;
 
     std::vector<PointLight> m_PointLights;

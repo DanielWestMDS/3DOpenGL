@@ -54,7 +54,8 @@ vec3 CalculateLight_Point(int i)
     float SpecularReflectivity = pow(max(dot(Normal, HalfwayVector), 0.0f), ObjectShininess);
     vec3 Specular = PointLightArray[i].SpecularStrength * SpecularReflectivity * LightColor;
 
-    return vec3 Light = (Diffuse + Specular);
+    vec3 Light;
+    return Light = Diffuse + Specular;
 }
 
 void main()
@@ -63,18 +64,18 @@ void main()
     vec3 Ambient = AmbientStrength * AmbientColor;
 
     // Light Direction
-    vec3 Normal = normalize(FragNormal);
-    vec3 LightDir = normalize(FragPos - LightPos);
+   // vec3 Normal = normalize(FragNormal);
+    //vec3 LightDir = normalize(FragPos - LightPos);
 
     // diffuse component
-    float DiffuseStrength = max(dot(Normal, -LightDir), 0.0f);
-    vec3 Diffuse = DiffuseStrength * LightColor;
+    //float DiffuseStrength = max(dot(Normal, -LightDir), 0.0f);
+    //vec3 Diffuse = DiffuseStrength * LightColor;
 
     // specular component
-    vec3 ReverseViewDir = normalize(CameraPos - FragPos);
-    vec3 HalfwayVector = normalize(-LightDir + ReverseViewDir);
-    float SpecularReflectivity = pow(max(dot(Normal, HalfwayVector), 0.0f), ObjectShininess);
-    vec3 Specular = LightSpecularStrength * SpecularReflectivity * LightColor;
+   // vec3 ReverseViewDir = normalize(CameraPos - FragPos);
+    //vec3 HalfwayVector = normalize(-LightDir + ReverseViewDir);
+    //float SpecularReflectivity = pow(max(dot(Normal, HalfwayVector), 0.0f), ObjectShininess);
+    //vec3 Specular = LightSpecularStrength * SpecularReflectivity * LightColor;
 
     // point light
     vec3 TotalLightOutput = vec3(0.0f);
@@ -84,8 +85,9 @@ void main()
     }
 
     // combine the lighting components
-    vec4 Light = vec4(Ambient + Diffuse + Specular + TotalLightOutput, 1.0f);
+    // vec4 Light = vec4(Ambient + Diffuse + Specular + TotalLightOutput, 1.0f);
 
     // Calculate the final color using the light
-    FinalColor = Light * texture(Texture0, FragTexCoords);
+    // FinalColor = Light * texture(Texture0, FragTexCoords);
+    FinalColor = vec4(TotalLightOutput, 1.0f) * texture(Texture0, FragTexCoords); // Correct line for final color output.
 }
