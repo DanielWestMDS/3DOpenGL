@@ -222,16 +222,16 @@ void InitialSetup()
 		"Resources/Shaders/Texture.frag.txt");
 
 	// program for 3d model
-	Program_3DModel = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert.txt",
-		"Resources/Shaders/3DModel.frag.txt");
+	Program_3DModel = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
+		"Resources/Shaders/3DModel.frag");
 
 	// program for lighting
-	Program_Lighting = ShaderLoader::CreateProgram("Resources/Shaders/InstancedArray_Standard.vert.txt",
-		"Resources/Shaders/Lighting_BlinnPhong.frag.txt");
+	Program_Lighting = ShaderLoader::CreateProgram("Resources/Shaders/InstancedArray_Standard.vert",
+		"Resources/Shaders/Lighting_BlinnPhong.frag");
 
 	// program for skybox
-	Program_Skybox = ShaderLoader::CreateProgram("Resources/Shaders/Skybox.vert.txt",
-		"Resources/Shaders/Skybox.frag.txt");
+	Program_Skybox = ShaderLoader::CreateProgram("Resources/Shaders/Skybox.vert",
+		"Resources/Shaders/Skybox.frag");
 
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
@@ -290,8 +290,8 @@ void InitialSetup()
 
 	LightManager = new CLightManager();
 
-	LightManager->AddPointLight(glm::vec3(25.0f, 15.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), 1.0f);
-	LightManager->AddPointLight(glm::vec3(-25.0f, 15.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 1.0f);
+	LightManager->AddPointLight(glm::vec3(10.0f, 15.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
+	LightManager->AddPointLight(glm::vec3(-10.0f, 15.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
 
 	// set background colour
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
@@ -363,7 +363,7 @@ void Update()
 	// multiply translation rotation scale for model matrix
 	TreeModelMat = TreeTranslationMat * TreeRotationMat * TreeScaleMat;
 	// get MVP by multiplying by camera projection and view matrices
-	TreeModelMat = Camera->GetProjMat() * Camera->GetViewMat() * TreeModelMat;
+	//TreeModelMat = Camera->GetProjMat() * Camera->GetViewMat() * TreeModelMat;
 
 	// calculate quad model matrix once
 	QuadTranslationMat = glm::translate(glm::mat4(1.0f), QuadPosition);
@@ -390,12 +390,14 @@ void Update()
 
 	// camera update
 	Camera->Update(CurrentTime, iWindowSize, Window, g_MousePos, deltaTime);	
-	Camera->PrintCamPos();
+	//Camera->PrintCamPos();
 }
 
 void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+
 
 	// UI button 
 	// change texture if mouse overlapping
@@ -405,7 +407,9 @@ void Render()
 		Model->Render(Program_3DModel, Texture_Awesome, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
 
 		// many trees
-		Tree->RenderInstanced(Program_Lighting, Texture_Awesome, RandomLocations, TreeModelMat, Camera->GetPosition());
+		// point lights
+		LightManager->UpdateShader(Program_Lighting);
+		Tree->RenderInstanced(Program_Lighting, Texture_Awesome, RandomLocations, TreeModelMat, Camera->GetPosition(), (Camera->GetProjMat() * Camera->GetViewMat()));
 
 		// Button
 		Button->Render(Program_Quads, Texture_Awesome, QuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
@@ -416,7 +420,9 @@ void Render()
 		Model->Render(Program_3DModel, Texture_Quag, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
 
 		// many trees
-		Tree->RenderInstanced(Program_Lighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition());
+		// point lights
+		LightManager->UpdateShader(Program_Lighting);
+		Tree->RenderInstanced(Program_Lighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), (Camera->GetProjMat() * Camera->GetViewMat()));
 		// Button
 		Button->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
 	}
@@ -426,8 +432,7 @@ void Render()
 	glm::mat4 projection = Camera->GetProjMat();
 	Skybox->Render(Program_Skybox, view, projection);
 
-	// point lights
-	LightManager->UpdateShader(Program_Lighting);
+
 
 	// unbind
 	glBindVertexArray(0);

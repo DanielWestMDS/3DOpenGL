@@ -23,6 +23,10 @@ struct PointLight
     glm::vec3 Position;
     glm::vec3 Color;
     float SpecularStrength;
+
+    float AttenuationConstant;
+    float AttenuationLinear;
+    float AttenuationExponent;
 };
 
 class CLightManager
@@ -31,14 +35,14 @@ public:
     CLightManager();
     ~CLightManager();
 
-    void AddPointLight(const glm::vec3& position, const glm::vec3& color, float specularStrength);
+    void AddPointLight(const glm::vec3& position, const glm::vec3& color, float specularStrength, float _Constant, float _Linear, float _Exponent);
     void UpdateShader(GLuint program);
 
 private:
     // lights
     float AmbientStrength;
     glm::vec3 AmbientColor;
-    static const int MAX_POINT_LIGHTS = 4;
+    static const int MAX_POINT_LIGHTS = 10;
     PointLight PointLightArray[MAX_POINT_LIGHTS];
     unsigned int PointLightCount;
 

@@ -120,7 +120,7 @@ void CModel::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cur
     glBindVertexArray(0);
 }
 
-void CModel::RenderInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos)
+void CModel::RenderInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos, glm::mat4 _VP)
 {
     // bind program and VAO
     glUseProgram(_program);
@@ -138,6 +138,16 @@ void CModel::RenderInstanced(GLint _program, GLint _texture, std::vector<glm::ve
     // pass camera position in via uniform
     GLint CameraPosLoc = glGetUniformLocation(_program, "CameraPos");
     glUniform3fv(CameraPosLoc, 1, glm::value_ptr(_cameraPos));
+
+    // pass in view projection
+    GLint VPMat = glGetUniformLocation(_program, "VP");
+    glUniformMatrix4fv(VPMat, 1, GL_FALSE, glm::value_ptr(_VP));
+
+    // view and projection matrices
+    //GLint viewLoc = glGetUniformLocation(_program, "view");
+    //GLint projLoc = glGetUniformLocation(_program, "projection");
+    //glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(_viewMat));
+    //glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(_projMat));
 
     // Bind and fill the instance buffer
     glBindBuffer(GL_ARRAY_BUFFER, InstanceBuffer);

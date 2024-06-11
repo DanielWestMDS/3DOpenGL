@@ -97,26 +97,31 @@
     <Text Include="Resources\Shaders\Squares.vert.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Resources\Shaders\3DModel.frag.txt">
+    <Text Include="Resources\Shaders\3DModel.frag">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Resources\Shaders\3DModel.vert.txt">
+    <Text Include="Resources\Shaders\3DModel.vert">
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="Resources\Shaders\Button.vert.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Resources\Shaders\InstancedArray_Standard.vert.txt">
+    <Text Include="Resources\Shaders\InstancedArray_Standard.vert">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Resources\Shaders\Lighting_BlinnPhong.frag.txt">
+    <Text Include="Resources\Shaders\Lighting_BlinnPhong.frag">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Resources\Shaders\Skybox.frag.txt">
+    <Text Include="Resources\Shaders\Skybox.frag">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Resources\Shaders\Skybox.vert.txt">
+    <Text Include="Resources\Shaders\Skybox.vert">
       <Filter>Resource Files</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shaders\onePointLight.frag">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

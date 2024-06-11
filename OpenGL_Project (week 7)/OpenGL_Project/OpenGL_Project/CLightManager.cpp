@@ -20,7 +20,7 @@ CLightManager::~CLightManager()
 {
 }
 
-void CLightManager::AddPointLight(const glm::vec3& position, const glm::vec3& color, float specularStrength)
+void CLightManager::AddPointLight(const glm::vec3& position, const glm::vec3& color, float specularStrength, float _Constant, float _Linear, float _Exponent)
 {
     if (m_PointLights.size() < MAX_POINT_LIGHTS)
     {
@@ -28,6 +28,9 @@ void CLightManager::AddPointLight(const glm::vec3& position, const glm::vec3& co
         pointLight.Position = position;
         pointLight.Color = color;
         pointLight.SpecularStrength = specularStrength;
+        pointLight.AttenuationConstant = _Constant;
+        pointLight.AttenuationExponent = _Exponent;
+        pointLight.AttenuationLinear = _Linear;
         m_PointLights.push_back(pointLight);
     }
     else
@@ -39,8 +42,8 @@ void CLightManager::AddPointLight(const glm::vec3& position, const glm::vec3& co
 void CLightManager::UpdateShader(GLuint program)
 {
     glUseProgram(program);
-
-    for (unsigned int i = 0; i < PointLightCount; ++i)
+        
+    for (unsigned int i = 0; i < m_PointLights.size(); ++i)
     {
         //glUniform3fv(glGetUniformLocation(program, "PointLightArray[0].Position"), 1, glm::value_ptr(PointLightArray[0].Position));
         std::string baseName = "PointLightArray[" + std::to_string(i) + "]";
@@ -49,5 +52,5 @@ void CLightManager::UpdateShader(GLuint program)
         glUniform1f(glGetUniformLocation(program, (baseName + ".SpecularStrength").c_str()), m_PointLights[i].SpecularStrength);
     }
 
-    glUniform1i(glGetUniformLocation(program, "PointLightCount"), PointLightCount);
+    glUniform1i(glGetUniformLocation(program, "PointLightCount"), m_PointLights.size());
 }
