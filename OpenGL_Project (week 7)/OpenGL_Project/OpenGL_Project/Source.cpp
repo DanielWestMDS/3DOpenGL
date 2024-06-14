@@ -169,49 +169,6 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 	{
 		g_bWireFrame = !g_bWireFrame;
 	}
-
-	//// for object
-	//// move forward
-	//if (glfwGetKey(_Window, GLFW_KEY_W))
-	//{
-	//	// use camera forward
-	//	SoldierPosition -= Camera->GetForward() * deltaTime * MoveSpeed;
-	//}
-
-	//// move back
-	//if (glfwGetKey(_Window, GLFW_KEY_S))
-	//{
-	//	// use camera forward but reverse
-	//	SoldierPosition += Camera->GetForward() * deltaTime * MoveSpeed;
-	//}
-
-	//// move left
-	//if (glfwGetKey(_Window, GLFW_KEY_A))
-	//{
-	//	// use camera right but reverse
-	//	SoldierPosition += Camera->GetRight() * deltaTime * MoveSpeed;
-	//}
-
-	//// move right
-	//if (glfwGetKey(_Window, GLFW_KEY_D))
-	//{
-	//	// use camera forward
-	//	SoldierPosition -= Camera->GetRight() * deltaTime * MoveSpeed;
-	//}
-
-	//// move up
-	//if (glfwGetKey(_Window, GLFW_KEY_Q))
-	//{
-	//	// use camera up but reverse
-	//	SoldierPosition -= Camera->GetUp() * deltaTime * MoveSpeed;
-	//}
-
-	//// move down
-	//if (glfwGetKey(_Window, GLFW_KEY_E))
-	//{
-	//	// use camera up 
-	//	SoldierPosition += Camera->GetUp() * deltaTime * MoveSpeed;
-	//}
 }
 
 // custom functions for tidy code
@@ -290,8 +247,8 @@ void InitialSetup()
 
 	LightManager = new CLightManager();
 
-	LightManager->AddPointLight(glm::vec3(10.0f, 15.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
-	LightManager->AddPointLight(glm::vec3(-10.0f, 15.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
+	LightManager->AddPointLight(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
+	LightManager->AddPointLight(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
 
 	// set background colour
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
@@ -389,7 +346,7 @@ void Update()
 	}
 
 	// camera update
-	Camera->Update(CurrentTime, iWindowSize, Window, g_MousePos, deltaTime);	
+	Camera->Update(iWindowSize, Window, g_MousePos, deltaTime);	
 	//Camera->PrintCamPos();
 }
 

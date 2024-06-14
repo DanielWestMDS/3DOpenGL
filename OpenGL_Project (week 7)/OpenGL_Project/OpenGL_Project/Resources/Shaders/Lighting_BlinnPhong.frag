@@ -121,7 +121,7 @@ void main()
 
     // Calculate the final color using the light
     FinalColor = Light * texture(Texture0, FragTexCoords);
-    FinalColor = vec4(TotalLightOutput, 1.0f) * texture(Texture0, FragTexCoords); // Correct line for final color output.
+    FinalColor = vec4(TotalLightOutput, 1.0f) * texture(Texture0, FragTexCoords); 
     
     // Light Direction
 //vec3 Normal = normalize(FragNormal);

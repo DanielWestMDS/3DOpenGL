@@ -16,12 +16,6 @@ CCamera::CCamera()
 {
 	m_position = glm::vec3(1.0f, 4.0f, 10.0f);
 
-	// orbit values
-	m_orbiting = true;
-	m_automaticOrbit = false;
-	m_radius = 60.0f;
-	m_angle = 90.0f;
-
 	// set movespeed
 	m_moveSpeed = 5.0f;
 
@@ -45,17 +39,12 @@ CCamera::~CCamera()
 {
 }
 
-void CCamera::Update(float _currentTime, int _iWindowSize, GLFWwindow* _Window, glm::vec2 _MousePos, float _dt)
+void CCamera::Update(int _iWindowSize, GLFWwindow* _Window, glm::vec2 _MousePos, float _dt)
 {
 	float HalfWindow = (float)_iWindowSize * 0.5;
 	m_projMat = glm::perspective(glm::radians(45.0f), (HalfWindow * 2) / (HalfWindow * 2), 0.1f, 1000.0f);
 	// orthographic
 	m_UIprojMat = glm::ortho(0.0f, (float)_iWindowSize, (float)_iWindowSize, 0.0f, 0.0f, 1000.0f);
-
-	//m_projMat = glm::perspective(glm::radians(45.0f), (HalfWindow * 2) / (HalfWindow * 2), 0.1f, 100.0f);
-
-	//m_lookDir = glm::vec3(0.0f, 0.0f, -1.0f);
-	//m_position = glm::vec3(1.0f, 1.0f, 10.0f);
 
 		// for mouse movement
 	glm::vec2 mouseDelta = _MousePos - m_lastMouse;
@@ -82,6 +71,7 @@ void CCamera::Update(float _currentTime, int _iWindowSize, GLFWwindow* _Window, 
 	// change look dir based on mouse
 	glm::vec3 dir;
 
+	// float radians yaw i fink
 	float fRyaw = glm::radians(m_yaw);
 	float fRpitch = glm::radians(m_pitch);
 
@@ -101,8 +91,6 @@ void CCamera::Update(float _currentTime, int _iWindowSize, GLFWwindow* _Window, 
 	// update input for movement every frame
 	Input(_Window, _dt);
 	ChangeHeight(_Window, _dt);
-	glm::vec3 move = ((float)(TriHoriz(_Window)) * -GetRight()) 
-				   + ((float)(-TriVerti(_Window)) * GetForward());
 	m_position += (GetMove(_Window, _dt) * _dt * m_moveSpeed);
 }
 
@@ -126,17 +114,6 @@ void CCamera::Input(GLFWwindow* _Window, float _dt)
 	else
 	{
 		m_bMousePressed = false;
-	}
-	
-	// switch to orbiting for arrow keys
-	if (glfwGetKey(_Window, GLFW_KEY_UP))
-	{
-		m_orbiting = true;
-	}
-
-	if (glfwGetKey(_Window, GLFW_KEY_DOWN))
-	{
-		m_orbiting = true;
 	}
 
 	// alter the camera move speed if shift is being held
