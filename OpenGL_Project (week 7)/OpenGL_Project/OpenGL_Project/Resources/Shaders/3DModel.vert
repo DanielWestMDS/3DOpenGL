@@ -7,8 +7,7 @@ layout (location = 1) in vec2 TexCoords;
 
 // Inputs
 uniform mat4 ModelMat;
-uniform mat4 ProjectionMat;
-uniform mat4 ViewMat;
+uniform mat4 VP;
 
 uniform vec3 SecondColor;
 uniform float CurrentTime;
@@ -21,7 +20,7 @@ out vec3 FragNormal;
 // Shader Functionality
 void main()
 {
-	gl_Position = ModelMat * vec4(Position, 1.0f);
+	gl_Position = VP * ModelMat * vec4(Position, 1.0f);
 	FragTexCoords = TexCoords;
 	FragPos = vec3(ModelMat * vec4(Position, 1.0f));
 	FragNormal = mat3(transpose(inverse(ModelMat))) * Normal;

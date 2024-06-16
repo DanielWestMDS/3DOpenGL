@@ -114,6 +114,10 @@ void CModel::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float Cur
     GLint CameraPosLoc = glGetUniformLocation(_program, "CameraPos");
     glUniform3fv(CameraPosLoc, 1, glm::value_ptr(_cameraPos));
 
+    // pass in view projection
+    GLint VPMat = glGetUniformLocation(_program, "VP");
+    glUniformMatrix4fv(VPMat, 1, GL_FALSE, glm::value_ptr(_projMat * _viewMat));
+
     // render
     glDrawArrays(DrawType, 0, DrawCount);
 

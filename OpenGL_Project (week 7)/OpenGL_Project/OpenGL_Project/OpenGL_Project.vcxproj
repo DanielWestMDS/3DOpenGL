@@ -141,7 +141,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CButton.cpp" />
     <ClCompile Include="CCamera.cpp" />
     <ClCompile Include="CLightManager.cpp" />
     <ClCompile Include="CModel.cpp" />
@@ -150,7 +149,6 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CButton.h" />
     <ClInclude Include="CCamera.h" />
     <ClInclude Include="CLightManager.h" />
     <ClInclude Include="CModel.h" />
@@ -162,7 +160,6 @@
     <Text Include="Resources\Shaders\3DModel.vert" />
     <Text Include="Resources\Shaders\Button.vert.txt" />
     <Text Include="Resources\Shaders\ClipSpace.vert.txt" />
-    <Text Include="Resources\Shaders\FixedColor.frag.txt" />
     <Text Include="Resources\Shaders\FixedTriangle.vert.txt" />
     <Text Include="Resources\Shaders\HexOne.vert.txt" />
     <Text Include="Resources\Shaders\InstancedArray_Standard.vert" />
@@ -180,7 +177,11 @@
     <Text Include="Resources\Shaders\WorldSpace.vert.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="PointLight1.frag" />
+    <None Include="PointLight2.frag" />
     <None Include="Resources\Shaders\onePointLight.frag" />
+    <None Include="Resources\Shaders\PointLight1.frag" />
+    <None Include="Resources\Shaders\PointLight2.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

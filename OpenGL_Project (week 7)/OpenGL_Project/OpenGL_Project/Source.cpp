@@ -18,7 +18,6 @@
 #include "ShaderLoader.h"
 #include "CCamera.h"
 #include "CModel.h"
-#include "CButton.h"
 #include "CSkyBox.h"
 #include "CLightManager.h"
 
@@ -29,31 +28,22 @@ int iWindowSize = 800;
 
 // pointer to shape objects
 CCamera* Camera;
-// statue
-CModel* Model;
 // tree
 CModel* Tree;
-// UI input button
-CButton* Button;
 // skybox
 CSkyBox* Skybox;
 // light manager
 CLightManager* LightManager;
-
-// camera vars
-glm::mat4 m_projMat;
-
-glm::vec3 m_lookDir;
-glm::vec3 m_upDir;
-glm::vec3 m_position;
-
-glm::mat4 m_viewMat;
+// point lights
+CModel* PointLight1;
+CModel* PointLight2;
 
 // programs
-GLuint Program_Quads;
 GLuint Program_3DModel;
 GLuint Program_Lighting;
 GLuint Program_Skybox;
+GLuint Program_PointLight1;
+GLuint Program_PointLight2;
 
 // texture
 GLuint Texture_Awesome;
@@ -74,6 +64,29 @@ glm::mat4 ScaleMat;
 
 // model to be combined with view and projection
 glm::mat4 SoldierModelMat;
+
+// translation
+glm::vec3 PointLight1Position = glm::vec3(20.0f, 0.0f, 20.0f);
+glm::mat4 PLTranslationMat1;
+
+// rotation
+float PointLight = 0.0f;
+glm::mat4 PLRotationMat;
+
+// scale
+glm::vec3 PointLightScale = glm::vec3(0.008f, 0.008f, 0.008f);
+glm::mat4 PLScaleMat;
+
+// model to be combined with view and projection
+glm::mat4 PLModelMat1;
+
+// point light 2
+// translation
+glm::vec3 PointLight2Position = glm::vec3(-20.0f, 0.0f, -20.0f);
+glm::mat4 PLTranslationMat2;
+
+// model to be combined with view and projection
+glm::mat4 PLModelMat2;
 
 
 // Tree Model mat
@@ -174,10 +187,6 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 // custom functions for tidy code
 void InitialSetup()
 {
-	// load program for single model / UI
-	Program_Quads = ShaderLoader::CreateProgram("Resources/Shaders/Squares.vert.txt",
-		"Resources/Shaders/Texture.frag.txt");
-
 	// program for 3d model
 	Program_3DModel = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
 		"Resources/Shaders/3DModel.frag");
@@ -189,6 +198,14 @@ void InitialSetup()
 	// program for skybox
 	Program_Skybox = ShaderLoader::CreateProgram("Resources/Shaders/Skybox.vert",
 		"Resources/Shaders/Skybox.frag");
+
+	// program for point light 1
+	Program_PointLight1 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
+		"Resources/Shaders/PointLight1.frag");
+
+	// program for point light 2
+	Program_PointLight2 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
+		"Resources/Shaders/PointLight2.frag");
 
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
@@ -210,7 +227,7 @@ void InitialSetup()
 
 	// Populate the texture with the image
 	glTexImage2D(GL_TEXTURE_2D, 0, LoadedComponents, ImageWidth, ImageHeight, 0, LoadedComponents, GL_UNSIGNED_BYTE, ImageData);
-	
+
 	// generate the mipmaps
 	glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -237,18 +254,18 @@ void InitialSetup()
 
 	Camera = new CCamera();
 
-	Model = new CModel("Resources/Models/SM_Prop_Statue_02.obj");
-
 	Tree = new CModel("Resources/Models/SM_Env_Tree_Palm_01.obj");
-
-	Button = new CButton();
 
 	Skybox = new CSkyBox(sFaces, "Resources/Models/cube.obj");
 
+	PointLight1 = new CModel("Resources/Models/SM_Prop_Statue_02.obj");
+
+	PointLight2 = new CModel("Resources/Models/SM_Prop_Statue_02.obj");
+
 	LightManager = new CLightManager();
 
-	LightManager->AddPointLight(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
-	LightManager->AddPointLight(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
+	LightManager->AddPointLight(glm::vec3(20.0f, 0.0f, 20.0f), glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
+	LightManager->AddPointLight(glm::vec3(-20.0f, 0.0f, -20.0f), glm::vec3(1.0f, 0.0f, 0.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
 
 	// set background colour
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
@@ -313,6 +330,20 @@ void Update()
 
 	SoldierModelMat = Camera->GetProjMat() * Camera->GetViewMat() * SoldierModelMat;
 
+	// for point lights
+	PLTranslationMat1 = glm::translate(glm::mat4(1.0f), PointLight1Position);
+	PLRotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((SoldierRotationAngle)), glm::vec3(1.0f, 1.0f, 1.0f));
+	PLScaleMat = glm::scale(glm::mat4(1.0f), PointLightScale);
+	PLModelMat1 = PLTranslationMat1 * PLRotationMat * PLScaleMat;
+
+	//PLModelMat1 = Camera->GetProjMat() * Camera->GetViewMat() * SoldierModelMat;
+
+	// point light 2
+	PLTranslationMat2 = glm::translate(glm::mat4(1.0f), PointLight2Position);
+	PLModelMat2 = PLTranslationMat2 * PLRotationMat * PLScaleMat;
+
+	//PLModelMat2 = Camera->GetProjMat() * Camera->GetViewMat() * SoldierModelMat;
+
 	// for instanced matrices
 	TreeTranslationMat = glm::translate(glm::mat4(1.0f), TreePosition);
 	TreeRotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((TreeRotationAngle) * 10), glm::vec3(1.0f, 1.0f, 1.0f));
@@ -358,36 +389,23 @@ void Render()
 
 	// UI button 
 	// change texture if mouse overlapping
-	if (g_UIChange)
-	{
 		// single soldier model
-		Model->Render(Program_3DModel, Texture_Awesome, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
-
-		// many trees
-		// point lights
-		LightManager->UpdateShader(Program_Lighting);
-		Tree->RenderInstanced(Program_Lighting, Texture_Awesome, RandomLocations, TreeModelMat, Camera->GetPosition(), (Camera->GetProjMat() * Camera->GetViewMat()));
-
-		// Button
-		Button->Render(Program_Quads, Texture_Awesome, QuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
-	}
-	else
-	{
-		// single soldier model
-		Model->Render(Program_3DModel, Texture_Quag, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
+		//Model->Render(Program_3DModel, Texture_Quag, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
 
 		// many trees
 		// point lights
 		LightManager->UpdateShader(Program_Lighting);
 		Tree->RenderInstanced(Program_Lighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), (Camera->GetProjMat() * Camera->GetViewMat()));
-		// Button
-		Button->Render(Program_Quads, Texture_Quag, QuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
-	}
 
 	// skybox
 	glm::mat4 view = Camera->GetViewMat();
 	glm::mat4 projection = Camera->GetProjMat();
 	Skybox->Render(Program_Skybox, view, projection);
+
+	// point lights
+	PointLight1->Render(Program_PointLight1, Texture_Quag, PLModelMat1, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
+	PointLight2->Render(Program_PointLight2, Texture_Quag, PLModelMat2, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
+
 
 
 

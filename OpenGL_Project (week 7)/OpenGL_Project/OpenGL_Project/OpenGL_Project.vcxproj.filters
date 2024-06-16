@@ -27,9 +27,6 @@
     <ClCompile Include="CModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CButton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CLightManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -47,9 +44,6 @@
     <ClInclude Include="CModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CButton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CLightManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -58,9 +52,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Resources\Shaders\FixedColor.frag.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
     <Text Include="Resources\Shaders\FixedTriangle.vert.txt">
       <Filter>Resource Files</Filter>
     </Text>
@@ -121,6 +112,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\onePointLight.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="PointLight1.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="PointLight2.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\PointLight1.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\PointLight2.frag">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
