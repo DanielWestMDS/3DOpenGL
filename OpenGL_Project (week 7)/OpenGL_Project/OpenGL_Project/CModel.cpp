@@ -158,9 +158,10 @@ void CModel::RenderInstanced(GLint _program, GLint _texture, std::vector<glm::ve
     glBufferData(GL_ARRAY_BUFFER, _instancePositions.size() * sizeof(glm::vec3), _instancePositions.data(), GL_DYNAMIC_DRAW);
 
     // Set the instancePosition attribute (location 3)
-    glEnableVertexAttribArray(3);
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-    glVertexAttribDivisor(3, 1); // Divisor for instancing
+    glEnableVertexAttribArray(3);
+   // glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+   // glVertexAttribDivisor(3, 1); // Divisor for instancing
 
     // render
     glDrawArraysInstanced(DrawType, 0, DrawCount, _instancePositions.size());

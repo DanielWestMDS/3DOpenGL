@@ -135,7 +135,7 @@ float MoveSpeed = 10.0f;
 
 // toggle bools
 bool g_bShowMousePosition = false;
-bool g_bWireFrame = false;
+bool g_bPointLightActive = true;
 bool g_bShowMouse = true;
 bool g_UIChange = false;
 
@@ -180,7 +180,7 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 	// toggle wireframe
 	if (_Key == GLFW_KEY_1 && _Action == GLFW_PRESS)
 	{
-		g_bWireFrame = !g_bWireFrame;
+		g_bPointLightActive = !g_bPointLightActive;
 	}
 }
 
@@ -292,9 +292,9 @@ void InitialSetup()
 
 	// bind instance buffer to attribue location
 	glBindVertexArray(Tree->GetVAO());
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-	glVertexAttribDivisor(2, 1);
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+	glVertexAttribDivisor(3, 1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
@@ -385,17 +385,10 @@ void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-
-
-	// UI button 
-	// change texture if mouse overlapping
-		// single soldier model
-		//Model->Render(Program_3DModel, Texture_Quag, SoldierModelMat, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
-
-		// many trees
-		// point lights
-		LightManager->UpdateShader(Program_Lighting);
-		Tree->RenderInstanced(Program_Lighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), (Camera->GetProjMat() * Camera->GetViewMat()));
+	// many trees
+	// point lights
+	LightManager->UpdateShader(Program_Lighting, g_bPointLightActive);
+	Tree->RenderInstanced(Program_Lighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), (Camera->GetProjMat() * Camera->GetViewMat()));
 
 	// skybox
 	glm::mat4 view = Camera->GetViewMat();
@@ -403,24 +396,14 @@ void Render()
 	Skybox->Render(Program_Skybox, view, projection);
 
 	// point lights
-	PointLight1->Render(Program_PointLight1, Texture_Quag, PLModelMat1, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
-	PointLight2->Render(Program_PointLight2, Texture_Quag, PLModelMat2, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
-
-
-
+	if (g_bPointLightActive)
+	{
+		PointLight1->Render(Program_PointLight1, Texture_Quag, PLModelMat1, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
+		PointLight2->Render(Program_PointLight2, Texture_Quag, PLModelMat2, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
+	}
 
 	// unbind
 	glBindVertexArray(0);
-
-	// show wireframe
-	if (g_bWireFrame)
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
-	else
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
 	
 	glUseProgram(0);
 

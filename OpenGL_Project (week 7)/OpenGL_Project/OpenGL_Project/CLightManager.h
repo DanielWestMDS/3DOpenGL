@@ -29,6 +29,13 @@ struct PointLight
     float AttenuationExponent;
 };
 
+struct DirectionalLight
+{
+    glm::vec3 Direction;
+    glm::vec3 Color;
+    float SpecularStrength;
+};
+
 class CLightManager
 {
 public:
@@ -36,7 +43,7 @@ public:
     ~CLightManager();
 
     void AddPointLight(const glm::vec3& position, const glm::vec3& color, float specularStrength, float _Constant, float _Linear, float _Exponent);
-    void UpdateShader(GLuint program);
+    void UpdateShader(GLuint program, bool _bPointLight);
 
 private:
     // lights
@@ -46,5 +53,9 @@ private:
     PointLight PointLightArray[MAX_POINT_LIGHTS];
     unsigned int PointLightCount;
 
+    // vector to store all the point lights
     std::vector<PointLight> m_PointLights;
+
+    // direction light (only one needed)
+    DirectionalLight m_DirectionLight;
 };

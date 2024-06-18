@@ -14,6 +14,13 @@ struct PointLight
     float AttenuationExponent;
 };
 
+struct DirectionalLight
+{
+    vec3 Direction;
+    vec3 Color;
+    float SpecularStrength;
+};
+
 // Inputs from Vertex Shader
 in vec3 FragNormal;
 in vec2 FragTexCoords;
@@ -37,6 +44,11 @@ uniform float ObjectShininess;
 // point light
 uniform PointLight PointLightArray[MAX_POINT_LIGHTS];
 uniform int PointLightCount;
+// bool for turning off point Light
+uniform bool bPointLightOn;
+
+// direction Light
+uniform DirectionalLight DirectionLight;
 
 // Output
 out vec4 FinalColor;
@@ -90,52 +102,47 @@ vec3 CalculateLight_Point(int i)
     return Light;
 }
 
+vec3 CalculateLight_Direction()
+{
+    // Light Direction
+    vec3 Normal = normalize(FragNormal);
+    vec3 LightDir = normalize(DirectionLight.Direction);
+
+    // diffuse component
+    float DiffuseStrength = max(dot(Normal, -LightDir), 0.0f);
+    vec3 Diffuse = DiffuseStrength * DirectionLight.Color;
+
+    // specular component
+    vec3 ReverseViewDir = normalize(CameraPos - FragPos);
+    vec3 HalfwayVector = normalize(LightDir + ReverseViewDir);
+    float SpecularReflectivity = pow(max(dot(Normal, HalfwayVector), 0.0f), ObjectShininess);
+    vec3 Specular = DirectionLight.SpecularStrength * SpecularReflectivity * LightColor;
+
+    vec3 Light = Diffuse + Specular;
+
+    return Light;
+}
+
 void main()
 {
     // Ambient component
     vec3 Ambient = AmbientStrength * AmbientColor;
-
-//   // Light Direction
-//   vec3 Normal = normalize(FragNormal);
-//   vec3 LightDir = normalize(FragPos - LightPos);
-//
-//   // diffuse component
-//   float DiffuseStrength = max(dot(Normal, -LightDir), 0.0f);
-//   vec3 Diffuse = DiffuseStrength * LightColor;
-//
-//   // specular component
-//   vec3 ReverseViewDir = normalize(CameraPos - FragPos);
-//   vec3 HalfwayVector = normalize(-LightDir + ReverseViewDir);
-//   float SpecularReflectivity = pow(max(dot(Normal, HalfwayVector), 0.0f), ObjectShininess);
-//   vec3 Specular = LightSpecularStrength * SpecularReflectivity * LightColor;
-
+    
+    // ambient
     vec3 TotalLightOutput = Ambient;
 
+    // direction
+    TotalLightOutput += CalculateLight_Direction();
+
    // point light
-   for (int i = 0; i < PointLightCount; i++)
+   if (bPointLightOn)
    {
-       TotalLightOutput += CalculateLight_Point(i);
+        for (int i = 0; i < PointLightCount; i++)
+        {
+            TotalLightOutput += CalculateLight_Point(i);
+        }
    }
 
+   // final color
     FinalColor = vec4(TotalLightOutput, 1.0f) * texture(Texture0, FragTexCoords); 
-    
-    // Light Direction
-//vec3 Normal = normalize(FragNormal);
-//vec3 LightDir = normalize(FragPos - LightPos);
-//
-//// diffuse component
-//float DiffuseStrength = max(dot(Normal, -LightDir), 0.0f);
-//vec3 Diffuse = DiffuseStrength * LightColor;
-//
-//// specular component
-//vec3 ReverseViewDir = normalize(CameraPos - FragPos);
-//vec3 HalfwayVector = normalize(-LightDir + ReverseViewDir);
-//float SpecularReflectivity = pow(max(dot(Normal, HalfwayVector), 0.0f), ObjectShininess);
-//vec3 Specular = LightSpecularStrength * SpecularReflectivity * LightColor;
-//
-//// combine the lighting components
-//vec4 Light = vec4(Ambient + Diffuse + Specular, 1.0f);
-//
-//// Calculate the final color using the light
-//FinalColor = Light * texture(Texture0, FragTexCoords);
 }

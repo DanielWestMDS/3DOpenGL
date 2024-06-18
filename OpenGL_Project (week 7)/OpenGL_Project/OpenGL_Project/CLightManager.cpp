@@ -22,6 +22,11 @@ CLightManager::CLightManager()
     unsigned int PointLightCount;
 
     std::vector<PointLight> m_PointLights;
+
+    // directional light
+    m_DirectionLight.Direction = glm::vec3(-1.0f, -1.0f, 0.0f);
+    m_DirectionLight.Color = glm::vec3(0.3f, 0.3f, 0.3f);
+    m_DirectionLight.SpecularStrength = 0.5f;
 }
 
 CLightManager::~CLightManager()
@@ -47,11 +52,11 @@ void CLightManager::AddPointLight(const glm::vec3& position, const glm::vec3& co
     }
 }
 
-void CLightManager::UpdateShader(GLuint program)
+void CLightManager::UpdateShader(GLuint program, bool _pointlight)
 {
     glUseProgram(program);
-        
-    for (unsigned int i = 0; i < m_PointLights.size(); ++i)
+
+    for (unsigned int i = 0; i < m_PointLights.size(); i++)
     {
         std::string baseName = "PointLightArray[" + std::to_string(i) + "]";
         glUniform3fv(glGetUniformLocation(program, (baseName + ".Position").c_str()), 1, &m_PointLights[i].Position[0]);
@@ -60,7 +65,16 @@ void CLightManager::UpdateShader(GLuint program)
         glUniform1f(glGetUniformLocation(program, (baseName + ".AttenuationConstant").c_str()), m_PointLights[i].AttenuationConstant);
         glUniform1f(glGetUniformLocation(program, (baseName + ".AttenuationLinear").c_str()), m_PointLights[i].AttenuationLinear);
         glUniform1f(glGetUniformLocation(program, (baseName + ".AttenuationExponent").c_str()), m_PointLights[i].AttenuationExponent);
-    }
 
+    }
+    // pass the boolean _pointlight into the shader
+    glUniform1i(glGetUniformLocation(program, "bPointLightOn"), _pointlight);
+
+    // pass point light count into shader
     glUniform1i(glGetUniformLocation(program, "PointLightCount"), m_PointLights.size());
+
+    std::string sDirection = "DirectionLight";
+    glUniform3fv(glGetUniformLocation(program, (sDirection + ".Direction").c_str()), 1, &m_DirectionLight.Direction[0]);
+    glUniform3fv(glGetUniformLocation(program, (sDirection + ".Color").c_str()), 1, &m_DirectionLight.Color[0]);
+    glUniform1f(glGetUniformLocation(program, (sDirection + ".SpecularStrength").c_str()), m_DirectionLight.SpecularStrength);
 }
