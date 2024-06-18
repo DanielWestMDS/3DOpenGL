@@ -158,23 +158,10 @@
   <ItemGroup>
     <Text Include="Resources\Shaders\3DModel.frag" />
     <Text Include="Resources\Shaders\3DModel.vert" />
-    <Text Include="Resources\Shaders\Button.vert.txt" />
-    <Text Include="Resources\Shaders\ClipSpace.vert.txt" />
-    <Text Include="Resources\Shaders\FixedTriangle.vert.txt" />
-    <Text Include="Resources\Shaders\HexOne.vert.txt" />
     <Text Include="Resources\Shaders\InstancedArray_Standard.vert" />
     <Text Include="Resources\Shaders\Lighting_BlinnPhong.frag" />
-    <Text Include="Resources\Shaders\PositionOnly.vert.txt" />
     <Text Include="Resources\Shaders\Skybox.frag" />
     <Text Include="Resources\Shaders\Skybox.vert" />
-    <Text Include="Resources\Shaders\Squares.vert.txt" />
-    <Text Include="Resources\Shaders\Texture.frag.txt" />
-    <Text Include="Resources\Shaders\Texture.vert.txt" />
-    <Text Include="Resources\Shaders\TextureMix.frag.txt" />
-    <Text Include="Resources\Shaders\VertexColor.frag.txt" />
-    <Text Include="Resources\Shaders\VertexColor.vert.txt" />
-    <Text Include="Resources\Shaders\VertexColorFade.frag.txt" />
-    <Text Include="Resources\Shaders\WorldSpace.vert.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PointLight1.frag" />

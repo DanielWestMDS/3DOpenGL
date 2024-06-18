@@ -53,29 +53,6 @@ uniform DirectionalLight DirectionLight;
 // Output
 out vec4 FinalColor;
 
-//// Inputs from Vertex Shader
-//in vec3 FragNormal;
-//in vec2 FragTexCoords;
-//in vec3 FragPos;
-//
-//// Uniform Inputs
-//uniform sampler2D Texture0;
-//// how strong ambient light is
-//uniform float AmbientStrength = 0.15f;
-//uniform vec3 AmbientColor = vec3(1.0f, 1.0f, 1.0f);
-//
-//// diffuse
-//uniform vec3 LightColor = vec3(1.0f, 1.0f, 1.0f);
-//uniform vec3 LightPos = vec3(-300.0f, 000.0f, 100.0f);
-//
-//// specular
-//uniform vec3 CameraPos;
-//uniform float LightSpecularStrength = 1.0f;
-//uniform float ObjectShininess = 20.0f;
-//
-//// Output
-//out vec4 FinalColor;
-
 // function to calculate point light, outputs result of lighting calculations
 vec3 CalculateLight_Point(int i)
 {
