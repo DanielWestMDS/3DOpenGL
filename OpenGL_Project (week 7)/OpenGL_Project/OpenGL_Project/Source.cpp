@@ -142,6 +142,14 @@ bool g_UIChange = false;
 // mouse position
 glm::vec2 g_MousePos;
 
+struct HeightMapInfo
+{
+	std::string FilePath = "";
+	unsigned int Width = 0;
+	unsigned int Depth = 0;
+	float CellSpacing = 1.0f;
+};
+
 // Define the six faces of the cube map in a vector
 std::vector<std::string> sFaces = {
 	"Resources/Textures/Right.png",
@@ -297,6 +305,9 @@ void InitialSetup()
 	glVertexAttribDivisor(3, 1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	// Height map terrain
+	//Mesh_Terrain();
 
 	// Mouse Callback
 	glfwSetCursorPosCallback(Window, CursorPositionInput);

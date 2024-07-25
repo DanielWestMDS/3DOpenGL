@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CCamera.cpp" />
+    <ClCompile Include="CHeightMap.cpp" />
     <ClCompile Include="CLightManager.cpp" />
     <ClCompile Include="CModel.cpp" />
     <ClCompile Include="CSkyBox.cpp" />
@@ -150,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCamera.h" />
+    <ClInclude Include="CHeightMap.h" />
     <ClInclude Include="CLightManager.h" />
     <ClInclude Include="CModel.h" />
     <ClInclude Include="CSkyBox.h" />

@@ -33,6 +33,9 @@
     <ClCompile Include="CSkyBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CHeightMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderLoader.h">
@@ -50,51 +53,15 @@
     <ClInclude Include="CSkyBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CHeightMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Resources\Shaders\FixedTriangle.vert.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Resources\Shaders\PositionOnly.vert.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Resources\Shaders\VertexColor.vert.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Resources\Shaders\VertexColor.frag.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Resources\Shaders\VertexColorFade.frag.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Resources\Shaders\WorldSpace.vert.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Resources\Shaders\Texture.vert.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Resources\Shaders\Texture.frag.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Resources\Shaders\TextureMix.frag.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Resources\Shaders\ClipSpace.vert.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Resources\Shaders\HexOne.vert.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Resources\Shaders\Squares.vert.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
     <Text Include="Resources\Shaders\3DModel.frag">
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="Resources\Shaders\3DModel.vert">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Resources\Shaders\Button.vert.txt">
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="Resources\Shaders\InstancedArray_Standard.vert">
