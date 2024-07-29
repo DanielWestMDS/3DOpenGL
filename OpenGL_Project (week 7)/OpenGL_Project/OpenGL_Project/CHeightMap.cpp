@@ -139,4 +139,14 @@ void CHeightMap::BuildEBO(HeightMapInfo& _BuildInfo)
 	glGenBuffers(1, &m_EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
+
+	// VAO
+	glGenVertexArrays(1, &m_VAO);
+	glBindVertexArray(m_VAO);
+
+	// vertex attribute pointers
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexStandard), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindVertexArray(0);
 }
