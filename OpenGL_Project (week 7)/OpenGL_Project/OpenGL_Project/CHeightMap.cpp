@@ -17,6 +17,30 @@ CHeightMap::~CHeightMap()
 {
 }
 
+void CHeightMap::Render(GLint _program, GLint _texture, glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _matrix)
+{
+	// bind program and VAO
+	glUseProgram(_program);
+	glBindVertexArray(m_VAO);
+
+	// Model matrix
+	GLint ModelMatrix = glGetUniformLocation(_program, "ModelMat");
+	glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_matrix));
+
+	// pass camera position in via uniform
+	GLint CameraPosLoc = glGetUniformLocation(_program, "CameraPos");
+	glUniform3fv(CameraPosLoc, 1, glm::value_ptr(_cameraPos));
+
+	// pass in view projection
+	GLint VPMat = glGetUniformLocation(_program, "VP");
+	glUniformMatrix4fv(VPMat, 1, GL_FALSE, glm::value_ptr(_projMat * _viewMat));
+
+	// render
+	glDrawArrays(m_DrawType, 0, m_DrawCount);
+
+	glBindVertexArray(0);
+}
+
 bool CHeightMap::LoadHeightMap(HeightMapInfo& _BuildInfo)
 {
 	unsigned int VertexCount = _BuildInfo.Width * _BuildInfo.Depth;
@@ -50,7 +74,7 @@ bool CHeightMap::LoadHeightMap(HeightMapInfo& _BuildInfo)
 void CHeightMap::BuildVertexData(HeightMapInfo& _BuildInfo)
 {
 	unsigned int VertexCount = _BuildInfo.Width * _BuildInfo.Depth;
-	std::vector<VertexStandard> Vertices(VertexCount);
+	std::vector<VertexStandardHeightMap> Vertices(VertexCount);
 
 	float HalfWidth = (_BuildInfo.Width - 1) * _BuildInfo.CellSpacing * 0.5;
 	float HalfDepth = (_BuildInfo.Depth - 1) * _BuildInfo.CellSpacing * 0.5;
@@ -145,7 +169,7 @@ void CHeightMap::BuildEBO(HeightMapInfo& _BuildInfo)
 	glBindVertexArray(m_VAO);
 
 	// vertex attribute pointers
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexStandard), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexStandardHeightMap), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	glBindVertexArray(0);

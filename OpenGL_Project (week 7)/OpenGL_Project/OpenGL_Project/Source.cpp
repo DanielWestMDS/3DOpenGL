@@ -20,6 +20,7 @@
 #include "CModel.h"
 #include "CSkyBox.h"
 #include "CLightManager.h"
+#include "CHeightMap.h"
 
 // global variables
 GLFWwindow* Window = nullptr;
@@ -37,6 +38,8 @@ CLightManager* LightManager;
 // point lights
 CModel* PointLight1;
 CModel* PointLight2;
+// height map
+CHeightMap* HeightMap;
 
 // programs
 GLuint Program_3DModel;
@@ -142,13 +145,13 @@ bool g_UIChange = false;
 // mouse position
 glm::vec2 g_MousePos;
 
-struct HeightMapInfo
-{
-	std::string FilePath = "";
-	unsigned int Width = 0;
-	unsigned int Depth = 0;
-	float CellSpacing = 1.0f;
-};
+//struct HeightMapInfo
+//{
+//	std::string FilePath = "";
+//	unsigned int Width = 0;
+//	unsigned int Depth = 0;
+//	float CellSpacing = 1.0f;
+//};
 
 // Define the six faces of the cube map in a vector
 std::vector<std::string> sFaces = {
@@ -412,6 +415,9 @@ void Render()
 		PointLight1->Render(Program_PointLight1, Texture_Quag, PLModelMat1, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
 		PointLight2->Render(Program_PointLight2, Texture_Quag, PLModelMat2, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
 	}
+
+	// Height map render
+	HeightMap->Render(Program_Lighting, Texture_Quag, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), TreeModelMat);
 
 	// unbind
 	glBindVertexArray(0);

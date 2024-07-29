@@ -4,20 +4,20 @@
 #include <vector>
 #include <fstream>
 
-struct VertexStandard
+struct VertexStandardHeightMap
 {
 public:
 	glm::vec3 Position;
 	glm::vec2 TexCoord;
 	glm::vec3 Normal;
 	;
-	VertexStandard()
+	VertexStandardHeightMap()
 	{
 		Position = glm::vec3(0.0f);
 		TexCoord = glm::vec2(0.0f);
 		Normal = glm::vec3(0.0f);
 	};
-	VertexStandard(glm::vec3 pos, glm::vec2 texc)
+	VertexStandardHeightMap(glm::vec3 pos, glm::vec2 texc)
 	{
 		Position = pos;
 		TexCoord = texc;
@@ -39,7 +39,7 @@ public:
 	CHeightMap(HeightMapInfo& _BuildInfo);
 	~CHeightMap();
 
-	void Render(GLint _program, GLint _texture, glm::mat4 _VP);
+	void Render(GLint _program, GLint _texture, glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _matrix);
 
 private:
 	bool LoadHeightMap(HeightMapInfo& _BuildInfo);
