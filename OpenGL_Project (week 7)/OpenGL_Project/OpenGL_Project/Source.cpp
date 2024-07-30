@@ -278,6 +278,14 @@ void InitialSetup()
 	LightManager->AddPointLight(glm::vec3(20.0f, 0.0f, 20.0f), glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
 	LightManager->AddPointLight(glm::vec3(-20.0f, 0.0f, -20.0f), glm::vec3(1.0f, 0.0f, 0.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
 
+	HeightMapInfo info;
+	info.FilePath = "Resources/Textures/Heightmap0.raw";
+	info.Width = 512;
+	info.Depth = 512;
+	info.CellSpacing = 1.0f;
+
+	HeightMap = new CHeightMap(info);
+
 	// set background colour
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 
@@ -417,7 +425,7 @@ void Render()
 	}
 
 	// Height map render
-	HeightMap->Render(Program_Lighting, Texture_Quag, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), TreeModelMat);
+	HeightMap->Render(Program_Lighting, Texture_Quag, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat);
 
 	// unbind
 	glBindVertexArray(0);

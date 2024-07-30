@@ -6,6 +6,7 @@ CHeightMap::CHeightMap(HeightMapInfo& _BuildInfo)
 	{
 		BuildVertexData(_BuildInfo);
 		BuildEBO(_BuildInfo);
+		std::cout << "Height Should have loaded successfully" << std::endl;
 	}
 	else
 	{
