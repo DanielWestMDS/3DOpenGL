@@ -109,7 +109,10 @@ void main()
     vec3 TotalLightOutput = Ambient;
 
     // direction
-    TotalLightOutput += CalculateLight_Direction();
+   if (bPointLightOn)
+   {
+        TotalLightOutput += CalculateLight_Direction();
+   }
 
    // point light
    if (bPointLightOn)

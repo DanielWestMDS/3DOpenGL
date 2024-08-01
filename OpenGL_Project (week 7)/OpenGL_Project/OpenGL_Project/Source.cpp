@@ -106,13 +106,13 @@ glm::mat4 TreeScaleMat;
 glm::mat4 TreeModelMat;
 
 // Quad Model Mat values
-glm::vec3 QuadPosition = glm::vec3(100.0f, 100.0f, 0.0f);
+glm::vec3 QuadPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::mat4 QuadTranslationMat;
 
-float QuadRotationAngle = 0.0f;
+float QuadRotationAngle = 180.0f;
 glm::mat4 QuadRotationMat;
 
-glm::vec3 QuadScale = glm::vec3(100.0f, 100.0f, 1.0f);
+glm::vec3 QuadScale = glm::vec3(10.0f, 10.0f, 10.0f);
 glm::mat4 QuadScaleMat;
 
 glm::mat4 QuadModelMat;
@@ -230,7 +230,7 @@ void InitialSetup()
 	glGenTextures(1, &Texture_Quag);
 	glBindTexture(GL_TEXTURE_2D, Texture_Quag);
 
-	unsigned char* ImageData = stbi_load("Resources/Textures/PolygonAncientWorlds_Texture_01_A.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
+	unsigned char* ImageData = stbi_load("Resources/Textures/FamilyPortrait.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
 
 
 	// Check if image is RGBA or RGB
@@ -244,7 +244,7 @@ void InitialSetup()
 
 	// second image 
 	// Load Image data
-	unsigned char* ImageData1 = stbi_load("Resources/Textures/PolygonAncientWorlds_Statue_01.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
+	unsigned char* ImageData1 = stbi_load("Resources/Textures/FamilyPortrait.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
 
 	// create and bind new texture
 	glGenTextures(1, &Texture_Awesome);
@@ -410,12 +410,12 @@ void Render()
 	// many trees
 	// point lights
 	LightManager->UpdateShader(Program_Lighting, g_bPointLightActive);
-	Tree->RenderInstanced(Program_Lighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), (Camera->GetProjMat() * Camera->GetViewMat()));
+	//Tree->RenderInstanced(Program_Lighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), (Camera->GetProjMat() * Camera->GetViewMat()));
 
 	// skybox
 	glm::mat4 view = Camera->GetViewMat();
 	glm::mat4 projection = Camera->GetProjMat();
-	Skybox->Render(Program_Skybox, view, projection);
+	//Skybox->Render(Program_Skybox, view, projection);
 
 	// point lights
 	if (g_bPointLightActive)
