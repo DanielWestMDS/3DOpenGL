@@ -3,6 +3,7 @@
 #include "CCamera.h"
 #include <vector>
 #include <fstream>
+#include <string>
 
 struct VertexStandardHeightMap
 {
@@ -10,21 +11,21 @@ public:
 	glm::vec3 Position;
 	glm::vec2 TexCoord;
 	glm::vec3 Normal;
-	glm::vec3 Color;
+	float Height;
 
 	VertexStandardHeightMap()
 	{
 		Position = glm::vec3(0.0f);
 		TexCoord = glm::vec2(0.0f);
 		Normal = glm::vec3(0.0f);
-		Color = glm::vec3(0.0f);
+		Height = 0.0f;
 	};
 	VertexStandardHeightMap(glm::vec3 pos, glm::vec2 texc)
 	{
 		Position = pos;
 		TexCoord = texc;
 		Normal = glm::vec3(0.0f);
-		Color = glm::vec3(0.0f);
+		Height = 0.0f;
 	}
 };
 
@@ -42,7 +43,7 @@ public:
 	CHeightMap(HeightMapInfo& _BuildInfo);
 	~CHeightMap();
 
-	void Render(GLint _program, GLint _texture, glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _matrix);
+	void Render(GLint _program, GLint _textureArray[4], glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _matrix);
 
 private:
 	bool LoadHeightMap(HeightMapInfo& _BuildInfo);
@@ -53,6 +54,7 @@ private:
 
 	std::vector<float> m_fHeightMap;
 	std::vector<float> m_fHeightMapSmooth;
+	float m_fHeightLevels[3];
 	int m_DrawType;
 	int m_DrawCount;
 	GLuint m_VAO;

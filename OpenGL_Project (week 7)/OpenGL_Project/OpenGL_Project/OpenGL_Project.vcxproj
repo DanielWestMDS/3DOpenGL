@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CCamera.cpp" />
+    <ClCompile Include="CFramebuffer.cpp" />
     <ClCompile Include="CHeightMap.cpp" />
     <ClCompile Include="CLightManager.cpp" />
     <ClCompile Include="CModel.cpp" />
@@ -151,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCamera.h" />
+    <ClInclude Include="CFramebuffer.h" />
     <ClInclude Include="CHeightMap.h" />
     <ClInclude Include="CLightManager.h" />
     <ClInclude Include="CModel.h" />
@@ -168,6 +170,8 @@
   <ItemGroup>
     <None Include="PointLight1.frag" />
     <None Include="PointLight2.frag" />
+    <None Include="Resources\Shaders\HeightMap.vert" />
+    <None Include="Resources\Shaders\Lighting_HeightMap.frag" />
     <None Include="Resources\Shaders\onePointLight.frag" />
     <None Include="Resources\Shaders\PointLight1.frag" />
     <None Include="Resources\Shaders\PointLight2.frag" />

@@ -47,10 +47,15 @@ GLuint Program_Lighting;
 GLuint Program_Skybox;
 GLuint Program_PointLight1;
 GLuint Program_PointLight2;
+GLuint Program_HeightMap;
 
 // texture
 GLuint Texture_Awesome;
 GLuint Texture_Quag;
+GLuint Texture_3;
+GLuint Texture_4;
+// textures for height map
+GLint HeightMapTextures[4];
 
 // Object Matrices and Components
 // translation
@@ -195,6 +200,39 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 	}
 }
 
+GLuint LoadTexture(std::string _filepath)
+{
+	GLuint Texture;
+
+	// Load Image data
+	int ImageWidth;
+	int ImageHeight;
+	int ImageComponents;
+
+	// create and bind new texture
+	glGenTextures(1, &Texture);
+	glBindTexture(GL_TEXTURE_2D, Texture);
+
+	unsigned char* ImageData = stbi_load("Resources/Textures/PolygonAncientWorlds_Texture_01_A.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
+
+
+	// Check if image is RGBA or RGB
+	GLint LoadedComponents = (ImageComponents == 4) ? GL_RGBA : GL_RGB;
+
+	// Populate the texture with the image
+	glTexImage2D(GL_TEXTURE_2D, 0, LoadedComponents, ImageWidth, ImageHeight, 0, LoadedComponents, GL_UNSIGNED_BYTE, ImageData);
+
+	// generate the mipmaps
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	// free memory
+	stbi_image_free(ImageData);
+	// unbind texture
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	return Texture;
+}
+
 // custom functions for tidy code
 void InitialSetup()
 {
@@ -218,50 +256,21 @@ void InitialSetup()
 	Program_PointLight2 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
 		"Resources/Shaders/PointLight2.frag");
 
+	Program_HeightMap = ShaderLoader::CreateProgram("Resources/Shaders/HeightMap.vert",
+		"Resources/Shaders/Lighting_HeightMap.frag");
+
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
 
-	// Load Image data
-	int ImageWidth;
-	int ImageHeight;
-	int ImageComponents;
 
-	// create and bind new texture
-	glGenTextures(1, &Texture_Quag);
-	glBindTexture(GL_TEXTURE_2D, Texture_Quag);
-
-	unsigned char* ImageData = stbi_load("Resources/Textures/FamilyPortrait.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
-
-
-	// Check if image is RGBA or RGB
-	GLint LoadedComponents = (ImageComponents == 4) ? GL_RGBA : GL_RGB;
-
-	// Populate the texture with the image
-	glTexImage2D(GL_TEXTURE_2D, 0, LoadedComponents, ImageWidth, ImageHeight, 0, LoadedComponents, GL_UNSIGNED_BYTE, ImageData);
-
-	// generate the mipmaps
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	// second image 
-	// Load Image data
-	unsigned char* ImageData1 = stbi_load("Resources/Textures/FamilyPortrait.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
-
-	// create and bind new texture
-	glGenTextures(1, &Texture_Awesome);
-	glBindTexture(GL_TEXTURE_2D, Texture_Awesome);
-
-	// Check if image is RGBA or RGB
-	LoadedComponents = (ImageComponents == 4) ? GL_RGBA : GL_RGB;
-
-	// Populate the texture with the image
-	glTexImage2D(GL_TEXTURE_2D, 0, LoadedComponents, ImageWidth, ImageHeight, 0, LoadedComponents, GL_UNSIGNED_BYTE, ImageData1);
-
-	// generate the mipmaps
-	glGenerateMipmap(GL_TEXTURE_2D);
-	// free memory
-	stbi_image_free(ImageData1);
-	// unbind texture
-	glBindTexture(GL_TEXTURE_2D, 0);
+	Texture_Quag = LoadTexture("Resources/Textures/FamilyPortrait.png");
+	Texture_Awesome = LoadTexture("Resources/Textures/GREY.png");
+	Texture_3 = LoadTexture("Resources/Textures/PolygonAncientWorlds_Statue_01.png");
+	Texture_4 = LoadTexture("Resources/Textures/PolygonAncientWorlds_Texture_01_A.png");
+	HeightMapTextures[0] = Texture_Quag;
+	HeightMapTextures[1] = Texture_Awesome;
+	HeightMapTextures[2] = Texture_3;
+	HeightMapTextures[3] = Texture_4;
 
 	Camera = new CCamera();
 
@@ -425,7 +434,7 @@ void Render()
 	}
 
 	// Height map render
-	HeightMap->Render(Program_Lighting, Texture_Quag, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat);
+	HeightMap->Render(Program_HeightMap, HeightMapTextures, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat);
 
 	// unbind
 	glBindVertexArray(0);
