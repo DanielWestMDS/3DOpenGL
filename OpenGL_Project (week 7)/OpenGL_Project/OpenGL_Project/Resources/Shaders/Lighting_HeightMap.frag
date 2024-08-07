@@ -104,7 +104,7 @@ void main()
     vec4 texColor;
     if (FragHeight < HeightLevels[0])
     {
-        texColor = texture(TextureArray[0], FragTexCoords);
+        texColor = texture(TextureArray[3], FragTexCoords);
     }
     else if (FragHeight < HeightLevels[1])
     {
@@ -116,7 +116,7 @@ void main()
     }
     else
     {
-        texColor = texture(TextureArray[3], FragTexCoords);
+        texColor = texture(TextureArray[0], FragTexCoords);
     }
 
     FinalColor = vec4(TotalLightOutput, 1.0f) * texColor;

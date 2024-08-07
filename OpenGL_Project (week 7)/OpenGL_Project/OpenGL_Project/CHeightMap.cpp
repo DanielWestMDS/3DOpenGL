@@ -13,9 +13,9 @@ CHeightMap::CHeightMap(HeightMapInfo& _BuildInfo)
     }
     
 
-    m_fHeightLevels[0] = 1;
-    m_fHeightLevels[1] = 2;
-    m_fHeightLevels[2] = 3;
+    m_fHeightLevels[0] = 50;
+    m_fHeightLevels[1] = 80;
+    m_fHeightLevels[2] = 100;
 }
 
 CHeightMap::~CHeightMap()
@@ -24,49 +24,6 @@ CHeightMap::~CHeightMap()
 
 void CHeightMap::Render(GLint _program, GLint _textureArray[4], glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _matrix)
 {
-    //// Bind program and VAO
-    //glUseProgram(_program);
-    //glBindVertexArray(m_VAO);
-
-    //// Set textures
-    //for (int i = 0; i < 4; i++)
-    //{
-    //    std::string uniformName = "TextureArray[" + std::to_string(i) + "]";
-    //    GLint location = glGetUniformLocation(_program, uniformName.c_str());
-    //    glUniform1i(location, i);
-    //    glActiveTexture(GL_TEXTURE0 + i);
-    //    glBindTexture(GL_TEXTURE_2D, _textureArray[i]);
-    //}
-
-    //// Pass height levels to the shader
-    //GLint HeightLevelsLoc = glGetUniformLocation(_program, "HeightLevels");
-    //glUniform1fv(HeightLevelsLoc, 3, m_fHeightLevels);
-    ////// Set heights
-    ////for (int i = 0; i < 4; i++)
-    ////{
-    ////    std::string uniformName = "HeightLevels[" + std::to_string(i) + "]";
-    ////    //GLint location = glGetUniformLocation(_program, uniformName.c_str());
-    ////    glUniform1f(glGetUniformLocation(_program, uniformName.c_str()), i);
-    ////}
-
-    //// Set model, view, projection matrices
-    //GLint ModelMatrix = glGetUniformLocation(_program, "model");
-    //glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_matrix));
-
-    //GLint ViewMatrix = glGetUniformLocation(_program, "view");
-    //glUniformMatrix4fv(ViewMatrix, 1, GL_FALSE, glm::value_ptr(_viewMat));
-
-    //GLint ProjMatrix = glGetUniformLocation(_program, "projection");
-    //glUniformMatrix4fv(ProjMatrix, 1, GL_FALSE, glm::value_ptr(_projMat));
-
-    //// Pass camera position
-    //GLint CameraPosLoc = glGetUniformLocation(_program, "CameraPos");
-    //glUniform3fv(CameraPosLoc, 1, glm::value_ptr(_cameraPos));
-
-    //// Render
-    //glDrawElements(GL_TRIANGLES, m_DrawCount, GL_UNSIGNED_INT, 0);
-
-    //glBindVertexArray(0);
     glUseProgram(_program);
     glBindVertexArray(m_VAO);
 
@@ -74,9 +31,9 @@ void CHeightMap::Render(GLint _program, GLint _textureArray[4], glm::mat4 _projM
     {
         std::string uniformName = "TextureArray[" + std::to_string(i) + "]";
         GLint location = glGetUniformLocation(_program, uniformName.c_str());
-        glUniform1i(location, i);
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, _textureArray[i]);
+        glUniform1i(location, i);
     }
 
     GLint ModelMatrix = glGetUniformLocation(_program, "model");
