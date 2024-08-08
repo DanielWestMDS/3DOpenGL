@@ -12,10 +12,9 @@ CHeightMap::CHeightMap(HeightMapInfo& _BuildInfo)
         std::cout << "Height Map failed" << std::endl;
     }
     
-
-    m_fHeightLevels[0] = 50;
-    m_fHeightLevels[1] = 80;
-    m_fHeightLevels[2] = 100;
+    m_fHeightLevels[0] = 4;
+    m_fHeightLevels[1] = 20;
+    m_fHeightLevels[2] = 80;
 }
 
 CHeightMap::~CHeightMap()
@@ -27,13 +26,14 @@ void CHeightMap::Render(GLint _program, GLint _textureArray[4], glm::mat4 _projM
     glUseProgram(_program);
     glBindVertexArray(m_VAO);
 
-    for (int i = 0; i < 4; ++i)
+    // Set textures
+    for (int i = 0; i < 4; i++)
     {
         std::string uniformName = "TextureArray[" + std::to_string(i) + "]";
         GLint location = glGetUniformLocation(_program, uniformName.c_str());
+        glUniform1i(location, i);
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, _textureArray[i]);
-        glUniform1i(location, i);
     }
 
     GLint ModelMatrix = glGetUniformLocation(_program, "model");

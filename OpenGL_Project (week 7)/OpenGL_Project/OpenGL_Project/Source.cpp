@@ -213,7 +213,7 @@ GLuint LoadTexture(std::string _filepath)
 	glGenTextures(1, &Texture);
 	glBindTexture(GL_TEXTURE_2D, Texture);
 
-	unsigned char* ImageData = stbi_load("Resources/Textures/PolygonAncientWorlds_Texture_01_A.png", &ImageWidth, &ImageHeight, &ImageComponents, 0);
+	unsigned char* ImageData = stbi_load(_filepath.c_str(), &ImageWidth, &ImageHeight, &ImageComponents, 0);
 
 
 	// Check if image is RGBA or RGB
@@ -263,10 +263,10 @@ void InitialSetup()
 	stbi_set_flip_vertically_on_load(true);
 
 
-	Texture_Quag = LoadTexture("Resources/Textures/FamilyPortrait.png");
-	Texture_Awesome = LoadTexture("Resources/Textures/GREY.png");
+	Texture_Quag = LoadTexture("Resources/Textures/PolygonAncientWorlds_Texture_01_A.png");
+	Texture_Awesome = LoadTexture("Resources/Textures/360_F_107140090_3eRlMItNMxEcw67BDq0lPAppu5q62QUw.jpg");
 	Texture_3 = LoadTexture("Resources/Textures/PolygonAncientWorlds_Statue_01.png");
-	Texture_4 = LoadTexture("Resources/Textures/PolygonAncientWorlds_Texture_01_A.png");
+	Texture_4 = LoadTexture("Resources/Textures/snow.jpg");
 	HeightMapTextures[0] = Texture_Quag;
 	HeightMapTextures[1] = Texture_Awesome;
 	HeightMapTextures[2] = Texture_3;

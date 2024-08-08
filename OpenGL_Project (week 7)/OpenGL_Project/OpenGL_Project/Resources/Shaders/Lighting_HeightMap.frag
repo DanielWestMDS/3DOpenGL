@@ -102,21 +102,25 @@ void main()
     }
 
     vec4 texColor;
+
     if (FragHeight < HeightLevels[0])
     {
-        texColor = texture(TextureArray[3], FragTexCoords);
+        texColor = texture(TextureArray[0], FragTexCoords);
     }
     else if (FragHeight < HeightLevels[1])
     {
-        texColor = texture(TextureArray[1], FragTexCoords);
+        float blendFactor = (FragHeight - HeightLevels[0]) / (HeightLevels[1] - HeightLevels[0]);
+        texColor = mix(texture(TextureArray[0], FragTexCoords), texture(TextureArray[1], FragTexCoords), blendFactor);
     }
     else if (FragHeight < HeightLevels[2])
     {
-        texColor = texture(TextureArray[2], FragTexCoords);
+        float blendFactor = (FragHeight - HeightLevels[1]) / (HeightLevels[2] - HeightLevels[1]);
+        texColor = mix(texture(TextureArray[1], FragTexCoords), texture(TextureArray[2], FragTexCoords), blendFactor);
     }
     else
     {
-        texColor = texture(TextureArray[0], FragTexCoords);
+        float blendFactor = (FragHeight - HeightLevels[2]) / (1.0 - HeightLevels[2]);
+        texColor = mix(texture(TextureArray[2], FragTexCoords), texture(TextureArray[3], FragTexCoords), blendFactor);
     }
 
     FinalColor = vec4(TotalLightOutput, 1.0f) * texColor;
