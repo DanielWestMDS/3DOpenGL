@@ -85,6 +85,11 @@ bool CHeightMap::LoadHeightMap(HeightMapInfo& _BuildInfo)
 
 void CHeightMap::BuildVertexData(HeightMapInfo& _BuildInfo)
 {
+    // smoothen the height map
+    SmoothHeights(_BuildInfo);
+    SmoothHeights(_BuildInfo);
+    SmoothHeights(_BuildInfo);
+    SmoothHeights(_BuildInfo);
     unsigned int VertexCount = _BuildInfo.Width * _BuildInfo.Depth;
     std::vector<VertexStandardHeightMap> Vertices(VertexCount);
 

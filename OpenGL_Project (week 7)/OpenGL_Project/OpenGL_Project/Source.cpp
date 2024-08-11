@@ -21,6 +21,7 @@
 #include "CSkyBox.h"
 #include "CLightManager.h"
 #include "CHeightMap.h"
+#include "CPerlinNoise.h"
 
 // global variables
 GLFWwindow* Window = nullptr;
@@ -38,8 +39,12 @@ CLightManager* LightManager;
 // point lights
 CModel* PointLight1;
 CModel* PointLight2;
+
 // height map
 CHeightMap* HeightMap;
+
+// perlin noise
+CPerlinNoise* NoiseMap;
 
 // programs
 GLuint Program_3DModel;
@@ -58,67 +63,18 @@ GLuint Texture_4;
 GLint HeightMapTextures[4];
 
 // Object Matrices and Components
-// translation
-glm::vec3 SoldierPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::mat4 TranslationMat;
-
-// rotation
-float SoldierRotationAngle = 0.0f;
-glm::mat4 RotationMat;
-
-// scale
-glm::vec3 SoldierScale = glm::vec3(0.15f, 0.15f, 0.15f);
-glm::mat4 ScaleMat;
-
 // model to be combined with view and projection
 glm::mat4 SoldierModelMat;
 
-// translation
-glm::vec3 PointLight1Position = glm::vec3(20.0f, 0.0f, 20.0f);
-glm::mat4 PLTranslationMat1;
-
-// rotation
-float PointLight = 0.0f;
-glm::mat4 PLRotationMat;
-
-// scale
-glm::vec3 PointLightScale = glm::vec3(0.008f, 0.008f, 0.008f);
 glm::mat4 PLScaleMat;
 
 // model to be combined with view and projection
 glm::mat4 PLModelMat1;
 
-// point light 2
-// translation
-glm::vec3 PointLight2Position = glm::vec3(-20.0f, 0.0f, -20.0f);
-glm::mat4 PLTranslationMat2;
-
 // model to be combined with view and projection
 glm::mat4 PLModelMat2;
 
-
-// Tree Model mat
-// translation
-glm::vec3 TreePosition = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::mat4 TreeTranslationMat;
-//rotation
-float TreeRotationAngle = 0.0f;
-glm::mat4 TreeRotationMat;
-// scale
-glm::vec3 TreeScale = glm::vec3(0.005f, 0.005f, 0.005f);
-glm::mat4 TreeScaleMat;
-// model matrix
 glm::mat4 TreeModelMat;
-
-// Quad Model Mat values
-glm::vec3 QuadPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::mat4 QuadTranslationMat;
-
-float QuadRotationAngle = 180.0f;
-glm::mat4 QuadRotationMat;
-
-glm::vec3 QuadScale = glm::vec3(10.0f, 10.0f, 10.0f);
-glm::mat4 QuadScaleMat;
 
 glm::mat4 QuadModelMat;
 
@@ -233,6 +189,18 @@ GLuint LoadTexture(std::string _filepath)
 	return Texture;
 }
 
+glm::mat4 MakeModelMatrix(glm::vec3 _position, float _scale, float _rotationAngle, glm::vec3 _rotationMat)
+{
+	// calculate model matrix
+	glm::mat4 TranslationMat = glm::translate(glm::mat4(1.0f), _position);
+	glm::mat4 RotationMat = glm::rotate(glm::mat4(1.0f), glm::radians(_rotationAngle), _rotationMat);
+	glm::mat4 ScaleMat = glm::scale(glm::mat4(1.0f), glm::vec3(_scale, _scale, _scale));
+	glm::mat4 OutputMat = TranslationMat * RotationMat * ScaleMat;
+
+	//OutputMat = Camera->GetProjMat() * Camera->GetViewMat() * OutputMat;
+	return OutputMat;
+}
+
 // custom functions for tidy code
 void InitialSetup()
 {
@@ -272,6 +240,7 @@ void InitialSetup()
 	HeightMapTextures[2] = Texture_3;
 	HeightMapTextures[3] = Texture_4;
 
+	// initialise objects
 	Camera = new CCamera();
 
 	Tree = new CModel("Resources/Models/SM_Env_Tree_Palm_01.obj");
@@ -287,8 +256,10 @@ void InitialSetup()
 	LightManager->AddPointLight(glm::vec3(20.0f, 0.0f, 20.0f), glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
 	LightManager->AddPointLight(glm::vec3(-20.0f, 0.0f, -20.0f), glm::vec3(1.0f, 0.0f, 0.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
 
+	NoiseMap = new CPerlinNoise(512, 512);
+
 	HeightMapInfo info;
-	info.FilePath = "Resources/Textures/Heightmap0.raw";
+	info.FilePath = "Resources/Textures/Noise/.raw";
 	info.Width = 512;
 	info.Depth = 512;
 	info.CellSpacing = 1.0f;
@@ -341,6 +312,8 @@ void InitialSetup()
 	// depth buffer
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_CCW);
+
+
 }
 
 void Update()
@@ -352,43 +325,20 @@ void Update()
 	deltaTime = CurrentTime - PreviousTime;
 	PreviousTime = CurrentTime;
 
-
 	// calculate model matrix
-	TranslationMat = glm::translate(glm::mat4(1.0f), SoldierPosition);
-	RotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((SoldierRotationAngle) * 10), glm::vec3(1.0f, 1.0f, 1.0f));
-	ScaleMat = glm::scale(glm::mat4(1.0f), SoldierScale);
-	SoldierModelMat = TranslationMat * RotationMat * ScaleMat;
-
-	SoldierModelMat = Camera->GetProjMat() * Camera->GetViewMat() * SoldierModelMat;
+	SoldierModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// for point lights
-	PLTranslationMat1 = glm::translate(glm::mat4(1.0f), PointLight1Position);
-	PLRotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((SoldierRotationAngle)), glm::vec3(1.0f, 1.0f, 1.0f));
-	PLScaleMat = glm::scale(glm::mat4(1.0f), PointLightScale);
-	PLModelMat1 = PLTranslationMat1 * PLRotationMat * PLScaleMat;
-
-	//PLModelMat1 = Camera->GetProjMat() * Camera->GetViewMat() * SoldierModelMat;
+	PLModelMat1 = MakeModelMatrix(glm::vec3(20.0f, 0.0f, 20.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// point light 2
-	PLTranslationMat2 = glm::translate(glm::mat4(1.0f), PointLight2Position);
-	PLModelMat2 = PLTranslationMat2 * PLRotationMat * PLScaleMat;
-
-	//PLModelMat2 = Camera->GetProjMat() * Camera->GetViewMat() * SoldierModelMat;
+	PLModelMat2 = MakeModelMatrix(glm::vec3(-20.0f, 0.0f, -20.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// for instanced matrices
-	TreeTranslationMat = glm::translate(glm::mat4(1.0f), TreePosition);
-	TreeRotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((TreeRotationAngle) * 10), glm::vec3(1.0f, 1.0f, 1.0f));
-	TreeScaleMat = glm::scale(glm::mat4(1.0f), TreeScale);
-	// multiply translation rotation scale for model matrix
-	TreeModelMat = TreeTranslationMat * TreeRotationMat * TreeScaleMat;
-	// get MVP by multiplying by camera projection and view matrices
-	//TreeModelMat = Camera->GetProjMat() * Camera->GetViewMat() * TreeModelMat;
+	TreeModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.005f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// calculate quad model matrix once
-	QuadTranslationMat = glm::translate(glm::mat4(1.0f), QuadPosition);
-	QuadRotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((QuadRotationAngle)), glm::vec3(0.0f, 0.0f, 1.0f));
-	QuadScaleMat = glm::scale(glm::mat4(1.0f), QuadScale);
-	QuadModelMat = QuadTranslationMat * QuadRotationMat * QuadScaleMat;
+	QuadModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 10.0f, 180.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 
 	// combine for MVP
 	QuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
@@ -398,8 +348,8 @@ void Update()
 	{
 		glm::mat4 newModelMat;
 		glm::mat4 randPosMatrix = glm::translate(glm::mat4(1.0f), RandomLocations[i]);
-		newModelMat = randPosMatrix * TreeRotationMat * TreeScaleMat;
-		MVPVec[i] = newModelMat;
+		//newModelMat = randPosMatrix * TreeRotationMat * TreeScaleMat;
+		//MVPVec[i] = newModelMat;
 	}
 
 	for (auto& matrix : MVPVec)
@@ -419,6 +369,7 @@ void Render()
 	// many trees
 	// point lights
 	LightManager->UpdateShader(Program_Lighting, g_bPointLightActive);
+	LightManager->UpdateShader(Program_HeightMap, g_bPointLightActive);
 	//Tree->RenderInstanced(Program_Lighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), (Camera->GetProjMat() * Camera->GetViewMat()));
 
 	// skybox
@@ -490,6 +441,22 @@ int main()
 
 	// shut down correctly
 	glfwTerminate();
+
+	// delete dynamically allocated memory
+	delete Camera;
+
+	delete Tree;
+
+	delete Skybox;
+
+	delete LightManager;
+
+	delete PointLight1;
+	delete PointLight2;
+
+	delete HeightMap;
+
+	delete NoiseMap;
 
 	return 0;
 }
