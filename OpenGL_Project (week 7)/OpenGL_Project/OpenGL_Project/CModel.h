@@ -38,12 +38,12 @@ class CModel
 {
 
 public:
-	CModel(std::string FilePath);
+	CModel(std::string FilePath, GLint _program, GLint _texture, glm::mat4 _matrix);
 	~CModel();
 
-	virtual void Update(float DeltaTime);
-	virtual void Render(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos);
-	virtual void RenderInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos, glm::mat4 _VP);
+	virtual void Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos);
+	virtual void Render();
+	//virtual void RenderInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos, glm::mat4 _VP);
 
 	GLuint GetVAO() { return VAO; };
 
@@ -53,5 +53,12 @@ protected:
 	GLuint InstanceBuffer;
 	int DrawType;
 	int m_CountInstanced;
+
+	GLint m_program = 0;
+	GLint m_texture = 0;
+	glm::mat4 m_matrix = glm::mat4();
+	glm::mat4 m_projMat = glm::mat4();
+	glm::mat4 m_viewMat = glm::mat4();
+	glm::vec3 m_cameraPos = glm::vec3();
 };
 

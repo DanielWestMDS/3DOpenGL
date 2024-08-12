@@ -27,8 +27,11 @@ CPerlinNoise::CPerlinNoise(int _ScreenWidth, int _ScreenHeight)
             // returns -1 to 1 value for each point
             float noise = (float)TotalNoisePerPoint(Row, Col);
 
+            // shift bell curve so noise isn't gray
+            noise *= 3.0f;
+
             // normalize noise from -1 -> 1 to 0 -> 1
-            noise = (noise + 1.0f) * 0.5f;
+            noise = (noise + 1) * 0.5f;
             // scale to 255
             noise = noise * 255.0f;
 
@@ -109,9 +112,9 @@ double CPerlinNoise::SmoothInterpolate(double _x, double _y)
 
 double CPerlinNoise::TotalNoisePerPoint(int _x, int _y)
 {
-    int octaves = 4;
-    float wavelength = 100.0f;
-    float gain = 0.2f;
+    int octaves = 6;
+    float wavelength = 255.0f;
+    float gain = 0.5f;
     float lacunarity = 2.0f;
 
     float maxValue = 0.0f;

@@ -31,7 +31,7 @@ int iWindowSize = 800;
 // pointer to shape objects
 CCamera* Camera;
 // tree
-CModel* Tree;
+//CModel* Tree;
 // skybox
 CSkyBox* Skybox;
 // light manager
@@ -77,11 +77,6 @@ glm::mat4 PLModelMat2;
 glm::mat4 TreeModelMat;
 
 glm::mat4 QuadModelMat;
-
-// Vector for instanced matrices
-std::vector<glm::mat4> MVPVec;
-// for random tree positions
-std::vector<glm::vec3> RandomLocations;
 
 int x = 0;
 int y = 0;
@@ -240,16 +235,26 @@ void InitialSetup()
 	HeightMapTextures[2] = Texture_3;
 	HeightMapTextures[3] = Texture_4;
 
+	// calculate model matrix
+	SoldierModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	// for point lights
+	PLModelMat1 = MakeModelMatrix(glm::vec3(20.0f, 0.0f, 20.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	// point light 2
+	PLModelMat2 = MakeModelMatrix(glm::vec3(-20.0f, 0.0f, -20.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	// for instanced matrices
+	TreeModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.005f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
 	// initialise objects
 	Camera = new CCamera();
 
-	Tree = new CModel("Resources/Models/SM_Env_Tree_Palm_01.obj");
+	Skybox = new CSkyBox(sFaces, "Resources/Models/cube.obj", Program_Skybox);
 
-	Skybox = new CSkyBox(sFaces, "Resources/Models/cube.obj");
+	PointLight1 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight1, Texture_Quag, PLModelMat1);
 
-	PointLight1 = new CModel("Resources/Models/SM_Prop_Statue_02.obj");
-
-	PointLight2 = new CModel("Resources/Models/SM_Prop_Statue_02.obj");
+	PointLight2 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight2, Texture_Quag, PLModelMat2);
 
 	LightManager = new CLightManager();
 
@@ -272,30 +277,13 @@ void InitialSetup()
 	// Map the ange of the window for when the buffer clears
 	glViewport(0, 0, iWindowSize, iWindowSize);
 
-	// clear vector just in case
-	MVPVec.clear();
-	// add matrices to matrix vec for each tree
-	for (unsigned int i = 0; i < g_objCount; i++)
-	{
-		// randomize x and z positions to disperse trees
-		RandomLocations.push_back(glm::vec3((rand() % 8000) - 4000, 0, (rand() % 8000) - 4000)); // random square around 0, 0, 0
-		// add random matrix to MVP so that the size is correct
-		MVPVec.push_back(SoldierModelMat);
-	}
-
-	// set matrices as instanced vertex attribute
-	GLuint VBO_Instanced;
-	glGenBuffers(1, &VBO_Instanced);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_Instanced);
-	glBufferData(GL_ARRAY_BUFFER, 1000 * sizeof(glm::mat4), &RandomLocations[0], GL_STATIC_DRAW);
-
 	// bind instance buffer to attribue location
-	glBindVertexArray(Tree->GetVAO());
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-	glVertexAttribDivisor(3, 1);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	//glBindVertexArray(Tree->GetVAO());
+	//glEnableVertexAttribArray(3);
+	//glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+	//glVertexAttribDivisor(3, 1);
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glBindVertexArray(0);
 
 	// Height map terrain
 	//Mesh_Terrain();
@@ -325,41 +313,19 @@ void Update()
 	deltaTime = CurrentTime - PreviousTime;
 	PreviousTime = CurrentTime;
 
-	// calculate model matrix
-	SoldierModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	// for point lights
-	PLModelMat1 = MakeModelMatrix(glm::vec3(20.0f, 0.0f, 20.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	// point light 2
-	PLModelMat2 = MakeModelMatrix(glm::vec3(-20.0f, 0.0f, -20.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	// for instanced matrices
-	TreeModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.005f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
 	// calculate quad model matrix once
 	QuadModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 10.0f, 180.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 
 	// combine for MVP
 	QuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
 
-	// apply random position to every matrix in the vector
-	for (unsigned int i = 0; i < g_objCount; i++)
-	{
-		glm::mat4 newModelMat;
-		glm::mat4 randPosMatrix = glm::translate(glm::mat4(1.0f), RandomLocations[i]);
-		//newModelMat = randPosMatrix * TreeRotationMat * TreeScaleMat;
-		//MVPVec[i] = newModelMat;
-	}
-
-	for (auto& matrix : MVPVec)
-	{
-		matrix = Camera->GetProjMat() * Camera->GetViewMat() * matrix;
-	}
-
 	// camera update
 	Camera->Update(iWindowSize, Window, g_MousePos, deltaTime);	
 	//Camera->PrintCamPos();
+
+	// models update
+	PointLight1->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
+	PointLight2->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
 }
 
 void Render()
@@ -375,13 +341,13 @@ void Render()
 	// skybox
 	glm::mat4 view = Camera->GetViewMat();
 	glm::mat4 projection = Camera->GetProjMat();
-	//Skybox->Render(Program_Skybox, view, projection);
+	Skybox->Render();
 
 	// point lights
 	if (g_bPointLightActive)
 	{
-		PointLight1->Render(Program_PointLight1, Texture_Quag, PLModelMat1, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
-		PointLight2->Render(Program_PointLight2, Texture_Quag, PLModelMat2, CurrentTime, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
+		PointLight1->Render();
+		PointLight2->Render();
 	}
 
 	// Height map render
@@ -445,7 +411,7 @@ int main()
 	// delete dynamically allocated memory
 	delete Camera;
 
-	delete Tree;
+	//delete Tree;
 
 	delete Skybox;
 

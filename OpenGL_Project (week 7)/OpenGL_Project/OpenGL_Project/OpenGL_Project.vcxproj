@@ -147,6 +147,7 @@
     <ClCompile Include="CLightManager.cpp" />
     <ClCompile Include="CModel.cpp" />
     <ClCompile Include="CPerlinNoise.cpp" />
+    <ClCompile Include="CScene.cpp" />
     <ClCompile Include="CSkyBox.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="CLightManager.h" />
     <ClInclude Include="CModel.h" />
     <ClInclude Include="CPerlinNoise.h" />
+    <ClInclude Include="CScene.h" />
     <ClInclude Include="CSkyBox.h" />
     <ClInclude Include="ShaderLoader.h" />
   </ItemGroup>

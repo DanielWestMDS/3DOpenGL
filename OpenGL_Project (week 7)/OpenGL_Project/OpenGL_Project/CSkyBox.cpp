@@ -13,7 +13,7 @@
 #include "CSkyBox.h"
 #include <stb_image.h>
 
-CSkyBox::CSkyBox(std::vector<std::string> sFaces, std::string _FilePath) : CModel(_FilePath)
+CSkyBox::CSkyBox(std::vector<std::string> sFaces, std::string _FilePath, GLint _program) : CModel(_FilePath, _program, 0, glm::mat4())
 {
     m_cubeMapTexture = LoadCubeMap(sFaces);
 }
@@ -23,27 +23,33 @@ CSkyBox::~CSkyBox()
     glDeleteTextures(1, &m_cubeMapTexture);
 }
 
-void CSkyBox::Render(GLint _program, glm::mat4 _viewMat, glm::mat4 _projMat)
+void CSkyBox::Update(glm::mat4 _viewMat, glm::mat4 _projMat)
+{
+    m_viewMat = _viewMat;
+    m_projMat = _projMat;
+}
+
+void CSkyBox::Render()
 {
     glDepthMask(GL_FALSE);
 
     // bind program and VAO
-    glUseProgram(_program);
+    glUseProgram(m_program);
     glBindVertexArray(VAO);
 
     // remove translation from the view matrix
-    glm::mat4 viewMat = glm::mat4(glm::mat3(_viewMat));
+    glm::mat4 viewMat = glm::mat4(glm::mat3(m_viewMat));
 
     // view and projection matrices
-    GLint viewLoc = glGetUniformLocation(_program, "view");
-    GLint projLoc = glGetUniformLocation(_program, "projection");
+    GLint viewLoc = glGetUniformLocation(m_program, "view");
+    GLint projLoc = glGetUniformLocation(m_program, "projection");
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMat));
-    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(_projMat));
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(m_projMat));
 
     // bind the cube map texture
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubeMapTexture);
-    glUniform1i(glGetUniformLocation(_program, "skybox"), 0);
+    glUniform1i(glGetUniformLocation(m_program, "skybox"), 0);
 
     glDepthFunc(GL_LEQUAL);
     glDrawArrays(GL_TRIANGLES, 0, 36);
