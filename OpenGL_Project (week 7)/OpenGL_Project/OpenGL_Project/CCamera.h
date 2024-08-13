@@ -57,8 +57,8 @@ private:
 	glm::mat4 m_viewMat;
 	glm::mat4 m_projMat;
 
-	glm::vec3 m_position;
-	glm::vec3 m_lookDir;
+	glm::vec3 m_position = {};
+	glm::vec3 m_lookDir = {};
 	glm::vec3 m_upDir;
 
 	// for UI

@@ -1,7 +1,12 @@
 #include "CHeightMap.h"
 
-CHeightMap::CHeightMap(HeightMapInfo& _BuildInfo)
+CHeightMap::CHeightMap(HeightMapInfo& _BuildInfo, GLint _program, GLint _textureArray[4])
 {
+    m_program = _program;
+    m_textureArray[0] = _textureArray[0];
+    m_textureArray[1] = _textureArray[1];
+    m_textureArray[2] = _textureArray[2];
+    m_textureArray[3] = _textureArray[3];
     if (LoadHeightMap(_BuildInfo))
     {
         BuildVertexData(_BuildInfo);
@@ -21,35 +26,35 @@ CHeightMap::~CHeightMap()
 {
 }
 
-void CHeightMap::Render(GLint _program, GLint _textureArray[4], glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _matrix)
+void CHeightMap::Render()
 {
-    glUseProgram(_program);
+    glUseProgram(m_program);
     glBindVertexArray(m_VAO);
 
     // Set textures
     for (int i = 0; i < 4; i++)
     {
         std::string uniformName = "TextureArray[" + std::to_string(i) + "]";
-        GLint location = glGetUniformLocation(_program, uniformName.c_str());
+        GLint location = glGetUniformLocation(m_program, uniformName.c_str());
         glUniform1i(location, i);
         glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, _textureArray[i]);
+        glBindTexture(GL_TEXTURE_2D, m_textureArray[i]);
     }
 
-    GLint ModelMatrix = glGetUniformLocation(_program, "model");
-    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_matrix));
+    GLint ModelMatrix = glGetUniformLocation(m_program, "model");
+    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(m_matrix));
 
-    GLint ViewMatrix = glGetUniformLocation(_program, "view");
-    glUniformMatrix4fv(ViewMatrix, 1, GL_FALSE, glm::value_ptr(_viewMat));
+    GLint ViewMatrix = glGetUniformLocation(m_program, "view");
+    glUniformMatrix4fv(ViewMatrix, 1, GL_FALSE, glm::value_ptr(m_viewMat));
 
-    GLint ProjMatrix = glGetUniformLocation(_program, "projection");
-    glUniformMatrix4fv(ProjMatrix, 1, GL_FALSE, glm::value_ptr(_projMat));
+    GLint ProjMatrix = glGetUniformLocation(m_program, "projection");
+    glUniformMatrix4fv(ProjMatrix, 1, GL_FALSE, glm::value_ptr(m_projMat));
 
-    GLint CameraPosLoc = glGetUniformLocation(_program, "CameraPos");
-    glUniform3fv(CameraPosLoc, 1, glm::value_ptr(_cameraPos));
+    GLint CameraPosLoc = glGetUniformLocation(m_program, "CameraPos");
+    glUniform3fv(CameraPosLoc, 1, glm::value_ptr(m_cameraPos));
 
     // Pass height levels to the shader
-    GLint HeightLevelsLoc = glGetUniformLocation(_program, "HeightLevels");
+    GLint HeightLevelsLoc = glGetUniformLocation(m_program, "HeightLevels");
     glUniform1fv(HeightLevelsLoc, 3, m_fHeightLevels);
 
     glDrawElements(GL_TRIANGLES, m_DrawCount, GL_UNSIGNED_INT, 0);
@@ -208,6 +213,14 @@ void CHeightMap::SmoothHeights(HeightMapInfo& _BuildInfo)
     }
 
     m_fHeightMap = SmoothedMap;
+}
+
+void CHeightMap::Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _matrix)
+{
+    m_projMat = _projMat;
+    m_viewMat = _viewMat;
+    m_cameraPos = _cameraPos;
+    m_matrix = _matrix;
 }
 
 float CHeightMap::Average(unsigned int _row, unsigned int _col, HeightMapInfo& _BuildInfo)

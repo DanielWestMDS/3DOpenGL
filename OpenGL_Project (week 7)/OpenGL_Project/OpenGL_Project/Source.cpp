@@ -22,6 +22,7 @@
 #include "CLightManager.h"
 #include "CHeightMap.h"
 #include "CPerlinNoise.h"
+#include "CScene.h"
 
 // global variables
 GLFWwindow* Window = nullptr;
@@ -45,6 +46,12 @@ CHeightMap* HeightMap;
 
 // perlin noise
 CPerlinNoise* NoiseMap;
+
+// scenes
+CScene* Scene1;
+CScene* Scene2;
+CScene* Scene3;
+CScene* Scene4;
 
 // programs
 GLuint Program_3DModel;
@@ -98,16 +105,11 @@ bool g_bPointLightActive = true;
 bool g_bShowMouse = true;
 bool g_UIChange = false;
 
+// scene number 
+int g_iSceneNumber = 1;
+
 // mouse position
 glm::vec2 g_MousePos;
-
-//struct HeightMapInfo
-//{
-//	std::string FilePath = "";
-//	unsigned int Width = 0;
-//	unsigned int Depth = 0;
-//	float CellSpacing = 1.0f;
-//};
 
 // Define the six faces of the cube map in a vector
 std::vector<std::string> sFaces = {
@@ -144,11 +146,33 @@ void CursorPositionInput(GLFWwindow* _Window, double _PosX, double _PosY)
 // for single key press
 void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mods)
 {
-	// toggle wireframe
+	// for sxene rendering
 	if (_Key == GLFW_KEY_1 && _Action == GLFW_PRESS)
 	{
-		g_bPointLightActive = !g_bPointLightActive;
+		g_iSceneNumber = 1;
 	}
+
+	if (_Key == GLFW_KEY_2 && _Action == GLFW_PRESS)
+	{
+		g_iSceneNumber = 2;
+	}
+
+	if (_Key == GLFW_KEY_3 && _Action == GLFW_PRESS)
+	{
+		g_iSceneNumber = 3;
+	}
+
+	if (_Key == GLFW_KEY_4 && _Action == GLFW_PRESS)
+	{
+		g_iSceneNumber = 4;
+	}
+
+	//// toggle lighting
+	//if (_Key == GLFW_KEY_1 && _Action == GLFW_PRESS)
+	//{
+	//	g_bPointLightActive = !g_bPointLightActive;
+	//}
+
 }
 
 GLuint LoadTexture(std::string _filepath)
@@ -225,7 +249,6 @@ void InitialSetup()
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
 
-
 	Texture_Quag = LoadTexture("Resources/Textures/PolygonAncientWorlds_Texture_01_A.png");
 	Texture_Awesome = LoadTexture("Resources/Textures/360_F_107140090_3eRlMItNMxEcw67BDq0lPAppu5q62QUw.jpg");
 	Texture_3 = LoadTexture("Resources/Textures/PolygonAncientWorlds_Statue_01.png");
@@ -263,27 +286,28 @@ void InitialSetup()
 
 	NoiseMap = new CPerlinNoise(512, 512);
 
+	Scene1 = new CScene();
+	Scene2 = new CScene();
+	Scene3 = new CScene();
+	Scene4 = new CScene();
+
 	HeightMapInfo info;
 	info.FilePath = "Resources/Textures/Noise/.raw";
 	info.Width = 512;
 	info.Depth = 512;
 	info.CellSpacing = 1.0f;
 
-	HeightMap = new CHeightMap(info);
+	HeightMap = new CHeightMap(info, Program_HeightMap, HeightMapTextures);
+
+	// add objects to scenes
+	Scene1->AddObject(Skybox);
+	Scene1->AddHeightMap(HeightMap);
 
 	// set background colour
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 
 	// Map the ange of the window for when the buffer clears
 	glViewport(0, 0, iWindowSize, iWindowSize);
-
-	// bind instance buffer to attribue location
-	//glBindVertexArray(Tree->GetVAO());
-	//glEnableVertexAttribArray(3);
-	//glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-	//glVertexAttribDivisor(3, 1);
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//glBindVertexArray(0);
 
 	// Height map terrain
 	//Mesh_Terrain();
@@ -300,8 +324,6 @@ void InitialSetup()
 	// depth buffer
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_CCW);
-
-
 }
 
 void Update()
@@ -314,7 +336,7 @@ void Update()
 	PreviousTime = CurrentTime;
 
 	// calculate quad model matrix once
-	QuadModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 10.0f, 180.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+	QuadModelMat = MakeModelMatrix(glm::vec3(1000.0f, 1000.0f, 1000.0f), 10.0f, 180.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 
 	// combine for MVP
 	QuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
@@ -326,6 +348,9 @@ void Update()
 	// models update
 	PointLight1->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
 	PointLight2->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
+
+	// height map
+	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat);
 }
 
 void Render()
@@ -336,22 +361,37 @@ void Render()
 	// point lights
 	LightManager->UpdateShader(Program_Lighting, g_bPointLightActive);
 	LightManager->UpdateShader(Program_HeightMap, g_bPointLightActive);
-	//Tree->RenderInstanced(Program_Lighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), (Camera->GetProjMat() * Camera->GetViewMat()));
 
 	// skybox
 	glm::mat4 view = Camera->GetViewMat();
 	glm::mat4 projection = Camera->GetProjMat();
-	Skybox->Render();
+	//Skybox->Render();
 
 	// point lights
-	if (g_bPointLightActive)
+	//if (g_bPointLightActive)
+	//{
+	//	PointLight1->Render();
+	//	PointLight2->Render();
+	//}
+
+	switch (g_iSceneNumber)
 	{
-		PointLight1->Render();
-		PointLight2->Render();
+	case 1:
+		Scene1->Render();
+		break;
+	case 2:
+		Scene2->Render();
+		break;
+	case 3:
+		Scene3->Render();
+		break;
+	case 4:
+		Scene4->Render();
+		break;
 	}
 
 	// Height map render
-	HeightMap->Render(Program_HeightMap, HeightMapTextures, Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat);
+	//HeightMap->Render();
 
 	// unbind
 	glBindVertexArray(0);

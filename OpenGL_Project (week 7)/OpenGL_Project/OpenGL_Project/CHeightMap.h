@@ -40,24 +40,32 @@ struct HeightMapInfo
 class CHeightMap
 {
 public:
-	CHeightMap(HeightMapInfo& _BuildInfo);
+	CHeightMap(HeightMapInfo& _BuildInfo, GLint _program, GLint _textureArray[4]);
 	~CHeightMap();
 
-	void Render(GLint _program, GLint _textureArray[4], glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _matrix);
+	void Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _matrix);
+	void Render();
 
 private:
 	bool LoadHeightMap(HeightMapInfo& _BuildInfo);
 	void BuildVertexData(HeightMapInfo& _BuildInfo);
 	float Average(unsigned int _row, unsigned int _col, HeightMapInfo& _BuildInfo);
 	void SmoothHeights(HeightMapInfo& _BuildInfo);
-	glm::vec3 CalculateColor(float height);
 
 	std::vector<float> m_fHeightMap;
 	std::vector<float> m_fHeightMapSmooth;
 	float m_fHeightLevels[3];
+	GLint m_textureArray[4] = {};
 	int m_DrawType;
 	int m_DrawCount;
 	GLuint m_VAO;
 	GLuint m_EBO;
+
+	GLint m_program = 0;
+	GLint m_texture = 0;
+	glm::mat4 m_matrix = glm::mat4();
+	glm::mat4 m_projMat = glm::mat4();
+	glm::mat4 m_viewMat = glm::mat4();
+	glm::vec3 m_cameraPos = glm::vec3();
 };
 

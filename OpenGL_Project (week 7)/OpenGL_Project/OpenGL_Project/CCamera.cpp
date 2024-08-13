@@ -23,8 +23,8 @@ CCamera::CCamera()
 	m_viewMat = glm::mat4(1.0f);
 	m_projMat = glm::mat4(1.0f);
 
-	m_position = glm::vec3(0.0f, 0.0f, 0.0f);
-	m_lookDir = glm::vec3(0.0f, 0.0f, 0.0f);
+	m_position = glm::vec3(-17, 5, -23);
+	m_lookDir = glm::vec3(0.208, -0.223, 0.952);
 	m_upDir = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	m_UIprojMat = glm::mat4(1.0f);

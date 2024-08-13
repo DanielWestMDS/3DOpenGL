@@ -4,11 +4,20 @@ CScene::CScene()
 {
 }
 
-void CScene::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos)
+CScene::~CScene()
+{
+}
+
+void CScene::Render()
 {
 	for (auto Model : m_Objects)
 	{
 		Model->Render();
+	}
+
+	if (m_HeightMap != nullptr)
+	{
+		m_HeightMap->Render();
 	}
 }
 
