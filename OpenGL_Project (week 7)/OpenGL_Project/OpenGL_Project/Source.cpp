@@ -23,6 +23,7 @@
 #include "CHeightMap.h"
 #include "CPerlinNoise.h"
 #include "CScene.h"
+#include "CQuad.h"
 
 // global variables
 GLFWwindow* Window = nullptr;
@@ -47,6 +48,9 @@ CHeightMap* HeightMap;
 // perlin noise
 CPerlinNoise* NoiseMap;
 
+// ui quad for perlin noise
+CQuad* PerlinQuad;
+
 // scenes
 CScene* Scene1;
 CScene* Scene2;
@@ -60,6 +64,7 @@ GLuint Program_Skybox;
 GLuint Program_PointLight1;
 GLuint Program_PointLight2;
 GLuint Program_HeightMap;
+GLuint Program_Squares;
 
 // texture
 GLuint Texture_Awesome;
@@ -84,6 +89,8 @@ glm::mat4 PLModelMat2;
 glm::mat4 TreeModelMat;
 
 glm::mat4 QuadModelMat;
+
+glm::mat4 PerlinQuadModelMat;
 
 int x = 0;
 int y = 0;
@@ -246,6 +253,10 @@ void InitialSetup()
 	Program_HeightMap = ShaderLoader::CreateProgram("Resources/Shaders/HeightMap.vert",
 		"Resources/Shaders/Lighting_HeightMap.frag");
 
+	// for orthographic squares
+	Program_Squares = ShaderLoader::CreateProgram("Resources/Shaders/Squares.vert",
+		"Resources/Shaders/Squares.frag");
+
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
 
@@ -270,6 +281,9 @@ void InitialSetup()
 	// for instanced matrices
 	TreeModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.005f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
+	// for Perlin noise quad
+	PerlinQuadModelMat = MakeModelMatrix(glm::vec3(100.0f, 100.0f, 0.0f), 100.0f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
 	// initialise objects
 	Camera = new CCamera();
 
@@ -285,6 +299,8 @@ void InitialSetup()
 	LightManager->AddPointLight(glm::vec3(-20.0f, 0.0f, -20.0f), glm::vec3(1.0f, 0.0f, 0.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
 
 	NoiseMap = new CPerlinNoise(512, 512);
+
+	PerlinQuad = new CQuad();
 
 	Scene1 = new CScene();
 	Scene2 = new CScene();
@@ -341,6 +357,9 @@ void Update()
 	// combine for MVP
 	QuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
 
+	// UI model matrix
+	PerlinQuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
+
 	// camera update
 	Camera->Update(iWindowSize, Window, g_MousePos, deltaTime);	
 	//Camera->PrintCamPos();
@@ -351,6 +370,9 @@ void Update()
 
 	// height map
 	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat);
+
+	// UI perlin noise
+	PerlinQuad->Update(Program_Squares, Texture_Awesome, PerlinQuadModelMat, Camera->GetUIProjMat(), Camera->GetViewMat());
 }
 
 void Render()
@@ -383,6 +405,7 @@ void Render()
 		Scene2->Render();
 		break;
 	case 3:
+		PerlinQuad->Render();
 		Scene3->Render();
 		break;
 	case 4:
@@ -463,6 +486,8 @@ int main()
 	delete HeightMap;
 
 	delete NoiseMap;
+
+	delete PerlinQuad;
 
 	return 0;
 }
