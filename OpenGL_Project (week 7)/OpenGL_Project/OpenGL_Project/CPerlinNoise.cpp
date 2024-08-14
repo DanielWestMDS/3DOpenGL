@@ -16,8 +16,10 @@ CPerlinNoise::CPerlinNoise(int _ScreenWidth, int _ScreenHeight)
 {
     m_iSeed = (int)time(NULL);
 
+    uint8_t* pixels = new uint8_t[_ScreenWidth * _ScreenHeight];
     uint8_t* pixelsRGBA = new uint8_t[_ScreenWidth * _ScreenHeight * 3];
     int index = 0;
+    int indexRGBA = 0;
 
     // create the noise data
     for (unsigned int Col = 0; Col < _ScreenHeight; Col++)
@@ -36,10 +38,15 @@ CPerlinNoise::CPerlinNoise(int _ScreenWidth, int _ScreenHeight)
             noise = noise * 255.0f;
 
             noise = glm::clamp(noise, 0.0f, 255.0f);
+            // black white heightmap
+            pixels[index++] = (uint8_t)(noise);
 
-            pixelsRGBA[index++] = (uint8_t)(noise);
-            pixelsRGBA[index++] = 30;
-            pixelsRGBA[index++] = 1;
+            // red
+            pixelsRGBA[indexRGBA++] = (uint8_t)(noise);
+            // green
+            pixelsRGBA[indexRGBA++] = 30;
+            // blue
+            pixelsRGBA[indexRGBA++] = 1;
         }
     }
 
@@ -48,12 +55,14 @@ CPerlinNoise::CPerlinNoise(int _ScreenWidth, int _ScreenHeight)
     std::ofstream rawFile(SaveFilePath + ".raw", std::ios_base::binary);
     if (rawFile)
     {
-        rawFile.write((char*)&pixelsRGBA[0], (std::streamsize)((int)_ScreenWidth * (int)_ScreenHeight));
+        rawFile.write((char*)&pixels[0], (std::streamsize)((int)_ScreenWidth * (int)_ScreenHeight));
         rawFile.close();
     }
 
-    // create jpg
+    // create coloured jpg
     stbi_write_jpg(("Resources/Textures/Noise/" + std::to_string(m_iSeed) + ".jpg").c_str(), _ScreenWidth, _ScreenHeight, 3, pixelsRGBA, 100);
+    // create black white jpg
+    stbi_write_jpg(("Resources/Textures/Noise/" + std::to_string(m_iSeed) + ".jpg").c_str(), _ScreenWidth, _ScreenHeight, 1, pixels, 100);
 
     delete[] pixelsRGBA;
 }

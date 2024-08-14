@@ -24,6 +24,7 @@
 #include "CPerlinNoise.h"
 #include "CScene.h"
 #include "CQuad.h"
+#include "CFramebuffer.h"
 
 // global variables
 GLFWwindow* Window = nullptr;
@@ -50,6 +51,9 @@ CPerlinNoise* NoiseMap;
 
 // ui quad for perlin noise
 CQuad* PerlinQuad;
+
+// framebuffer
+CFramebuffer* FrameBuffer;
 
 // scenes
 CScene* Scene1;
@@ -282,7 +286,7 @@ void InitialSetup()
 	TreeModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.005f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// for Perlin noise quad
-	PerlinQuadModelMat = MakeModelMatrix(glm::vec3(100.0f, 100.0f, 0.0f), 100.0f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	PerlinQuadModelMat = MakeModelMatrix(glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// initialise objects
 	Camera = new CCamera();
@@ -302,6 +306,9 @@ void InitialSetup()
 
 	PerlinQuad = new CQuad();
 
+	//FrameBuffer = new CFramebuffer(iWindowSize, iWindowSize);
+
+	// scenes
 	Scene1 = new CScene();
 	Scene2 = new CScene();
 	Scene3 = new CScene();
@@ -379,23 +386,14 @@ void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
+	//FrameBuffer->Bind();
+
 	// many trees
 	// point lights
 	LightManager->UpdateShader(Program_Lighting, g_bPointLightActive);
 	LightManager->UpdateShader(Program_HeightMap, g_bPointLightActive);
 
-	// skybox
-	glm::mat4 view = Camera->GetViewMat();
-	glm::mat4 projection = Camera->GetProjMat();
-	//Skybox->Render();
-
-	// point lights
-	//if (g_bPointLightActive)
-	//{
-	//	PointLight1->Render();
-	//	PointLight2->Render();
-	//}
-
+	// scenes
 	switch (g_iSceneNumber)
 	{
 	case 1:
@@ -413,8 +411,8 @@ void Render()
 		break;
 	}
 
-	// Height map render
-	//HeightMap->Render();
+	//FrameBuffer->Unbind();
+	//PerlinQuad->Render();
 
 	// unbind
 	glBindVertexArray(0);
