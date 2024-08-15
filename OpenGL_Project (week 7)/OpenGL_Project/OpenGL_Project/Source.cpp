@@ -45,6 +45,7 @@ CModel* PointLight2;
 
 // height map
 CHeightMap* HeightMap;
+CHeightMap* HeightMapNoise;
 
 // perlin noise
 CPerlinNoise* NoiseMap;
@@ -121,6 +122,17 @@ int g_iSceneNumber = 1;
 
 // mouse position
 glm::vec2 g_MousePos;
+
+// Quad Model Mat values
+glm::vec3 QuadPosition = glm::vec3(100.0f, 100.0f, 0.0f);
+glm::mat4 QuadTranslationMat;
+
+float QuadRotationAngle = 0.0f;
+glm::mat4 QuadRotationMat;
+
+glm::vec3 QuadScale = glm::vec3(2.0f, 2.0f, 2.0f);
+glm::mat4 QuadScaleMat;
+
 
 // Define the six faces of the cube map in a vector
 std::vector<std::string> sFaces = {
@@ -314,17 +326,25 @@ void InitialSetup()
 	Scene3 = new CScene();
 	Scene4 = new CScene();
 
+	HeightMapInfo infoNoise;
+	infoNoise.FilePath = "Resources/Textures/Noise/.raw";
+	infoNoise.Width = 512;
+	infoNoise.Depth = 512;
+	infoNoise.CellSpacing = 1.0f;
+
 	HeightMapInfo info;
 	info.FilePath = "Resources/Textures/Noise/.raw";
 	info.Width = 512;
 	info.Depth = 512;
 	info.CellSpacing = 1.0f;
 
+	HeightMapNoise = new CHeightMap(info, Program_HeightMap, HeightMapTextures);
 	HeightMap = new CHeightMap(info, Program_HeightMap, HeightMapTextures);
 
 	// add objects to scenes
 	Scene1->AddObject(Skybox);
 	Scene1->AddHeightMap(HeightMap);
+	Scene2->AddHeightMap(HeightMap);
 
 	// set background colour
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
@@ -365,7 +385,15 @@ void Update()
 	QuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
 
 	// UI model matrix
-	PerlinQuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
+	//PerlinQuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
+	// calculate quad model matrix once
+	PerlinQuadModelMat = glm::translate(glm::mat4(1.0f), QuadPosition);
+	PerlinQuadModelMat = glm::rotate(glm::mat4(1.0f), glm::radians((QuadRotationAngle)), glm::vec3(0.0f, 0.0f, 1.0f));
+	PerlinQuadModelMat = glm::scale(glm::mat4(1.0f), QuadScale);
+	QuadModelMat = QuadTranslationMat * QuadRotationMat * QuadScaleMat;
+
+	// combine for MVP
+	QuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
 
 	// camera update
 	Camera->Update(iWindowSize, Window, g_MousePos, deltaTime);	
@@ -379,13 +407,13 @@ void Update()
 	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat);
 
 	// UI perlin noise
-	PerlinQuad->Update(Program_Squares, Texture_Awesome, PerlinQuadModelMat, Camera->GetUIProjMat(), Camera->GetViewMat());
+	//PerlinQuad->Update(Program_Squares, Texture_Awesome, PerlinQuadModelMat, Camera->GetUIProjMat(), Camera->GetViewMat());
 }
 
 void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	//FrameBuffer->Bind();
 
 	// many trees
@@ -403,7 +431,7 @@ void Render()
 		Scene2->Render();
 		break;
 	case 3:
-		PerlinQuad->Render();
+		//PerlinQuad->Render(Program_Squares, Texture_Awesome, PerlinQuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
 		Scene3->Render();
 		break;
 	case 4:
@@ -412,7 +440,7 @@ void Render()
 	}
 
 	//FrameBuffer->Unbind();
-	//PerlinQuad->Render();
+	//PerlinQuad->Render(Program_Squares, FrameBuffer->GetRenderTexture(), PerlinQuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
 
 	// unbind
 	glBindVertexArray(0);

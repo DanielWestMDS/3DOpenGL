@@ -18,10 +18,10 @@ CQuad::CQuad()
         // Define vertices for two triangles
         GLfloat m_vertices[] = {
             // position		   // color			  // texture coords
-            0.0f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f, // top left
-            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,  0.0f, 0.0f, // bottom left
-            1.0f, 1.0f, 0.0f,  1.0f, 0.0f, 1.0f,  1.0f, 0.0f, // bottom right
-            1.0f, 0.0f, 0.0f,   0.0f, 1.0f, 1.0f,  1.0f, 1.0f, // top right
+            -0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  -1.0f, 1.0f, // top left
+            -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  -2.0f, -1.0f, // bottom left
+            0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 1.0f,  1.0f, -1.0f, // bottom right
+            0.5f, 0.5f, 0.0f,   0.0f, 1.0f, 1.0f,  1.0f, 1.0f, // top right
         };
 
         // Define indices for the triangle vertices
@@ -64,52 +64,26 @@ CQuad::~CQuad()
 {
 }
 
-void CQuad::Update(GLint _program, GLint _texture, glm::mat4 _matrix, glm::mat4 _projMat, glm::mat4 _viewMat)
+void CQuad::Render(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat)
 {
-    m_program = _program;
-    m_texture = _texture;
-    m_matrix = _matrix;
-    m_projMat = _projMat;
-    m_viewMat = _viewMat;
-}
 
-void CQuad::Render()
-{
+
     // bind program and VAO
-    glUseProgram(m_program);
+    glUseProgram(_program);
     glBindVertexArray(VAO);
 
-    // send variables to shader via uniform
-    GLint ProjectionMatLoc = glGetUniformLocation(m_program, "ProjectionMat");
-    glUniformMatrix4fv(ProjectionMatLoc, 1, GL_FALSE, glm::value_ptr(m_projMat));
-    GLint ViewMatLoc = glGetUniformLocation(m_program, "ViewMat");
-    glUniformMatrix4fv(ViewMatLoc, 1, GL_FALSE, glm::value_ptr(m_viewMat));
-
-    //Model matrix
-    GLint ModelMatrix = glGetUniformLocation(m_program, "QuadModelMat");
-    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(m_matrix));
-
-    // render
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-    glBindVertexArray(0);
-}
-
-void CQuad::FrameBufferRender()
-{
-    // bind program and VAO
-    glUseProgram(m_program);
-    glBindVertexArray(VAO);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _texture);
 
     // send variables to shader via uniform
-    GLint ProjectionMatLoc = glGetUniformLocation(m_program, "ProjectionMat");
-    glUniformMatrix4fv(ProjectionMatLoc, 1, GL_FALSE, glm::value_ptr(m_projMat));
-    GLint ViewMatLoc = glGetUniformLocation(m_program, "ViewMat");
-    glUniformMatrix4fv(ViewMatLoc, 1, GL_FALSE, glm::value_ptr(m_viewMat));
+    GLint ProjectionMatLoc = glGetUniformLocation(_program, "ProjectionMat");
+    glUniformMatrix4fv(ProjectionMatLoc, 1, GL_FALSE, glm::value_ptr(_projMat));
+    GLint ViewMatLoc = glGetUniformLocation(_program, "ViewMat");
+    glUniformMatrix4fv(ViewMatLoc, 1, GL_FALSE, glm::value_ptr(_viewMat));
 
     //Model matrix
-    GLint ModelMatrix = glGetUniformLocation(m_program, "QuadModelMat");
-    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(m_matrix));
+    GLint ModelMatrix = glGetUniformLocation(_program, "QuadModelMat");
+    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_matrix));
 
     // render
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

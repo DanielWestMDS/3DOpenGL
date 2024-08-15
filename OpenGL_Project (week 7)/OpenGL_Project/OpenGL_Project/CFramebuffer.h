@@ -10,6 +10,9 @@ public:
 	void Bind();
 	void Unbind();
 
+	GLuint GetRenderTexture() { return m_RenderTexture; };
+
+
 private:
 	void RenderBuffer();
 

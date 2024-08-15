@@ -7,9 +7,9 @@ public:
 	CQuad();
 	~CQuad();
 
-	void Update(GLint _program, GLint _texture, glm::mat4 _matrix, glm::mat4 _projMat, glm::mat4 _viewMat);
-	void Render();
-	void FrameBufferRender();
+	//void Update();
+	void Render(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat);
+	//void FrameBufferRender();
 
 private:
 
