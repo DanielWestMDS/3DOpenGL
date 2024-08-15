@@ -33,6 +33,9 @@ CCamera::CCamera()
 	// mouse values
 	m_lastMouse = glm::vec2(0.0f, 0.0f);
 	m_mouseSpeed = 100.0f;
+
+	// look at terrain
+	m_yaw = 70.0f;
 }
 
 CCamera::~CCamera()

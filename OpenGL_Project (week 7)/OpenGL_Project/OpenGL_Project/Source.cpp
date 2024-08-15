@@ -318,7 +318,7 @@ void InitialSetup()
 
 	PerlinQuad = new CQuad();
 
-	//FrameBuffer = new CFramebuffer(iWindowSize, iWindowSize);
+	FrameBuffer = new CFramebuffer(iWindowSize, iWindowSize);
 
 	// scenes
 	Scene1 = new CScene();
@@ -390,10 +390,10 @@ void Update()
 	PerlinQuadModelMat = glm::translate(glm::mat4(1.0f), QuadPosition);
 	PerlinQuadModelMat = glm::rotate(glm::mat4(1.0f), glm::radians((QuadRotationAngle)), glm::vec3(0.0f, 0.0f, 1.0f));
 	PerlinQuadModelMat = glm::scale(glm::mat4(1.0f), QuadScale);
-	QuadModelMat = QuadTranslationMat * QuadRotationMat * QuadScaleMat;
+	PerlinQuadModelMat = QuadTranslationMat * QuadRotationMat * QuadScaleMat;
 
 	// combine for MVP
-	QuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
+	//QuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
 
 	// camera update
 	Camera->Update(iWindowSize, Window, g_MousePos, deltaTime);	
@@ -414,7 +414,6 @@ void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//FrameBuffer->Bind();
 
 	// many trees
 	// point lights
@@ -439,7 +438,9 @@ void Render()
 		break;
 	}
 
-	//FrameBuffer->Unbind();
+	FrameBuffer->Bind();
+
+	FrameBuffer->Unbind();
 	//PerlinQuad->Render(Program_Squares, FrameBuffer->GetRenderTexture(), PerlinQuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
 
 	// unbind
