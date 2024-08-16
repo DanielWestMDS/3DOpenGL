@@ -1,16 +1,13 @@
-#version 460 core
+#version 330 core
 
-// Inputs from vertex shader
-in vec3 FragColor;
-in vec2 FragTexCoords;
+// Input from vertex shader
+in vec2 TexCoord;
 
-// Uniform Inputs
+out vec4 FragColor;
+
 uniform sampler2D Texture0;
-
-// Output
-out vec4 FinalColor;
 
 void main()
 {
-	FinalColor = texture(Texture0, FragTexCoords);
+    FragColor = texture(Texture0, TexCoord);
 }

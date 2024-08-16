@@ -316,7 +316,7 @@ void InitialSetup()
 
 	NoiseMap = new CPerlinNoise(512, 512);
 
-	PerlinQuad = new CQuad();
+	PerlinQuad = new CQuad(10, 10, 100, 100, Texture_3, Program_Squares);
 
 	FrameBuffer = new CFramebuffer(iWindowSize, iWindowSize);
 
@@ -420,28 +420,34 @@ void Render()
 	LightManager->UpdateShader(Program_Lighting, g_bPointLightActive);
 	LightManager->UpdateShader(Program_HeightMap, g_bPointLightActive);
 
+
+	FrameBuffer->Bind();
+
+	FrameBuffer->Unbind();
+
 	// scenes
 	switch (g_iSceneNumber)
 	{
 	case 1:
 		Scene1->Render();
+		PerlinQuad->UpdateTexture(Texture_Quag);
 		break;
 	case 2:
 		Scene2->Render();
+		PerlinQuad->UpdateTexture(Texture_Awesome);
 		break;
 	case 3:
 		//PerlinQuad->Render(Program_Squares, Texture_Awesome, PerlinQuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
 		Scene3->Render();
+		PerlinQuad->UpdateTexture(Texture_4);
 		break;
 	case 4:
 		Scene4->Render();
+		PerlinQuad->UpdateTexture(Texture_3);
 		break;
 	}
 
-	FrameBuffer->Bind();
-
-	FrameBuffer->Unbind();
-	//PerlinQuad->Render(Program_Squares, FrameBuffer->GetRenderTexture(), PerlinQuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
+	PerlinQuad->Render(*Camera);
 
 	// unbind
 	glBindVertexArray(0);

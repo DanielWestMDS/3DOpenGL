@@ -1,28 +1,16 @@
-#version 460 core
+#version 330 core
 
-// Vertex Data Interpretation
-layout (location = 0) in vec3 Position;
-layout (location = 2) in vec3 Color;
-layout (location = 1) in vec2 TexCoords;
+layout(location = 0) in vec3 aPos;
+layout(location = 1) in vec2 aTexCoord;
 
+uniform mat4 projection;
+uniform mat4 model;
 
-// Inputs
-uniform mat4 QuadModelMat;
-uniform mat4 ProjectionMat;
-uniform mat4 ViewMat;
+out vec2 TexCoord;
 
-uniform vec3 SecondColor;
-uniform float CurrentTime;
-
-// Outputs to Fragment Shader
-out vec3 FragColor;
-out vec2 FragTexCoords;
-
-// Shader Functionality
 void main()
 {
-	gl_Position = QuadModelMat * vec4(Position, 1.0f);
-	FragColor = Color;
-	FragTexCoords = TexCoords;
-	//FragColor = mix(Color, SecondColor, (sin(CurrentTime) * cos(CurrentTime) + 0.5);
-} 
+    gl_Position = projection * model * vec4(aPos, 1.0);
+
+    TexCoord = aTexCoord;
+}

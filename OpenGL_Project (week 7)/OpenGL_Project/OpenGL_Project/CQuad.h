@@ -1,20 +1,23 @@
-#pragma once
 #include "CCamera.h"
 
-class CQuad
+class CQuad 
 {
 public:
-	CQuad();
-	~CQuad();
+    CQuad(float _x, float _y, float _width, float _height, GLuint _texture, GLuint _program);
 
-	//void Update();
-	void Render(GLint _program, GLint _texture, glm::mat4 _matrix, float CurrentTime, glm::mat4 _projMat, glm::mat4 _viewMat);
-	//void FrameBufferRender();
+    ~CQuad();
+
+    void Render(CCamera& camera);
+
+    void UpdateTexture(GLuint _texture);
+
+    void SetPosition(float _newX, float _newY);
 
 private:
+    GLuint VAO, VBO, EBO, m_texture, m_program;
+    float x, y, m_fWidth, m_fHeight;
 
-	GLuint VBO, VAO, EBO = 0;
-	GLint m_program, m_texture = {};
-	glm::mat4 m_matrix, m_projMat, m_viewMat = {};
+    //void LoadTexture(const char* _texturePath);
+
+    void UpdateVertices();
 };
-
