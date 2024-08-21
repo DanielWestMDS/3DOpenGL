@@ -52,6 +52,7 @@ CPerlinNoise* NoiseMap;
 
 // ui quad for perlin noise
 CQuad* PerlinQuad;
+CQuad* FrameBufferQuad;
 
 // framebuffer
 CFramebuffer* FrameBuffer;
@@ -318,6 +319,8 @@ void InitialSetup()
 
 	PerlinQuad = new CQuad(10, 10, 100, 100, Texture_3, Program_Squares);
 
+	FrameBufferQuad = new CQuad(0, 0, 1000, 1000, Texture_Awesome, Program_Squares);
+
 	FrameBuffer = new CFramebuffer(iWindowSize, iWindowSize);
 
 	// scenes
@@ -387,10 +390,10 @@ void Update()
 	// UI model matrix
 	//PerlinQuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
 	// calculate quad model matrix once
-	PerlinQuadModelMat = glm::translate(glm::mat4(1.0f), QuadPosition);
-	PerlinQuadModelMat = glm::rotate(glm::mat4(1.0f), glm::radians((QuadRotationAngle)), glm::vec3(0.0f, 0.0f, 1.0f));
-	PerlinQuadModelMat = glm::scale(glm::mat4(1.0f), QuadScale);
-	PerlinQuadModelMat = QuadTranslationMat * QuadRotationMat * QuadScaleMat;
+	//PerlinQuadModelMat = glm::translate(glm::mat4(1.0f), QuadPosition);
+	//PerlinQuadModelMat = glm::rotate(glm::mat4(1.0f), glm::radians((QuadRotationAngle)), glm::vec3(0.0f, 0.0f, 1.0f));
+	//PerlinQuadModelMat = glm::scale(glm::mat4(1.0f), QuadScale);
+	//PerlinQuadModelMat = QuadTranslationMat * QuadRotationMat * QuadScaleMat;
 
 	// combine for MVP
 	//QuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
@@ -421,33 +424,38 @@ void Render()
 	LightManager->UpdateShader(Program_HeightMap, g_bPointLightActive);
 
 
-	FrameBuffer->Bind();
 
-	FrameBuffer->Unbind();
+
 
 	// scenes
 	switch (g_iSceneNumber)
 	{
 	case 1:
+		FrameBuffer->Bind();
+		PerlinQuad->UpdateTexture(Texture_Awesome);
+		PerlinQuad->Render(*Camera, false);
 		Scene1->Render();
-		PerlinQuad->UpdateTexture(Texture_Quag);
+		FrameBuffer->Unbind();
+		FrameBufferQuad->UpdateTexture(FrameBuffer->GetRenderTexture());
+		FrameBufferQuad->Render(*Camera, true);
 		break;
 	case 2:
 		Scene2->Render();
 		PerlinQuad->UpdateTexture(Texture_Awesome);
+		PerlinQuad->Render(*Camera, false);
 		break;
 	case 3:
 		//PerlinQuad->Render(Program_Squares, Texture_Awesome, PerlinQuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
 		Scene3->Render();
 		PerlinQuad->UpdateTexture(Texture_4);
+		PerlinQuad->Render(*Camera, false);
 		break;
 	case 4:
 		Scene4->Render();
 		PerlinQuad->UpdateTexture(Texture_3);
+		PerlinQuad->Render(*Camera, false);
 		break;
 	}
-
-	PerlinQuad->Render(*Camera);
 
 	// unbind
 	glBindVertexArray(0);

@@ -7,7 +7,7 @@ public:
 
     ~CQuad();
 
-    void Render(CCamera& camera);
+    void Render(CCamera& camera, bool _isRenderQuad);
 
     void UpdateTexture(GLuint _texture);
 

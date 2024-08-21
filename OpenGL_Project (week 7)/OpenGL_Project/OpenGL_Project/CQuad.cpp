@@ -45,7 +45,7 @@ CQuad::~CQuad()
     glDeleteVertexArrays(1, &VAO);
 }
 
-void CQuad::Render(CCamera& camera)
+void CQuad::Render(CCamera& camera, bool _isRenderQuad)
 {
     glUseProgram(m_program);
 
