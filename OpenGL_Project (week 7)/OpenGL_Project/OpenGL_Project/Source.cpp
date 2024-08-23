@@ -23,6 +23,7 @@
 #include "CHeightMap.h"
 #include "CPerlinNoise.h"
 #include "CScene.h"
+#include "CFrameBufferQuad.h"
 #include "CQuad.h"
 #include "CFramebuffer.h"
 
@@ -52,7 +53,7 @@ CPerlinNoise* NoiseMap;
 
 // ui quad for perlin noise
 CQuad* PerlinQuad;
-CQuad* FrameBufferQuad;
+CFrameBufferQuad* FrameBufferQuad;
 
 // framebuffer
 CFramebuffer* FrameBuffer;
@@ -71,12 +72,16 @@ GLuint Program_PointLight1;
 GLuint Program_PointLight2;
 GLuint Program_HeightMap;
 GLuint Program_Squares;
+GLuint Program_RenderBuffer;
+GLuint Program_InverseColour;
+GLuint Program_GreyScale;
 
 // texture
 GLuint Texture_Awesome;
 GLuint Texture_Quag;
 GLuint Texture_3;
 GLuint Texture_4;
+GLuint Texture_Noise;
 // textures for height map
 GLint HeightMapTextures[4];
 
@@ -191,6 +196,21 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 		g_iSceneNumber = 4;
 	}
 
+
+	if (_Key == GLFW_KEY_5 && _Action == GLFW_PRESS)
+	{
+		//g_iSceneNumber = 5;
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glLineWidth(4.0f);
+	}
+
+
+	if (_Key == GLFW_KEY_6 && _Action == GLFW_PRESS)
+	{
+		//g_iSceneNumber = 6;
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
 	//// toggle lighting
 	//if (_Key == GLFW_KEY_1 && _Action == GLFW_PRESS)
 	//{
@@ -274,6 +294,18 @@ void InitialSetup()
 	Program_Squares = ShaderLoader::CreateProgram("Resources/Shaders/Squares.vert",
 		"Resources/Shaders/Squares.frag");
 
+	// renderbuffer with no effects
+	Program_RenderBuffer = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
+		"Resources/Shaders/FrameBuffer/RenderBuffer.frag");
+
+	// renderbuffer with inverse colour
+	Program_InverseColour = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
+		"Resources/Shaders/FrameBuffer/InverseColour.frag");
+
+	// renderbuffer with luminosity method greyscale
+	Program_GreyScale = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
+		"Resources/Shaders/FrameBuffer/Greyscale.frag");
+
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
 
@@ -319,7 +351,7 @@ void InitialSetup()
 
 	PerlinQuad = new CQuad(10, 10, 100, 100, Texture_3, Program_Squares);
 
-	FrameBufferQuad = new CQuad(0, 0, 1000, 1000, Texture_Awesome, Program_Squares);
+	FrameBufferQuad = new CFrameBufferQuad(Texture_Awesome, Program_RenderBuffer);
 
 	FrameBuffer = new CFramebuffer(iWindowSize, iWindowSize);
 
@@ -340,6 +372,10 @@ void InitialSetup()
 	info.Width = 512;
 	info.Depth = 512;
 	info.CellSpacing = 1.0f;
+
+	// noise texture
+
+	Texture_Noise = LoadTexture("Resources/Textures/Noise/" + std::to_string(NoiseMap->GetSeed()) + ".jpg");
 
 	HeightMapNoise = new CHeightMap(info, Program_HeightMap, HeightMapTextures);
 	HeightMap = new CHeightMap(info, Program_HeightMap, HeightMapTextures);
@@ -433,27 +469,27 @@ void Render()
 	case 1:
 		FrameBuffer->Bind();
 		PerlinQuad->UpdateTexture(Texture_Awesome);
-		PerlinQuad->Render(*Camera, false);
+		PerlinQuad->Render(*Camera);
 		Scene1->Render();
 		FrameBuffer->Unbind();
 		FrameBufferQuad->UpdateTexture(FrameBuffer->GetRenderTexture());
-		FrameBufferQuad->Render(*Camera, true);
+		FrameBufferQuad->Render();
 		break;
 	case 2:
 		Scene2->Render();
-		PerlinQuad->UpdateTexture(Texture_Awesome);
-		PerlinQuad->Render(*Camera, false);
+		PerlinQuad->UpdateTexture(Texture_Noise);
+		PerlinQuad->Render(*Camera);
 		break;
 	case 3:
 		//PerlinQuad->Render(Program_Squares, Texture_Awesome, PerlinQuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
 		Scene3->Render();
 		PerlinQuad->UpdateTexture(Texture_4);
-		PerlinQuad->Render(*Camera, false);
+		PerlinQuad->Render(*Camera);
 		break;
 	case 4:
 		Scene4->Render();
 		PerlinQuad->UpdateTexture(Texture_3);
-		PerlinQuad->Render(*Camera, false);
+		PerlinQuad->Render(*Camera);
 		break;
 	}
 

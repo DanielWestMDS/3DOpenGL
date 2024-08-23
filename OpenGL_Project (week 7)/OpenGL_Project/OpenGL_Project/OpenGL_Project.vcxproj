@@ -148,6 +148,7 @@
     <ClCompile Include="CModel.cpp" />
     <ClCompile Include="CPerlinNoise.cpp" />
     <ClCompile Include="CQuad.cpp" />
+    <ClCompile Include="CFrameBufferQuad.cpp" />
     <ClCompile Include="CScene.cpp" />
     <ClCompile Include="CSkyBox.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="CModel.h" />
     <ClInclude Include="CPerlinNoise.h" />
     <ClInclude Include="CQuad.h" />
+    <ClInclude Include="CFrameBufferQuad.h" />
     <ClInclude Include="CScene.h" />
     <ClInclude Include="CSkyBox.h" />
     <ClInclude Include="ShaderLoader.h" />
@@ -176,11 +178,13 @@
   <ItemGroup>
     <None Include="PointLight1.frag" />
     <None Include="PointLight2.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\RenderBuffer.frag" />
     <None Include="Resources\Shaders\HeightMap.vert" />
     <None Include="Resources\Shaders\Lighting_HeightMap.frag" />
     <None Include="Resources\Shaders\onePointLight.frag" />
     <None Include="Resources\Shaders\PointLight1.frag" />
     <None Include="Resources\Shaders\PointLight2.frag" />
+    <None Include="Resources\Shaders\RenderBuffer.vert" />
     <None Include="Resources\Shaders\Squares.frag" />
     <None Include="Resources\Shaders\Squares.vert" />
   </ItemGroup>

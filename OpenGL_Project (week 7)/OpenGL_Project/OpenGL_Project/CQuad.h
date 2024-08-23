@@ -7,16 +7,17 @@ public:
 
     ~CQuad();
 
-    void Render(CCamera& camera, bool _isRenderQuad);
+    virtual void Render(CCamera& camera);
+
+    void RenderFrameBuffer();
 
     void UpdateTexture(GLuint _texture);
 
     void SetPosition(float _newX, float _newY);
 
-private:
+protected:
     GLuint VAO, VBO, EBO, m_texture, m_program;
     float x, y, m_fWidth, m_fHeight;
-
     //void LoadTexture(const char* _texturePath);
 
     void UpdateVertices();

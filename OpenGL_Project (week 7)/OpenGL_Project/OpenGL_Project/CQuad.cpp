@@ -1,7 +1,6 @@
 #include "CQuad.h"
 
-CQuad::CQuad(float _x, float _y, float _width, float _height, GLuint _texture, GLuint _program)
-    : x(_x), y(_y), m_fWidth(_width), m_fHeight(_height), m_texture(_texture), m_program(_program)
+CQuad::CQuad(float _x, float _y, float _width, float _height, GLuint _texture, GLuint _program) : x(_x), y(_y), m_fWidth(_width), m_fHeight(_height), m_texture(_texture), m_program(_program)
 {
     GLfloat vertices[] = {
         // Positions          // Texture Coords
@@ -45,7 +44,7 @@ CQuad::~CQuad()
     glDeleteVertexArrays(1, &VAO);
 }
 
-void CQuad::Render(CCamera& camera, bool _isRenderQuad)
+void CQuad::Render(CCamera& camera)
 {
     glUseProgram(m_program);
 
@@ -69,6 +68,15 @@ void CQuad::Render(CCamera& camera, bool _isRenderQuad)
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+}
+
+void CQuad::RenderFrameBuffer()
+{
+    GLuint projLoc = glGetUniformLocation(m_program, "projection");
+
+    // Set the orthographic projection matrix to the shader
+    glm::mat4 projection = glm::mat4(1.0f);
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 }
 
 void CQuad::UpdateTexture(GLuint _texture)

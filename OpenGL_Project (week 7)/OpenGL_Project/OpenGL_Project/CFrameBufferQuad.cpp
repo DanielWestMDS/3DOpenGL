@@ -1,0 +1,59 @@
+#include "CFrameBufferQuad.h"
+
+CFrameBufferQuad::CFrameBufferQuad(GLuint _texture, GLuint _program) : m_program(_program), m_texture(_texture) {
+    initQuad();
+}
+
+CFrameBufferQuad::~CFrameBufferQuad() {
+    glDeleteVertexArrays(1, &quadVAO);
+    glDeleteBuffers(1, &quadVBO);
+}
+
+void CFrameBufferQuad::initQuad() {
+    GLfloat quadVertices[] = {
+        // Positions        // Texture Coords
+        -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+         1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+
+        -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+         1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+         1.0f,  1.0f, 0.0f, 1.0f, 1.0f
+    };
+    glGenVertexArrays(1, &quadVAO);
+    glGenBuffers(1, &quadVBO);
+    glBindVertexArray(quadVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+}
+
+void CFrameBufferQuad::Render() 
+{
+    if (m_program) {
+        glUseProgram(m_program);
+    }
+
+    // Activate and bind the textures
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+    glUniform1i(glGetUniformLocation(m_program, "Texture0"), 0);
+
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+    if (m_program) {
+        glUseProgram(0);
+    }
+}
+
+void CFrameBufferQuad::UpdateTexture(GLuint textureID) {
+    m_texture = textureID;
+}
+
+void CFrameBufferQuad::SetProgram(GLuint programID) {
+    m_program = programID;
+}

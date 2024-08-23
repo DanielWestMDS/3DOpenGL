@@ -7,6 +7,8 @@ public:
 	CPerlinNoise(int _ScreenWidth, int _ScreenHeight);
 	~CPerlinNoise();
 
+	int GetSeed() { return m_iSeed; };
+
 private:
 
 	double RandomValue(int _x, int _y);
