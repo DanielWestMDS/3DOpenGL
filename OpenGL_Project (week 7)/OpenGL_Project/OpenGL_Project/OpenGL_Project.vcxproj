@@ -178,6 +178,11 @@
   <ItemGroup>
     <None Include="PointLight1.frag" />
     <None Include="PointLight2.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\Cartoon.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\Effect.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\Greyscale.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\InverseColour.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\Rain.frag" />
     <None Include="Resources\Shaders\FrameBuffer\RenderBuffer.frag" />
     <None Include="Resources\Shaders\HeightMap.vert" />
     <None Include="Resources\Shaders\Lighting_HeightMap.frag" />

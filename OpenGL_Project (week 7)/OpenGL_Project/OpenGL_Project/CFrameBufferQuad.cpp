@@ -33,7 +33,8 @@ void CFrameBufferQuad::initQuad() {
 
 void CFrameBufferQuad::Render() 
 {
-    if (m_program) {
+    if (m_program) 
+    {
         glUseProgram(m_program);
     }
 
@@ -42,18 +43,34 @@ void CFrameBufferQuad::Render()
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glUniform1i(glGetUniformLocation(m_program, "Texture0"), 0);
 
+    //glActiveTexture(GL_TEXTURE1);
+    //glBindTexture(GL_TEXTURE_2D, texture1);
+    //glUniform1i(glGetUniformLocation(shaderProgram, "iChannel1"), 1);
+
+    // for the effect
+    glUseProgram(m_program);
+    glUniform2f(glGetUniformLocation(m_program, "iResolution"), 800.0f, 800.0f);
+
+    float timeValue = glfwGetTime();
+    glUniform1f(glGetUniformLocation(m_program, "iTime"), timeValue);
+
+
+
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
-    if (m_program) {
+    if (m_program) 
+    {
         glUseProgram(0);
     }
 }
 
-void CFrameBufferQuad::UpdateTexture(GLuint textureID) {
+void CFrameBufferQuad::UpdateTexture(GLuint textureID) 
+{
     m_texture = textureID;
 }
 
-void CFrameBufferQuad::SetProgram(GLuint programID) {
+void CFrameBufferQuad::SetProgram(GLuint programID) 
+{
     m_program = programID;
 }

@@ -141,5 +141,20 @@
     <None Include="Resources\Shaders\FrameBuffer\RenderBuffer.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Resources\Shaders\FrameBuffer\Greyscale.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\FrameBuffer\InverseColour.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\FrameBuffer\Effect.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\FrameBuffer\Cartoon.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\FrameBuffer\Rain.frag">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

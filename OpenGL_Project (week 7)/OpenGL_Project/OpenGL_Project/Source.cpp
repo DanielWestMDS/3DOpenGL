@@ -75,6 +75,10 @@ GLuint Program_Squares;
 GLuint Program_RenderBuffer;
 GLuint Program_InverseColour;
 GLuint Program_GreyScale;
+GLuint Program_RenderBufferNone;
+GLuint Program_Effect;
+GLuint Program_Cartoon;
+GLuint Program_Rain;
 
 // texture
 GLuint Texture_Awesome;
@@ -125,6 +129,8 @@ bool g_UIChange = false;
 
 // scene number 
 int g_iSceneNumber = 1;
+// renderbuffer program
+int g_iProgram = 0;
 
 // mouse position
 glm::vec2 g_MousePos;
@@ -211,6 +217,48 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
+	if (_Key == GLFW_KEY_TAB && _Action == GLFW_PRESS)
+	{
+		if (g_iProgram <= 4)
+		{
+			g_iProgram++;
+		}
+		else
+		{
+			g_iProgram = 0;
+		}
+
+		switch (g_iProgram)
+		{
+		case 0:
+			Program_RenderBuffer = Program_RenderBufferNone;
+			break;
+
+		case 1:
+			Program_RenderBuffer = Program_GreyScale;
+			break;
+
+		case 2:
+			Program_RenderBuffer = Program_InverseColour;
+			break;
+
+		case 3:
+			Program_RenderBuffer = Program_Rain;
+			break;
+
+		case 4:
+			Program_RenderBuffer = Program_Effect;
+			break;
+
+		case 5:
+			Program_RenderBuffer = Program_Cartoon;
+			break;
+
+		default:
+			break;
+		}
+	}
+
 	//// toggle lighting
 	//if (_Key == GLFW_KEY_1 && _Action == GLFW_PRESS)
 	//{
@@ -294,8 +342,12 @@ void InitialSetup()
 	Program_Squares = ShaderLoader::CreateProgram("Resources/Shaders/Squares.vert",
 		"Resources/Shaders/Squares.frag");
 
-	// renderbuffer with no effects
+	// base renderbuffer
 	Program_RenderBuffer = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
+		"Resources/Shaders/FrameBuffer/RenderBuffer.frag");
+
+	// renderbuffer with no effects
+	Program_RenderBufferNone = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
 		"Resources/Shaders/FrameBuffer/RenderBuffer.frag");
 
 	// renderbuffer with inverse colour
@@ -305,6 +357,18 @@ void InitialSetup()
 	// renderbuffer with luminosity method greyscale
 	Program_GreyScale = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
 		"Resources/Shaders/FrameBuffer/Greyscale.frag");
+
+	// renderbuffer with something idk
+	Program_Effect = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
+		"Resources/Shaders/FrameBuffer/Effect.frag");
+
+	// renderbuffer with rain
+	Program_Rain = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
+		"Resources/Shaders/FrameBuffer/Rain.frag");
+
+	// renderbuffer with cartoon effect
+	Program_Cartoon = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
+		"Resources/Shaders/FrameBuffer/Cartoon.frag");
 
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
@@ -423,17 +487,6 @@ void Update()
 	// combine for MVP
 	QuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
 
-	// UI model matrix
-	//PerlinQuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
-	// calculate quad model matrix once
-	//PerlinQuadModelMat = glm::translate(glm::mat4(1.0f), QuadPosition);
-	//PerlinQuadModelMat = glm::rotate(glm::mat4(1.0f), glm::radians((QuadRotationAngle)), glm::vec3(0.0f, 0.0f, 1.0f));
-	//PerlinQuadModelMat = glm::scale(glm::mat4(1.0f), QuadScale);
-	//PerlinQuadModelMat = QuadTranslationMat * QuadRotationMat * QuadScaleMat;
-
-	// combine for MVP
-	//QuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
-
 	// camera update
 	Camera->Update(iWindowSize, Window, g_MousePos, deltaTime);	
 	//Camera->PrintCamPos();
@@ -453,15 +506,9 @@ void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-	// many trees
-	// point lights
+	// lighting
 	LightManager->UpdateShader(Program_Lighting, g_bPointLightActive);
 	LightManager->UpdateShader(Program_HeightMap, g_bPointLightActive);
-
-
-
-
 
 	// scenes
 	switch (g_iSceneNumber)
@@ -472,6 +519,7 @@ void Render()
 		PerlinQuad->Render(*Camera);
 		Scene1->Render();
 		FrameBuffer->Unbind();
+		FrameBufferQuad->SetProgram(Program_RenderBuffer);
 		FrameBufferQuad->UpdateTexture(FrameBuffer->GetRenderTexture());
 		FrameBufferQuad->Render();
 		break;
