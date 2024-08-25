@@ -86,6 +86,7 @@ GLuint Texture_Quag;
 GLuint Texture_3;
 GLuint Texture_4;
 GLuint Texture_Noise;
+GLuint Texture_PerlinMap;
 // textures for height map
 GLint HeightMapTextures[4];
 
@@ -373,10 +374,10 @@ void InitialSetup()
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
 
-	Texture_Quag = LoadTexture("Resources/Textures/PolygonAncientWorlds_Texture_01_A.png");
+	Texture_Quag = LoadTexture("Resources/Textures/SkyboxBack.jpg");
 	Texture_Awesome = LoadTexture("Resources/Textures/360_F_107140090_3eRlMItNMxEcw67BDq0lPAppu5q62QUw.jpg");
 	Texture_3 = LoadTexture("Resources/Textures/PolygonAncientWorlds_Statue_01.png");
-	Texture_4 = LoadTexture("Resources/Textures/snow.jpg");
+	Texture_4 = LoadTexture("Resources/Textures/png-transparent-spider-man-heroes-download-with-transparent-background-free-thumbnail.png");
 	HeightMapTextures[0] = Texture_Quag;
 	HeightMapTextures[1] = Texture_Awesome;
 	HeightMapTextures[2] = Texture_3;
@@ -432,7 +433,7 @@ void InitialSetup()
 	infoNoise.CellSpacing = 1.0f;
 
 	HeightMapInfo info;
-	info.FilePath = "Resources/Textures/Noise/.raw";
+	info.FilePath = "Resources/Textures/Heightmap0.raw";
 	info.Width = 512;
 	info.Depth = 512;
 	info.CellSpacing = 1.0f;
@@ -441,12 +442,15 @@ void InitialSetup()
 
 	Texture_Noise = LoadTexture("Resources/Textures/Noise/" + std::to_string(NoiseMap->GetSeed()) + ".jpg");
 
-	HeightMapNoise = new CHeightMap(info, Program_HeightMap, HeightMapTextures);
+	HeightMapNoise = new CHeightMap(infoNoise, Program_HeightMap, HeightMapTextures);
 	HeightMap = new CHeightMap(info, Program_HeightMap, HeightMapTextures);
 
+	// load noise texture after creating heightmap
+	Texture_PerlinMap = LoadTexture("Resources/Textures/Noise/COLOURED.jpg");
+
 	// add objects to scenes
-	Scene1->AddObject(Skybox);
-	Scene1->AddHeightMap(HeightMap);
+	//Scene1->AddObject(Skybox);
+	Scene3->AddHeightMap(HeightMapNoise);
 	Scene2->AddHeightMap(HeightMap);
 
 	// set background colour
@@ -497,6 +501,7 @@ void Update()
 
 	// height map
 	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat);
+	HeightMapNoise->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat);
 
 	// UI perlin noise
 	//PerlinQuad->Update(Program_Squares, Texture_Awesome, PerlinQuadModelMat, Camera->GetUIProjMat(), Camera->GetViewMat());
@@ -514,30 +519,20 @@ void Render()
 	switch (g_iSceneNumber)
 	{
 	case 1:
+
+		break;
+	case 2:
+		Scene2->Render();
+		break;
+	case 3:
 		FrameBuffer->Bind();
-		PerlinQuad->UpdateTexture(Texture_Awesome);
+		PerlinQuad->UpdateTexture(Texture_PerlinMap);
 		PerlinQuad->Render(*Camera);
-		Scene1->Render();
+		Scene3->Render();
 		FrameBuffer->Unbind();
 		FrameBufferQuad->SetProgram(Program_RenderBuffer);
 		FrameBufferQuad->UpdateTexture(FrameBuffer->GetRenderTexture());
 		FrameBufferQuad->Render();
-		break;
-	case 2:
-		Scene2->Render();
-		PerlinQuad->UpdateTexture(Texture_Noise);
-		PerlinQuad->Render(*Camera);
-		break;
-	case 3:
-		//PerlinQuad->Render(Program_Squares, Texture_Awesome, PerlinQuadModelMat, CurrentTime, Camera->GetUIProjMat(), Camera->GetViewMat());
-		Scene3->Render();
-		PerlinQuad->UpdateTexture(Texture_4);
-		PerlinQuad->Render(*Camera);
-		break;
-	case 4:
-		Scene4->Render();
-		PerlinQuad->UpdateTexture(Texture_3);
-		PerlinQuad->Render(*Camera);
 		break;
 	}
 
@@ -609,6 +604,7 @@ int main()
 	delete PointLight2;
 
 	delete HeightMap;
+	delete HeightMapNoise;
 
 	delete NoiseMap;
 

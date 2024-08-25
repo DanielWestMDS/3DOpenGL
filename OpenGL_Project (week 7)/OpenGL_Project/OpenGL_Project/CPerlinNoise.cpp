@@ -41,12 +41,53 @@ CPerlinNoise::CPerlinNoise(int _ScreenWidth, int _ScreenHeight)
             // black white heightmap
             pixels[index++] = (uint8_t)(noise);
 
-            // red
-            pixelsRGBA[indexRGBA++] = (uint8_t)(noise);
-            // green
-            pixelsRGBA[indexRGBA++] = 30;
+            // Apply smooth blending for colors based on the noise value
+            float r, g, b;
+
             // blue
-            pixelsRGBA[indexRGBA++] = 1;
+            if (noise < 32)
+            {
+                r = 252;
+                g = 244;
+                b = 52;
+            }
+            else if (noise < 64)
+            {
+                // mix the previous colour
+                float t = (noise - 32) / 32.0f;
+                r = glm::mix(252, 255, t);
+                g = glm::mix(244, 255, t);
+                b = glm::mix(52, 255, t);
+            }
+            // pink
+            else if (noise < 128)
+            {
+                // mix the previous colour
+                float t = (noise - 64) / 64.0f;
+                r = glm::mix(255, 156, t);
+                g = glm::mix(255, 89, t);
+                b = glm::mix(255, 209, t);
+            }
+            // white
+            else
+            {
+                float t = (noise - 128) / 68.0f;
+                r = glm::mix(156, 44, t);
+                g = glm::mix(89, 44, t);
+                b = glm::mix(209, 4, t);
+            }
+            // dark blue
+            //else
+            //{
+            //    float t = (noise - 128) / 68.0f;
+            //    r = glm::mix(128, 69, t);
+            //    g = glm::mix(128, 240, t);
+            //    b = glm::mix(128, 20, t);
+            //}
+
+            pixelsRGBA[indexRGBA++] = (uint8_t)glm::clamp(r, 0.0f, 255.0f);
+            pixelsRGBA[indexRGBA++] = (uint8_t)glm::clamp(g, 0.0f, 255.0f);
+            pixelsRGBA[indexRGBA++] = (uint8_t)glm::clamp(b, 0.0f, 255.0f);
         }
     }
 
@@ -60,11 +101,12 @@ CPerlinNoise::CPerlinNoise(int _ScreenWidth, int _ScreenHeight)
     }
 
     // create coloured jpg
-    stbi_write_jpg(("Resources/Textures/Noise/" + std::to_string(m_iSeed) + ".jpg").c_str(), _ScreenWidth, _ScreenHeight, 3, pixelsRGBA, 100);
+    stbi_write_jpg("Resources/Textures/Noise/COLOURED.jpg", _ScreenWidth, _ScreenHeight, 3, pixelsRGBA, 100);
     // create black white jpg
     stbi_write_jpg(("Resources/Textures/Noise/" + std::to_string(m_iSeed) + ".jpg").c_str(), _ScreenWidth, _ScreenHeight, 1, pixels, 100);
 
     delete[] pixelsRGBA;
+    delete[] pixels;
 }
 
 CPerlinNoise::~CPerlinNoise()
