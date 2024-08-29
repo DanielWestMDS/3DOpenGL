@@ -1,6 +1,10 @@
+Clay texture:
+https://stock.adobe.com/107140090
+Grass texture:
+https://www.pexels.com/photo/green-grass-413195/
 
-Cubemap texture: 
-https://www.cleanpng.com/png-skybox-texture-mapping-cube-mapping-desktop-wallpa-6020000/
+ShaderToy shaders used:
+https://www.shadertoy.com/view/4dXSzB
+https://www.shadertoy.com/view/ltyGzz
+https://www.shadertoy.com/view/4ffBD2
 
-cube obj (didn't wanna download blender and make my own):
-https://gist.github.com/MaikKlein/0b6d6bb58772c13593d0a0add6004c1c#file-cube-obj

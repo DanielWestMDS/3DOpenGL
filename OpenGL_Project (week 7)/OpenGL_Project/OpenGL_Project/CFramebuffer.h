@@ -1,3 +1,15 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CFrameBuffer.h
+// Description : Converts the scene to a texture so that the scene can be altered in its entirety 
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #pragma once
 #include "CCamera.h"
 

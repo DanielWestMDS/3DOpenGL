@@ -1,5 +1,16 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CHeightMap.h
+// Description : Header file for height map. Holds variables such as the texture array which is used for making each height a different texture. 
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #pragma once
-// camera has all the glfw stuff
 #include "CCamera.h"
 #include <vector>
 #include <fstream>
@@ -54,7 +65,7 @@ private:
 
 	std::vector<float> m_fHeightMap;
 	std::vector<float> m_fHeightMapSmooth;
-	float m_fHeightLevels[3];
+	float m_fHeightLevels[4];
 	GLint m_textureArray[4] = {};
 	int m_DrawType;
 	int m_DrawCount;

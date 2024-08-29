@@ -1,3 +1,15 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CHeightMap.h
+// Description : Uses a raw file and buildinfo to create a bunch of vertices at different heights which connect to create a landscape 
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #include "CFramebuffer.h"
 
 CFramebuffer::CFramebuffer(int _windowWidth, int _windowHeight)
@@ -26,14 +38,7 @@ CFramebuffer::CFramebuffer(int _windowWidth, int _windowHeight)
 							GL_TEXTURE_2D,			// texture target type
 							m_RenderTexture,		// texture id
 							0);						// mipmap level
-}
 
-CFramebuffer::~CFramebuffer()
-{
-}
-
-void CFramebuffer::RenderBuffer()
-{
 	GLuint RBO;
 	glGenRenderbuffers(1, &RBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, RBO);
@@ -49,6 +54,15 @@ void CFramebuffer::RenderBuffer()
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+CFramebuffer::~CFramebuffer()
+{
+}
+
+void CFramebuffer::RenderBuffer()
+{
+
 }
 
 void CFramebuffer::Bind()

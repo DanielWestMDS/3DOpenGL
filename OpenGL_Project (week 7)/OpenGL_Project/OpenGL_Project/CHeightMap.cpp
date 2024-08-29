@@ -1,3 +1,15 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CHeightMap.h
+// Description : Uses a raw file and buildinfo to create a bunch of vertices at different heights which connect to create a landscape 
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #include "CHeightMap.h"
 
 CHeightMap::CHeightMap(HeightMapInfo& _BuildInfo, GLint _program, GLint _textureArray[4])
@@ -18,8 +30,9 @@ CHeightMap::CHeightMap(HeightMapInfo& _BuildInfo, GLint _program, GLint _texture
     }
     
     m_fHeightLevels[0] = 4;
-    m_fHeightLevels[1] = 20;
-    m_fHeightLevels[2] = 80;
+    m_fHeightLevels[1] = 30;
+    m_fHeightLevels[2] = 150;
+    //m_fHeightLevels[3] = 300;
 }
 
 CHeightMap::~CHeightMap()

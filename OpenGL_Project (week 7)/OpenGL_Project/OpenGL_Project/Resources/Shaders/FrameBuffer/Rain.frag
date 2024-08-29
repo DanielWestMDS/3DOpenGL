@@ -12,7 +12,7 @@ void main()
 {
     vec2 uv = TexCoord;
     float time = iTime;
-    vec3 raintex = texture(iChannel1, vec2(uv.x * 2.0, uv.y * 0.1 + time * 0.125)).rgb / 8.0;
+    vec3 raintex = texture(iChannel1, vec2(uv.x * 2.0, uv.y * 0.1 + time * 0.225)).rgb / 8.0;
     vec2 where = (uv - raintex.xy);
     vec3 texchur1 = texture(Texture0, where).rgb;
     

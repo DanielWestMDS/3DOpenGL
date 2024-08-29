@@ -24,11 +24,13 @@ public:
 
 	VertexStandard()
 	{
+		normal = glm::vec3(0.0f);
 		position = glm::vec3(0.0f);
 		texcoord = glm::vec2(0.0f);
 	};
 	VertexStandard(glm::vec3 pos, glm::vec2 texc)
 	{
+		normal = glm::vec3(0.0f);
 		position = pos;
 		texcoord = texc;
 	}

@@ -1,15 +1,30 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CFrameBufferQuad.cpp
+// Description : Creates a quad manually and passes in uniforms for the FBO texture and the rain noise as well as resolution and time. 
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #include "CFrameBufferQuad.h"
 
-CFrameBufferQuad::CFrameBufferQuad(GLuint _texture, GLuint _program) : m_program(_program), m_texture(_texture) {
+CFrameBufferQuad::CFrameBufferQuad(GLuint _texture, GLuint _textureNoise, GLuint _program) : m_program(_program), m_texture(_texture), m_rainTexture(_textureNoise)
+{
     initQuad();
 }
 
-CFrameBufferQuad::~CFrameBufferQuad() {
+CFrameBufferQuad::~CFrameBufferQuad() 
+{
     glDeleteVertexArrays(1, &quadVAO);
     glDeleteBuffers(1, &quadVBO);
 }
 
-void CFrameBufferQuad::initQuad() {
+void CFrameBufferQuad::initQuad() 
+{
     GLfloat quadVertices[] = {
         // Positions        // Texture Coords
         -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
@@ -43,9 +58,9 @@ void CFrameBufferQuad::Render()
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glUniform1i(glGetUniformLocation(m_program, "Texture0"), 0);
 
-    //glActiveTexture(GL_TEXTURE1);
-    //glBindTexture(GL_TEXTURE_2D, texture1);
-    //glUniform1i(glGetUniformLocation(shaderProgram, "iChannel1"), 1);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_rainTexture);
+    glUniform1i(glGetUniformLocation(m_program, "iChannel1"), 1);
 
     // for the effect
     glUseProgram(m_program);

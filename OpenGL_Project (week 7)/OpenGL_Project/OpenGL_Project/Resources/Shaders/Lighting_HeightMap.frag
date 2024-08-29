@@ -30,7 +30,7 @@ in float FragHeight;
 
 // Uniform Inputs
 uniform sampler2D TextureArray[4];
-uniform float HeightLevels[3];
+uniform float HeightLevels[4];
 uniform float AmbientStrength = 0.3f;
 uniform vec3 AmbientColor = vec3(1.0f, 1.0f, 1.0f);
 uniform vec3 LightColor;
@@ -117,9 +117,13 @@ void main()
         float blendFactor = (FragHeight - HeightLevels[1]) / (HeightLevels[2] - HeightLevels[1]);
         texColor = mix(texture(TextureArray[1], FragTexCoords), texture(TextureArray[2], FragTexCoords), blendFactor);
     }
+    else if (FragHeight > 220)
+    {
+        texColor = texture(TextureArray[3], FragTexCoords);
+    }
     else
     {
-        float blendFactor = (FragHeight - HeightLevels[2]) / (1.0 - HeightLevels[2]);
+        float blendFactor = (FragHeight - HeightLevels[2]) / (255 - HeightLevels[2]);
         texColor = mix(texture(TextureArray[2], FragTexCoords), texture(TextureArray[3], FragTexCoords), blendFactor);
     }
 

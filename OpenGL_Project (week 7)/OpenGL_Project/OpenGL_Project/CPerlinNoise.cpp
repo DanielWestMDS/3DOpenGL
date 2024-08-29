@@ -1,3 +1,15 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CPerlinNoise.cpp
+// Description : Creates perlin noise. NPG blends four colours based on height. Outputs a raw file to make a heightmap. 
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #define _USE_MATH_DEFINES
 #define STBI_MSC_SECURE_CRT
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -113,6 +125,134 @@ CPerlinNoise::~CPerlinNoise()
 {
 }
 
+//void CPerlinNoise::AnimateTransition(GLuint texture1ID, GLuint texture2ID, int frameCount, const std::string& outputDirectory)
+//{
+//    int channels = 4; // Assuming RGBA format
+//
+//    // Retrieve dimensions of the first texture
+//    glBindTexture(GL_TEXTURE_2D, texture1ID);
+//    GLint texture1Width, texture1Height;
+//    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &texture1Width);
+//    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &texture1Height);
+//
+//    // Retrieve dimensions of the second texture
+//    glBindTexture(GL_TEXTURE_2D, texture2ID);
+//    GLint texture2Width, texture2Height;
+//    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &texture2Width);
+//    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &texture2Height);
+//
+//    // Determine the minimum dimensions for blending
+//    int blendWidth = std::min(texture1Width, texture2Width);
+//    int blendHeight = std::min(texture1Height, texture2Height);
+//
+//    size_t textureSize = blendWidth * blendHeight * channels;
+//
+//    // Allocate space for the pixel data of both textures
+//    uint8_t* texture1 = new uint8_t[textureSize];
+//    uint8_t* texture2 = new uint8_t[textureSize];
+//    uint8_t* blendedTexture = new uint8_t[textureSize];
+//
+//    // Bind and read the first texture from GPU to CPU
+//    glBindTexture(GL_TEXTURE_2D, texture1ID);
+//    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture1);
+//
+//    // Bind and read the second texture from GPU to CPU
+//    glBindTexture(GL_TEXTURE_2D, texture2ID);
+//    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture2);
+//
+//    // Generate Perlin noise map
+//    float low = 0.0f;
+//    float increment = 1.0f / frameCount;
+//    float high = increment;
+//
+//    float** perlinNoise = GeneratePerlinNoise(blendWidth, blendHeight, 9);
+//    AdjustLevels(perlinNoise, blendWidth, blendHeight, 0.2f, 0.8f);
+//
+//    // Create animation frames
+//    for (int frame = 0; frame < frameCount; frame++)
+//    {
+//        // Adjust noise levels for the current frame
+//        float** blendMask = AdjustLevels(perlinNoise, blendWidth, blendHeight, low, high);
+//
+//        int index = 0;
+//        for (int Col = 0; Col < blendHeight; Col++)
+//        {
+//            for (int Row = 0; Row < blendWidth; Row++)
+//            {
+//                float blendValue = blendMask[Row][Col];
+//
+//                for (int c = 0; c < channels; c++)
+//                {
+//                    blendedTexture[index] = (uint8_t)glm::mix(texture1[index], texture2[index], blendValue);
+//                    index++;
+//                }
+//            }
+//        }
+//
+//        // Save the blended texture as a PNG
+//        std::string outputPath = outputDirectory + "/blend_animation_" + std::to_string(frame) + ".png";
+//        stbi_write_png(outputPath.c_str(), blendWidth, blendHeight, channels, blendedTexture, blendWidth * channels);
+//
+//        // Update levels for the next frame
+//        low = high;
+//        high += increment;
+//    }
+//
+//    // Cleanup
+//    delete[] texture1;
+//    delete[] texture2;
+//    delete[] blendedTexture;
+//    FreeArray(perlinNoise, blendWidth);
+//}
+
+float** CPerlinNoise::AdjustLevels(float** image, int width, int height, float low, float high)
+{
+    float** newImage = GetEmptyArray(width, height);
+
+    for (int i = 0; i < width; i++)
+    {
+        for (int j = 0; j < height; j++)
+        {
+            float col = image[i][j];
+
+            if (col <= low)
+            {
+                newImage[i][j] = 0.0f;
+            }
+            else if (col >= high)
+            {
+                newImage[i][j] = 1.0f;
+            }
+            else
+            {
+                newImage[i][j] = (col - low) / (high - low);
+            }
+        }
+    }
+
+    return newImage;
+}
+
+float** CPerlinNoise::GetEmptyArray(int width, int height)
+{
+    float** array = new float* [width];
+    for (int i = 0; i < width; i++)
+    {
+        array[i] = new float[height];
+        std::fill(array[i], array[i] + height, 0.0f);
+    }
+    return array;
+}
+
+void CPerlinNoise::FreeArray(float** array, int width)
+{
+    for (int i = 0; i < width; i++)
+    {
+        delete[] array[i];
+    }
+    delete[] array;
+}
+
 double CPerlinNoise::RandomValue(int _x, int _y)
 {
     double randomValue;
@@ -186,29 +326,4 @@ double CPerlinNoise::TotalNoisePerPoint(int _x, int _y)
     }
 
     return (total);
-
-    //// circle
-    //int octaves = 4;
-    //float wavelength = 12.0f;
-    //float gain = 0.5f;
-    //float lacunarity = 2.0f;
-
-    //int ScreenX = _x - 256;
-    //int ScreenY = _y - 256;
-
-    //double total = 0.0f;
-    //for (int i = 0; i < octaves; i++)
-    //{
-    //    float frequency = (float)pow(lacunarity, i) / wavelength;
-    //    float amplitude = (float)pow(gain, i);
-
-    //    float valX = glm::pow(((float)ScreenX / wavelength) - 0.5f, 2.0f);
-    //    float valY = glm::pow(((float)ScreenY / wavelength) - 0.5f, 2.0f);
-    //    float Sqroot = std::sqrt(valX + valY);
-
-    //    total += glm::sin(Sqroot) + 
-    //        (SmoothInterpolate(_x * frequency, _y * frequency) * amplitude);
-    //}
-
-    //return total;
 }

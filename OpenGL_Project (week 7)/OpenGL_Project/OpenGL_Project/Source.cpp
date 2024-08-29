@@ -44,6 +44,11 @@ CLightManager* LightManager;
 CModel* PointLight1;
 CModel* PointLight2;
 
+// stencil objects
+CModel* Skull;
+CModel* Dandelion;
+CModel* Halberd;
+
 // height map
 CHeightMap* HeightMap;
 CHeightMap* HeightMapNoise;
@@ -87,6 +92,7 @@ GLuint Texture_3;
 GLuint Texture_4;
 GLuint Texture_Noise;
 GLuint Texture_PerlinMap;
+GLuint Texture_RainNoise;
 // textures for height map
 GLint HeightMapTextures[4];
 
@@ -376,8 +382,9 @@ void InitialSetup()
 
 	Texture_Quag = LoadTexture("Resources/Textures/SkyboxBack.jpg");
 	Texture_Awesome = LoadTexture("Resources/Textures/360_F_107140090_3eRlMItNMxEcw67BDq0lPAppu5q62QUw.jpg");
-	Texture_3 = LoadTexture("Resources/Textures/PolygonAncientWorlds_Statue_01.png");
-	Texture_4 = LoadTexture("Resources/Textures/png-transparent-spider-man-heroes-download-with-transparent-background-free-thumbnail.png");
+	Texture_3 = LoadTexture("Resources/Textures/pexels-pixmike-413195.jpg");
+	Texture_4 = LoadTexture("Resources/Textures/PolygonAncientWorlds_Statue_01.png");
+	Texture_RainNoise = LoadTexture("Resources/Textures/ad56fba948dfba9ae698198c109e71f118a54d209c0ea50d77ea546abad89c57.png");
 	HeightMapTextures[0] = Texture_Quag;
 	HeightMapTextures[1] = Texture_Awesome;
 	HeightMapTextures[2] = Texture_3;
@@ -416,7 +423,7 @@ void InitialSetup()
 
 	PerlinQuad = new CQuad(10, 10, 100, 100, Texture_3, Program_Squares);
 
-	FrameBufferQuad = new CFrameBufferQuad(Texture_Awesome, Program_RenderBuffer);
+	FrameBufferQuad = new CFrameBufferQuad(Texture_Awesome, Texture_RainNoise, Program_RenderBuffer);
 
 	FrameBuffer = new CFramebuffer(iWindowSize, iWindowSize);
 
@@ -450,6 +457,8 @@ void InitialSetup()
 
 	// add objects to scenes
 	//Scene1->AddObject(Skybox);
+	Scene1->AddObject(PointLight1);
+	//Scene1->AddObject(PointLight2);
 	Scene3->AddHeightMap(HeightMapNoise);
 	Scene2->AddHeightMap(HeightMap);
 
@@ -473,7 +482,12 @@ void InitialSetup()
 
 	// depth buffer
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_CCW);
+	glDepthFunc(GL_LESS);
+
+	// culling
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CCW);
+	glCullFace(GL_BACK);
 }
 
 void Update()
@@ -503,6 +517,8 @@ void Update()
 	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat);
 	HeightMapNoise->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat);
 
+	//NoiseMap->AnimationGrowth(Texture_Quag, Texture_Awesome);
+
 	// UI perlin noise
 	//PerlinQuad->Update(Program_Squares, Texture_Awesome, PerlinQuadModelMat, Camera->GetUIProjMat(), Camera->GetViewMat());
 }
@@ -519,7 +535,9 @@ void Render()
 	switch (g_iSceneNumber)
 	{
 	case 1:
-
+		FrameBuffer->Bind();
+		Scene1->Render();
+		FrameBuffer->Unbind();
 		break;
 	case 2:
 		Scene2->Render();
