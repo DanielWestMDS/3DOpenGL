@@ -16,18 +16,35 @@
 class CFramebuffer
 {
 public:
+	/// <summary>
+	/// Constructor, creates FBO and depth buffer
+	/// </summary>
+	/// <param name="_windowWidth"></param>
+	/// <param name="_windowHeight"></param>
 	CFramebuffer(int _windowWidth, int _windowHeight);
+
+	/// <summary>
+	/// destructor
+	/// </summary>
 	~CFramebuffer();
 
+	/// <summary>
+	/// Binds the framebuffer. ANything after this function call will be added to the FBO texture
+	/// </summary>
 	void Bind();
+	/// <summary>
+	/// unbinds the frame buffer. Anything after this function call will not be added to the FBO texture
+	/// </summary>
 	void Unbind();
 
+	/// <summary>
+	/// Getter for the render texture. Should be passed to a quad to display the scene
+	/// </summary>
+	/// <returns></returns>
 	GLuint GetRenderTexture() { return m_RenderTexture; };
 
 
 private:
-	void RenderBuffer();
-
 	GLuint m_FBO;
 	GLuint m_RenderTexture;
 

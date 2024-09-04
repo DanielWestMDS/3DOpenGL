@@ -16,6 +16,9 @@
 #include <fstream>
 #include <string>
 
+/// <summary>
+/// struct that holds data for every vertex in the height map
+/// </summary>
 struct VertexStandardHeightMap
 {
 public:
@@ -40,6 +43,13 @@ public:
 	}
 };
 
+/// <summary>
+/// info defining how the height map is constructed
+/// </summary>
+/// <param name="_row"></param>
+/// <param name="_col"></param>
+/// <param name="_BuildInfo"></param>
+/// <returns></returns>
 struct HeightMapInfo
 {
 	std::string FilePath = "";
@@ -51,16 +61,46 @@ struct HeightMapInfo
 class CHeightMap
 {
 public:
+	/// <summary>
+	/// Constructor. Uses build info to create a height map. Initialises the program and textures to be passed into the program
+	/// </summary>
 	CHeightMap(HeightMapInfo& _BuildInfo, GLint _program, GLint _textureArray[4]);
+
+	/// <summary>
+	/// destructor.
+	/// </summary>
 	~CHeightMap();
 
+	/// <summary>
+	/// Called every frame. Updates matrices so moving the camera works properly
+	/// </summary>
 	void Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _matrix);
+
+	/// <summary>
+	/// Binds VAO, passes all necessary matrices and textures in via uniform, renders vertices to screen.
+	/// </summary>
 	void Render();
 
 private:
+
+	/// <summary>
+	/// Gets Height map info from a raw file
+	/// </summary>
 	bool LoadHeightMap(HeightMapInfo& _BuildInfo);
+
+	/// <summary>
+	/// Uses raw file data to create positions for all the vertices. Binds everything to VAO attribarray and VBO
+	/// </summary>
 	void BuildVertexData(HeightMapInfo& _BuildInfo);
+
+	/// <summary>
+	/// returns the average based on the surrounding 8 vertices
+	/// </summary>
 	float Average(unsigned int _row, unsigned int _col, HeightMapInfo& _BuildInfo);
+
+	/// <summary>
+	/// Uses the average to decrease the height differences between vertex neighbours. 
+	/// </summary>
 	void SmoothHeights(HeightMapInfo& _BuildInfo);
 
 	std::vector<float> m_fHeightMap;

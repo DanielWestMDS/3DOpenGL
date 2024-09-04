@@ -15,6 +15,9 @@
 #include "CCamera.h"
 #include <iostream>
 
+/// <summary>
+/// Holds vertex information for each point on the model.
+/// </summary>
 struct VertexStandard
 {
 public:
@@ -40,13 +43,40 @@ class CModel
 {
 
 public:
+	/// <summary>
+	/// Constructor. Reads data from an obj file passed via filepath and creates vertex information using the struct. Also creates and binds VBO
+	/// </summary>
+	/// <param name="FilePath"></param>
+	/// <param name="_program"></param>
+	/// <param name="_texture"></param>
+	/// <param name="_matrix"></param>
 	CModel(std::string FilePath, GLint _program, GLint _texture, glm::mat4 _matrix);
+
+	/// <summary>
+	/// destructor
+	/// </summary>
 	~CModel();
 
+	/// <summary>
+	/// Updates matrices so the model is displayed correctly after the camera moves
+	/// </summary>
+	/// <param name="_projMat"></param>
+	/// <param name="_viewMat"></param>
+	/// <param name="_cameraPos"></param>
 	virtual void Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos);
+
+	/// <summary>
+	/// Binds VAO and passes matrices into shader
+	/// </summary>
 	virtual void Render();
+
+	// unused instanced rendering function
 	//virtual void RenderInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos, glm::mat4 _VP);
 
+	/// <summary>
+	/// getter for VAO
+	/// </summary>
+	/// <returns></returns>
 	GLuint GetVAO() { return VAO; };
 
 protected:

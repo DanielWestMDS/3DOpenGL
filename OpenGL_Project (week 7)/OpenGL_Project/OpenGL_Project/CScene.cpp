@@ -1,3 +1,15 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CScene.cpp
+// Description : Loads objects into a scene to render everything cleaner 
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #include "CScene.h"
 
 CScene::CScene()

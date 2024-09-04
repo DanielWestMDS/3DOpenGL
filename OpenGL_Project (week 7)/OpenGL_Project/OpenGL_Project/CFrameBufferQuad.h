@@ -16,10 +16,35 @@
 class CFrameBufferQuad
 {
 public:
+
+    /// <summary>
+    /// Constructor. Initialises anything passed into the uniform 
+    /// </summary>
+    /// <param name="_texture"></param>
+    /// <param name="_rainTexture"></param>
+    /// <param name="_program"></param>
     CFrameBufferQuad(GLuint _texture, GLuint _rainTexture, GLuint _program);
+
+    /// <summary>
+    /// destructor
+    /// </summary>
     ~CFrameBufferQuad();
+
+    /// <summary>
+    /// Passes needed variables into the program via uniform. Binds VAO
+    /// </summary>
     void Render();
+
+    /// <summary>
+    /// Updates the texture being displayed to the quad
+    /// </summary>
+    /// <param name="textureID"></param>
     void UpdateTexture(GLuint textureID);
+
+    /// <summary>
+    /// Updates the program being used to change the effect on screen
+    /// </summary>
+    /// <param name="programID"></param>
     void SetProgram(GLuint programID);
 
 private:
@@ -27,6 +52,9 @@ private:
     GLuint quadVAO, quadVBO;
     GLuint m_program;
 
+    /// <summary>
+    /// creates a manual quad and initialises VAO and VBO
+    /// </summary>
     void initQuad();
 };
 

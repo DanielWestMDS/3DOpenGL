@@ -274,6 +274,11 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 
 }
 
+/// <summary>
+/// Load an openGL texture from a filepath
+/// </summary>
+/// <param name="_filepath"></param>
+/// <returns></returns>
 GLuint LoadTexture(std::string _filepath)
 {
 	GLuint Texture;
@@ -307,6 +312,14 @@ GLuint LoadTexture(std::string _filepath)
 	return Texture;
 }
 
+/// <summary>
+/// Creates a model matrix for objects in the scene
+/// </summary>
+/// <param name="_position"></param>
+/// <param name="_scale"></param>
+/// <param name="_rotationAngle"></param>
+/// <param name="_rotationMat"></param>
+/// <returns></returns>
 glm::mat4 MakeModelMatrix(glm::vec3 _position, float _scale, float _rotationAngle, glm::vec3 _rotationMat)
 {
 	// calculate model matrix
@@ -319,7 +332,9 @@ glm::mat4 MakeModelMatrix(glm::vec3 _position, float _scale, float _rotationAngl
 	return OutputMat;
 }
 
-// custom functions for tidy code
+/// <summary>
+/// runs once at the beginning of the project
+/// </summary>
 void InitialSetup()
 {
 	// program for 3d model
@@ -490,6 +505,9 @@ void InitialSetup()
 	glCullFace(GL_BACK);
 }
 
+/// <summary>
+/// runs once every tick. Handles anything not to do with rendering to the screen
+/// </summary>
 void Update()
 {
 	glfwPollEvents();
@@ -523,6 +541,9 @@ void Update()
 	//PerlinQuad->Update(Program_Squares, Texture_Awesome, PerlinQuadModelMat, Camera->GetUIProjMat(), Camera->GetViewMat());
 }
 
+/// <summary>
+/// Runs once every tick. handles anything visual such as lighting and rendering
+/// </summary>
 void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -562,6 +583,10 @@ void Render()
 	glfwSwapBuffers(Window);
 }
 
+/// <summary>
+/// initialises openGL and runs update and render every frame
+/// </summary>
+/// <returns></returns>
 int main()
 {
 	// initialise GLFW and set version to 4.6

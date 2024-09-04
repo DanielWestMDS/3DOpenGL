@@ -18,6 +18,9 @@
 
 //#define MAX_POINT_LIGHTS 4
 
+/// <summary>
+/// Information for point lights to be passed into the lighting program
+/// </summary>
 struct PointLight
 {
     glm::vec3 Position;
@@ -29,6 +32,9 @@ struct PointLight
     float AttenuationExponent;
 };
 
+/// <summary>
+/// information for the directional lighting to be passed into the lighting program
+/// </summary>
 struct DirectionalLight
 {
     glm::vec3 Direction;
@@ -39,10 +45,33 @@ struct DirectionalLight
 class CLightManager
 {
 public:
+
+    /// <summary>
+    /// constructor. Initialises ambient and directional light
+    /// </summary>
     CLightManager();
+
+    /// <summary>
+    /// destructor
+    /// </summary>
     ~CLightManager();
 
+    /// <summary>
+    /// Adds a point light into pointlights vector. 
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="color"></param>
+    /// <param name="specularStrength"></param>
+    /// <param name="_Constant"></param>
+    /// <param name="_Linear"></param>
+    /// <param name="_Exponent"></param>
     void AddPointLight(const glm::vec3& position, const glm::vec3& color, float specularStrength, float _Constant, float _Linear, float _Exponent);
+
+    /// <summary>
+    /// Updates the shader with point light info. Also updates boolean for if pointlights are active or not.
+    /// </summary>
+    /// <param name="program"></param>
+    /// <param name="_bPointLight"></param>
     void UpdateShader(GLuint program, bool _bPointLight);
 
 private:
@@ -50,8 +79,6 @@ private:
     float AmbientStrength;
     glm::vec3 AmbientColor;
     static const int MAX_POINT_LIGHTS = 10;
-    PointLight PointLightArray[MAX_POINT_LIGHTS];
-    unsigned int PointLightCount;
 
     // vector to store all the point lights
     std::vector<PointLight> m_PointLights;

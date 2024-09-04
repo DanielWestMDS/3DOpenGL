@@ -6,7 +6,7 @@
 // (c) Media Design School
 //
 // File Name : CLightManager.cpp
-// Description : Manages point lights for the shader
+// Description : Manages point lights and directional light for the shader
 // Author : Daniel West
 // Mail : daniel.west@mds.ac.nz
 
@@ -15,11 +15,8 @@
 CLightManager::CLightManager()
 {
     // lights
-    float AmbientStrength = 0.3;
-    glm::vec3 AmbientColor;
-    static const int MAX_POINT_LIGHTS = 10;
-    PointLight PointLightArray[MAX_POINT_LIGHTS];
-    unsigned int PointLightCount;
+    AmbientStrength = 0.3;
+    AmbientColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
     std::vector<PointLight> m_PointLights;
 

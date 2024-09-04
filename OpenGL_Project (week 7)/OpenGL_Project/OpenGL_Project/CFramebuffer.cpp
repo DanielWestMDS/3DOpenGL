@@ -60,11 +60,6 @@ CFramebuffer::~CFramebuffer()
 {
 }
 
-void CFramebuffer::RenderBuffer()
-{
-
-}
-
 void CFramebuffer::Bind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
