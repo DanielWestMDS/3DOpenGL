@@ -24,6 +24,10 @@ CLightManager::CLightManager()
     m_DirectionLight.Direction = glm::vec3(-1.0f, -1.0f, 0.0f);
     m_DirectionLight.Color = glm::vec3(0.3f, 0.3f, 0.3f);
     m_DirectionLight.SpecularStrength = 0.5f;
+
+    m_LightViewMat = glm::lookAt(glm::normalize(m_DirectionLight.Direction) * m_fDirScalar, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    m_VPMat = m_LightProjMat * m_LightViewMat;
 }
 
 CLightManager::~CLightManager()

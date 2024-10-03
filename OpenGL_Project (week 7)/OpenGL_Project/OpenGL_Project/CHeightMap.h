@@ -74,12 +74,17 @@ public:
 	/// <summary>
 	/// Called every frame. Updates matrices so moving the camera works properly
 	/// </summary>
-	void Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _matrix);
+	void Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _matrix, glm::mat4 _LightVP, GLuint _ShadowTex);
 
 	/// <summary>
 	/// Binds VAO, passes all necessary matrices and textures in via uniform, renders vertices to screen.
 	/// </summary>
 	void Render();
+
+	/// <summary>
+	/// Creates a shadow map
+	/// </summary>
+	void RenderShadow(GLuint _ShadowProgram);
 
 private:
 
@@ -118,5 +123,9 @@ private:
 	glm::mat4 m_projMat = glm::mat4();
 	glm::mat4 m_viewMat = glm::mat4();
 	glm::vec3 m_cameraPos = glm::vec3();
+
+	glm::mat4 m_lightVP = glm::mat4();
+
+	GLuint m_ShadowTexture;
 };
 

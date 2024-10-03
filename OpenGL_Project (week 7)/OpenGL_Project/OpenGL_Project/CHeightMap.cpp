@@ -70,6 +70,36 @@ void CHeightMap::Render()
     GLint HeightLevelsLoc = glGetUniformLocation(m_program, "HeightLevels");
     glUniform1fv(HeightLevelsLoc, 3, m_fHeightLevels);
 
+    // pass in view projection for shadows
+    GLint VPMat = glGetUniformLocation(m_program, "VPLight");
+    glUniformMatrix4fv(VPMat, 1, GL_FALSE, glm::value_ptr(m_lightVP));
+
+    // pass shadow texture to shader
+    GLint ShadowTexture = glGetUniformLocation(m_program, "Texture_ShadowMap");
+    glActiveTexture(GL_TEXTURE0 + 4);
+    glBindTexture(GL_TEXTURE_2D, m_ShadowTexture);
+    glUniform1i(ShadowTexture, 5);
+
+    // shadow texture
+
+    glDrawElements(GL_TRIANGLES, m_DrawCount, GL_UNSIGNED_INT, 0);
+
+    glBindVertexArray(0);
+}
+
+void CHeightMap::RenderShadow(GLuint _ShadowProgram)
+{
+    glUseProgram(_ShadowProgram);
+    glBindVertexArray(m_VAO);
+
+    // Model matrix
+    GLint ModelMatrix = glGetUniformLocation(m_program, "ModelMatrix");
+    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(m_matrix));
+
+    // pass in view projection
+    GLint VPMat = glGetUniformLocation(m_program, "LightVP");
+    glUniformMatrix4fv(VPMat, 1, GL_FALSE, glm::value_ptr(m_lightVP));
+
     glDrawElements(GL_TRIANGLES, m_DrawCount, GL_UNSIGNED_INT, 0);
 
     glBindVertexArray(0);
@@ -228,12 +258,14 @@ void CHeightMap::SmoothHeights(HeightMapInfo& _BuildInfo)
     m_fHeightMap = SmoothedMap;
 }
 
-void CHeightMap::Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _matrix)
+void CHeightMap::Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _matrix, glm::mat4 _LightVP, GLuint _ShadowTex)
 {
     m_projMat = _projMat;
     m_viewMat = _viewMat;
     m_cameraPos = _cameraPos;
     m_matrix = _matrix;
+    m_lightVP = _LightVP;
+    m_ShadowTexture = _ShadowTex;
 }
 
 float CHeightMap::Average(unsigned int _row, unsigned int _col, HeightMapInfo& _BuildInfo)

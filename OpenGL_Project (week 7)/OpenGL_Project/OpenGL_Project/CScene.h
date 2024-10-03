@@ -34,6 +34,13 @@ public:
 	void Render();
 
 	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_ShadowProgram"></param>
+	/// <param name="_LightVP"></param>
+	void RenderShadow(GLuint _ShadowProgram, glm::mat4 _LightVP);
+
+	/// <summary>
 	/// adds an object to be rendered to the scene
 	/// </summary>
 	/// <param name="_Model"></param>

@@ -131,6 +131,23 @@ void CModel::Render()
     glBindVertexArray(0);
 }
 
+void CModel::RenderShadow(GLuint _ShadowProgram, glm::mat4 _LightVP)
+{
+    glUseProgram(_ShadowProgram);
+
+    // Model matrix
+    GLint ModelMatrix = glGetUniformLocation(_ShadowProgram, "ModelMatrix");
+    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(m_matrix));
+
+    // pass in view projection
+    GLint VPMat = glGetUniformLocation(_ShadowProgram, "LightVP");
+    glUniformMatrix4fv(VPMat, 1, GL_FALSE, glm::value_ptr(_LightVP));
+
+    glDrawArrays(DrawType, 0, DrawCount);
+
+    glBindVertexArray(0);
+}
+
 //void CModel::RenderInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos, glm::mat4 _VP)
 //{
 //    // bind program and VAO

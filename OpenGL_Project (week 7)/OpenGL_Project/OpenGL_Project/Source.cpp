@@ -26,6 +26,7 @@
 #include "CFrameBufferQuad.h"
 #include "CQuad.h"
 #include "CFramebuffer.h"
+#include "CShadowMap.h"
 
 // global variables
 GLFWwindow* Window = nullptr;
@@ -63,6 +64,9 @@ CFrameBufferQuad* FrameBufferQuad;
 // framebuffer
 CFramebuffer* FrameBuffer;
 
+// Shadows
+CShadowMap* ShadowMap;
+
 // scenes
 CScene* Scene1;
 CScene* Scene2;
@@ -84,6 +88,7 @@ GLuint Program_RenderBufferNone;
 GLuint Program_Effect;
 GLuint Program_Cartoon;
 GLuint Program_Rain;
+GLuint Program_ShadowMap;
 
 // texture
 GLuint Texture_Awesome;
@@ -392,6 +397,10 @@ void InitialSetup()
 	Program_Cartoon = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
 		"Resources/Shaders/FrameBuffer/Cartoon.frag");
 
+	// renderbuffer with cartoon effect
+	Program_ShadowMap = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/ShadowPass.vert",
+		"Resources/Shaders/FrameBuffer/ShadowPass.frag");
+
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
 
@@ -441,6 +450,8 @@ void InitialSetup()
 	FrameBufferQuad = new CFrameBufferQuad(Texture_Awesome, Texture_RainNoise, Program_RenderBuffer);
 
 	FrameBuffer = new CFramebuffer(iWindowSize, iWindowSize);
+
+	ShadowMap = new CShadowMap(iWindowSize, iWindowSize);
 
 	// scenes
 	Scene1 = new CScene();
@@ -532,8 +543,8 @@ void Update()
 	PointLight2->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
 
 	// height map
-	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat);
-	HeightMapNoise->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat);
+	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
+	HeightMapNoise->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
 
 	//NoiseMap->AnimationGrowth(Texture_Quag, Texture_Awesome);
 
@@ -557,21 +568,26 @@ void Render()
 	{
 	case 1:
 		FrameBuffer->Bind();
-		Scene1->Render();
+		Scene1->RenderShadow(Program_ShadowMap, LightManager->GetVP());
 		FrameBuffer->Unbind();
 		break;
 	case 2:
-		Scene2->Render();
+		Scene2->RenderShadow(Program_ShadowMap, LightManager->GetVP());
 		break;
 	case 3:
-		FrameBuffer->Bind();
+		ShadowMap->Bind();
+		//FrameBuffer->Bind();
+
+		Scene3->RenderShadow(Program_ShadowMap, LightManager->GetVP());
+
+		ShadowMap->Unbind();
+		//FrameBuffer->Unbind();
 		PerlinQuad->UpdateTexture(Texture_PerlinMap);
 		PerlinQuad->Render(*Camera);
 		Scene3->Render();
-		FrameBuffer->Unbind();
-		FrameBufferQuad->SetProgram(Program_RenderBuffer);
-		FrameBufferQuad->UpdateTexture(FrameBuffer->GetRenderTexture());
-		FrameBufferQuad->Render();
+		//FrameBufferQuad->SetProgram(Program_RenderBuffer);
+		//FrameBufferQuad->UpdateTexture(FrameBuffer->GetRenderTexture());
+		//FrameBufferQuad->Render();
 		break;
 	}
 

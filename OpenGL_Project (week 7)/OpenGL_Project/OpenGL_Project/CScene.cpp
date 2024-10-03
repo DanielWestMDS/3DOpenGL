@@ -33,6 +33,19 @@ void CScene::Render()
 	}
 }
 
+void CScene::RenderShadow(GLuint _ShadowProgram, glm::mat4 _LightVP)
+{
+	for (auto Model : m_Objects)
+	{
+		Model->RenderShadow(_ShadowProgram, _LightVP);
+	}
+
+	if (m_HeightMap != nullptr)
+	{
+		m_HeightMap->RenderShadow(_ShadowProgram);
+	}
+}
+
 void CScene::AddObject(CModel* _Model)
 {
 	m_Objects.push_back(_Model);

@@ -73,6 +73,12 @@ public:
     /// <param name="program"></param>
     /// <param name="_bPointLight"></param>
     void UpdateShader(GLuint program, bool _bPointLight);
+    
+    /// <summary>
+    /// Returns the VP matrix for shadow mapping
+    /// </summary>
+    /// <returns></returns>
+    glm::mat4 GetVP() { return m_VPMat; };
 
 private:
     // lights
@@ -85,4 +91,11 @@ private:
 
     // direction light (only one needed)
     DirectionalLight m_DirectionLight;
+
+    glm::mat4 m_LightProjMat = glm::ortho(-24.0f, -14.0f, -24.0f, -14.0f, 0.1f, 2000.0f);
+    glm::mat4 m_LightViewMat;
+
+    glm::mat4 m_VPMat;
+
+    float m_fDirScalar = -1.0f * 500.0f;
 };

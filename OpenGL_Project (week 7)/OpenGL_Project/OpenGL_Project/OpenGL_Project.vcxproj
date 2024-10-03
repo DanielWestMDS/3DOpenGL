@@ -150,6 +150,7 @@
     <ClCompile Include="CQuad.cpp" />
     <ClCompile Include="CFrameBufferQuad.cpp" />
     <ClCompile Include="CScene.cpp" />
+    <ClCompile Include="CShadowMap.cpp" />
     <ClCompile Include="CSkyBox.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="CQuad.h" />
     <ClInclude Include="CFrameBufferQuad.h" />
     <ClInclude Include="CScene.h" />
+    <ClInclude Include="CShadowMap.h" />
     <ClInclude Include="CSkyBox.h" />
     <ClInclude Include="ShaderLoader.h" />
   </ItemGroup>
@@ -190,6 +192,8 @@
     <None Include="Resources\Shaders\PointLight1.frag" />
     <None Include="Resources\Shaders\PointLight2.frag" />
     <None Include="Resources\Shaders\RenderBuffer.vert" />
+    <None Include="Resources\Shaders\ShadowPass.frag" />
+    <None Include="Resources\Shaders\ShadowPass.vert" />
     <None Include="Resources\Shaders\Squares.frag" />
     <None Include="Resources\Shaders\Squares.vert" />
   </ItemGroup>
