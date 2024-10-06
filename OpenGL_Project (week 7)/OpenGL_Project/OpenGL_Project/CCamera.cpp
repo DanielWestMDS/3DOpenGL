@@ -107,6 +107,11 @@ glm::mat4 CCamera::GetProjMat()
 	return m_projMat;
 }
 
+glm::mat4 CCamera::GetVP()
+{
+	return m_projMat * m_viewMat;
+}
+
 void CCamera::Input(GLFWwindow* _Window, float _dt)
 {
 	// get mouse input

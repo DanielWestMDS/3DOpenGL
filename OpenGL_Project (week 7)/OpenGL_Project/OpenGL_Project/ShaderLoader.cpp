@@ -36,6 +36,32 @@ GLuint ShaderLoader::CreateProgram(const char* vertexShaderFilename, const char*
 	return program;
 }
 
+GLuint ShaderLoader::CreateProgram_C(std::string ComputeShaderFilename)
+{
+	std::string PathPrefix = "Resources/Shaders/";
+	std::string FullPath_Compute = PathPrefix + ComputeShaderFilename;
+
+	GLuint ComputeShaderID = CreateShader(GL_COMPUTE_SHADER, FullPath_Compute.c_str());
+
+	GLuint program = glCreateProgram();
+	glAttachShader(program, ComputeShaderID);
+	glLinkProgram(program);
+
+	// Check for link errors
+	int link_result = 0;
+	glGetProgramiv(program, GL_LINK_STATUS, &link_result);
+	//glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+	if (link_result == GL_FALSE)
+	{
+		std::string programName = ComputeShaderFilename;
+		PrintErrorDetails(false, program, programName.c_str());
+		return 0;
+	}
+
+	glDeleteShader(ComputeShaderID);
+	return program;
+}
+
 GLuint ShaderLoader::CreateShader(GLenum shaderType, const char* shaderName)
 {
 	// Read the shader files and save the source code as strings

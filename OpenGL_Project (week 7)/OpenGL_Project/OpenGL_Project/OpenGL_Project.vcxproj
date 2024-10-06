@@ -146,6 +146,7 @@
     <ClCompile Include="CHeightMap.cpp" />
     <ClCompile Include="CLightManager.cpp" />
     <ClCompile Include="CModel.cpp" />
+    <ClCompile Include="CParticleSystem.cpp" />
     <ClCompile Include="CPerlinNoise.cpp" />
     <ClCompile Include="CQuad.cpp" />
     <ClCompile Include="CFrameBufferQuad.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="CHeightMap.h" />
     <ClInclude Include="CLightManager.h" />
     <ClInclude Include="CModel.h" />
+    <ClInclude Include="CParticleSystem.h" />
     <ClInclude Include="CPerlinNoise.h" />
     <ClInclude Include="CQuad.h" />
     <ClInclude Include="CFrameBufferQuad.h" />
@@ -180,6 +182,7 @@
   <ItemGroup>
     <None Include="PointLight1.frag" />
     <None Include="PointLight2.frag" />
+    <None Include="Resources\Shaders\ComputeParticles.comp" />
     <None Include="Resources\Shaders\FrameBuffer\Cartoon.frag" />
     <None Include="Resources\Shaders\FrameBuffer\Effect.frag" />
     <None Include="Resources\Shaders\FrameBuffer\Greyscale.frag" />
@@ -189,6 +192,8 @@
     <None Include="Resources\Shaders\HeightMap.vert" />
     <None Include="Resources\Shaders\Lighting_HeightMap.frag" />
     <None Include="Resources\Shaders\onePointLight.frag" />
+    <None Include="Resources\Shaders\Particles.frag" />
+    <None Include="Resources\Shaders\Particles.vert" />
     <None Include="Resources\Shaders\PointLight1.frag" />
     <None Include="Resources\Shaders\PointLight2.frag" />
     <None Include="Resources\Shaders\RenderBuffer.vert" />

@@ -30,6 +30,8 @@ public:
 	glm::mat4 GetViewMat();
 	// projection matrix passed into object render functions for MVP matrixs
 	glm::mat4 GetProjMat();
+	//gets projection times view matrix
+	glm::mat4 GetVP();
 	// projection matrix for UI
 	glm::mat4 GetUIProjMat() { return m_UIprojMat; };
 	// view matrix for UI

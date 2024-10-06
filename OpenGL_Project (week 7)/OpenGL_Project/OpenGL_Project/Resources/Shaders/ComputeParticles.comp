@@ -1,0 +1,63 @@
+#version 460 core
+
+#define WORK_GROUP_SIZE_X 128
+
+layout (local_size_x = WORK_GROUP_SIZE_X,
+		local_size_y = 1,
+		local_size_z = 1
+		) in;
+
+layout(std430, binding = 0) buffer PositionLifeBuffer { vec4 PositionLife[]; };
+layout(std430, binding = 1) buffer VelocityBuffer { vec4 Velocity[]; };
+
+uniform int SeedLife;
+uniform int SeedX;
+uniform int SeedY;
+uniform int SeedZ;
+uniform vec4 VelocityLifeChange;
+uniform vec3 EmitterOrigin;
+
+// function prototypes
+void ResetParticle(uint Index);
+double RandomValue(uint ID, int Seed);
+
+double RandomValue(uint ID, int Seed)
+{
+	double RandomValue;
+	int Noise = int(ID) * Seed;
+	Noise = (Noise << 13) ^ Noise;
+
+	int T = (Noise * (Noise * Noise * 15731 + 789221) + 1376312589) & 0x7fffffff;
+	RandomValue = 1.0 - double(T) * 0.93132257461548515625e-9;
+	return RandomValue;
+}
+
+void ResetParticle(uint Index)
+{
+	float LifeModifier = 5.0f;
+	float Speed_XZ = 8.0f;
+	float Speed_Y = 20.0f;
+
+	PositionLife[Index] = vec4(EmitterOrigin.xyz,					// Initial Position
+		(RandomValue(Index, SeedLife) + 1) * 0.5f * LifeModifier);	// Initial Lifespan
+	
+	Velocity[Index] = vec4(
+		Speed_XZ * RandomValue(Index, SeedX),							// initial x velocity
+		Speed_Y  * (RandomValue(Index, SeedY) + 1.0f) * 0.5f + 10.0f,	// initial y Velocity
+		Speed_XZ * RandomValue(Index, SeedZ),							// initial z velocity
+		0.0f);
+}
+
+void main()
+{
+	uint Index = gl_GlobalInvocationID.x;
+
+	Velocity[Index].xyz += VelocityLifeChange.xyz;
+	PositionLife[Index].xyz += Velocity[Index].xyz * VelocityLifeChange.w;
+	PositionLife[Index].w -= VelocityLifeChange.w;
+
+	if(PositionLife[Index].w <= 0.0f) // lifespan
+	{
+		ResetParticle(Index);
+	}
+}

@@ -16,7 +16,6 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 
 #include "ShaderLoader.h"
-#include "CCamera.h"
 #include "CModel.h"
 #include "CSkyBox.h"
 #include "CLightManager.h"
@@ -27,6 +26,7 @@
 #include "CQuad.h"
 #include "CFramebuffer.h"
 #include "CShadowMap.h"
+#include "CParticleSystem.h"
 
 // global variables
 GLFWwindow* Window = nullptr;
@@ -67,6 +67,9 @@ CFramebuffer* FrameBuffer;
 // Shadows
 CShadowMap* ShadowMap;
 
+// particle effects
+CParticleSystem* Particles;
+
 // scenes
 CScene* Scene1;
 CScene* Scene2;
@@ -89,6 +92,9 @@ GLuint Program_Effect;
 GLuint Program_Cartoon;
 GLuint Program_Rain;
 GLuint Program_ShadowMap;
+// compute program for particles
+GLuint Program_ComputeParticles;
+GLuint Program_Particles;
 
 // texture
 GLuint Texture_Awesome;
@@ -401,6 +407,13 @@ void InitialSetup()
 	Program_ShadowMap = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/ShadowPass.vert",
 		"Resources/Shaders/FrameBuffer/ShadowPass.frag");
 
+	// particles
+	Program_Particles = ShaderLoader::CreateProgram("Resources/Shaders/Particles.vert",
+		"Resources/Shaders/Particles.frag");
+
+	// particle compute shader
+	Program_ComputeParticles = ShaderLoader::CreateProgram_C("ComputeParticles.comp");
+
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
 
@@ -452,6 +465,8 @@ void InitialSetup()
 	FrameBuffer = new CFramebuffer(iWindowSize, iWindowSize);
 
 	ShadowMap = new CShadowMap(iWindowSize, iWindowSize);
+
+	Particles = new CParticleSystem(Camera, Program_Particles, Program_ComputeParticles, glm::vec3(0.0f, 0.0f, 0.0f));
 
 	// scenes
 	Scene1 = new CScene();
@@ -546,6 +561,9 @@ void Update()
 	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
 	HeightMapNoise->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
 
+	// particles
+	Particles->Update(deltaTime);
+
 	//NoiseMap->AnimationGrowth(Texture_Quag, Texture_Awesome);
 
 	// UI perlin noise
@@ -573,6 +591,7 @@ void Render()
 		break;
 	case 2:
 		Scene2->RenderShadow(Program_ShadowMap, LightManager->GetVP());
+		Particles->Render();
 		break;
 	case 3:
 		ShadowMap->Bind();

@@ -76,9 +76,9 @@ void CHeightMap::Render()
 
     // pass shadow texture to shader
     GLint ShadowTexture = glGetUniformLocation(m_program, "Texture_ShadowMap");
-    glActiveTexture(GL_TEXTURE0 + 4);
-    glBindTexture(GL_TEXTURE_2D, m_ShadowTexture);
     glUniform1i(ShadowTexture, 5);
+    glActiveTexture(GL_TEXTURE0 + 5);
+    glBindTexture(GL_TEXTURE_2D, m_ShadowTexture);
 
     // shadow texture
 

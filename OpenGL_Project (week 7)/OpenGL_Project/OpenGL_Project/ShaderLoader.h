@@ -11,6 +11,8 @@ class ShaderLoader
 public:	
 	static GLuint CreateProgram(const char* VertexShaderFilename, const char* FragmentShaderFilename);
 
+	static GLuint CreateProgram_C(std::string ComputeShaderFilename);
+
 private:
 	ShaderLoader(void);
 	~ShaderLoader(void);
