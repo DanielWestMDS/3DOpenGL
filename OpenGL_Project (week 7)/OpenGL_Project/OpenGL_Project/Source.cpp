@@ -46,6 +46,7 @@ CModel* PointLight1;
 CModel* PointLight2;
 
 // shadow model
+CModel* Soldier;
 
 // stencil objects
 CModel* Skull;
@@ -112,6 +113,8 @@ GLint HeightMapTextures[4];
 // Object Matrices and Components
 // model to be combined with view and projection
 glm::mat4 SoldierModelMat;
+
+glm::vec3 SoldierPosition = glm::vec3(0.0f);
 
 glm::mat4 PLScaleMat;
 
@@ -279,6 +282,34 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 		}
 	}
 
+	// for object
+// move forward
+	if (glfwGetKey(_Window, GLFW_KEY_UP))
+	{
+		// use camera forward
+		SoldierPosition -= Camera->GetForward() * deltaTime * MoveSpeed;
+	}
+
+	// move back
+	if (glfwGetKey(_Window, GLFW_KEY_DOWN))
+	{
+		// use camera forward but reverse
+		SoldierPosition += Camera->GetForward() * deltaTime * MoveSpeed;
+	}
+
+	// move left
+	if (glfwGetKey(_Window, GLFW_KEY_LEFT))
+	{
+		// use camera right but reverse
+		SoldierPosition += Camera->GetRight() * deltaTime * MoveSpeed;
+	}
+
+	// move right
+	if (glfwGetKey(_Window, GLFW_KEY_RIGHT))
+	{
+		// use camera forward
+		SoldierPosition -= Camera->GetRight() * deltaTime * MoveSpeed;
+	}
 	//// toggle lighting
 	//if (_Key == GLFW_KEY_1 && _Action == GLFW_PRESS)
 	//{
@@ -431,7 +462,7 @@ void InitialSetup()
 	HeightMapTextures[3] = Texture_4;
 
 	// calculate model matrix
-	SoldierModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	SoldierModelMat = MakeModelMatrix(SoldierPosition, 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// for point lights
 	PLModelMat1 = MakeModelMatrix(glm::vec3(20.0f, 0.0f, 20.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -453,6 +484,8 @@ void InitialSetup()
 	PointLight1 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight1, Texture_Quag, PLModelMat1);
 
 	PointLight2 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight2, Texture_Quag, PLModelMat2);
+
+	Soldier = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight2, Texture_Quag, SoldierModelMat);
 
 	LightManager = new CLightManager();
 
@@ -504,6 +537,7 @@ void InitialSetup()
 	Scene1->AddObject(PointLight1);
 	//Scene1->AddObject(PointLight2);
 	Scene3->AddHeightMap(HeightMapNoise);
+	Scene3->AddObject(Soldier);
 	Scene2->AddHeightMap(HeightMap);
 
 	// set background colour
@@ -546,8 +580,10 @@ void Update()
 	deltaTime = CurrentTime - PreviousTime;
 	PreviousTime = CurrentTime;
 
-	// calculate quad model matrix once
+	// calculate quad model matrix evert frame
 	QuadModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 10.0f, 180.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+
+	SoldierModelMat = MakeModelMatrix(SoldierPosition, 1.0f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// combine for MVP
 	QuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
@@ -557,8 +593,10 @@ void Update()
 	//Camera->PrintCamPos();
 
 	// models update
-	PointLight1->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
-	PointLight2->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
+	PointLight1->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat1);
+	PointLight2->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat2);
+
+	Soldier->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), SoldierModelMat);
 
 	// height map
 	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
