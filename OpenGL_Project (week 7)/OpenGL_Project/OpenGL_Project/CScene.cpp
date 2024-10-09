@@ -24,7 +24,7 @@ void CScene::Render()
 {
 	for (auto Model : m_Objects)
 	{
-		Model->Render();
+		//Model->Render();
 	}
 
 	if (m_HeightMap != nullptr)

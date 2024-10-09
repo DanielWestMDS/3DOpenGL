@@ -45,13 +45,10 @@ CLightManager* LightManager;
 CModel* PointLight1;
 CModel* PointLight2;
 
-// stencil objects
-CModel* Skull;
-CModel* Dandelion;
-CModel* Halberd;
+// shadow object
+CModel* Model;
 
 // height map
-CHeightMap* HeightMap;
 CHeightMap* HeightMapNoise;
 
 // perlin noise
@@ -108,6 +105,18 @@ GLuint Texture_RainNoise;
 GLint HeightMapTextures[4];
 
 // Object Matrices and Components
+// translation
+glm::vec3 SoldierPosition = glm::vec3(1000.0f, 1000.0f, 0.0f);
+glm::mat4 TranslationMat;
+
+// rotation
+float SoldierRotationAngle = 0.0f;
+glm::mat4 RotationMat;
+
+// scale
+glm::vec3 SoldierScale = glm::vec3(0.0015f, 0.0015f, 0.0015f);
+glm::mat4 ScaleMat;
+
 // model to be combined with view and projection
 glm::mat4 SoldierModelMat;
 
@@ -277,6 +286,34 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 		}
 	}
 
+		// for object
+	// move forward
+	if (glfwGetKey(_Window, GLFW_KEY_UP))
+	{
+		// use camera forward
+		SoldierPosition -= Camera->GetForward() * deltaTime * MoveSpeed;
+	}
+	
+	// move back
+	if (glfwGetKey(_Window, GLFW_KEY_DOWN))
+	{
+		// use camera forward but reverse
+		SoldierPosition += Camera->GetForward() * deltaTime * MoveSpeed;
+	}
+	
+	// move left
+	if (glfwGetKey(_Window, GLFW_KEY_LEFT))
+	{
+		// use camera right but reverse
+		SoldierPosition += Camera->GetRight() * deltaTime * MoveSpeed;
+	}
+	
+	// move right
+	if (glfwGetKey(_Window, GLFW_KEY_RIGHT))
+	{
+		// use camera forward
+		SoldierPosition -= Camera->GetRight() * deltaTime * MoveSpeed;
+	}
 	//// toggle lighting
 	//if (_Key == GLFW_KEY_1 && _Action == GLFW_PRESS)
 	//{
@@ -349,11 +386,11 @@ glm::mat4 MakeModelMatrix(glm::vec3 _position, float _scale, float _rotationAngl
 void InitialSetup()
 {
 	// program for 3d model
-	Program_3DModel = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
-		"Resources/Shaders/3DModel.frag");
+	//Program_3DModel = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
+	//	"Resources/Shaders/3DModel.frag");
 
 	// program for lighting
-	Program_Lighting = ShaderLoader::CreateProgram("Resources/Shaders/InstancedArray_Standard.vert",
+	Program_Lighting = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
 		"Resources/Shaders/Lighting_BlinnPhong.frag");
 
 	// program for skybox
@@ -445,6 +482,8 @@ void InitialSetup()
 	// initialise objects
 	Camera = new CCamera();
 
+	Model = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_Lighting, Texture_4, SoldierModelMat);
+
 	Skybox = new CSkyBox(sFaces, "Resources/Models/cube.obj", Program_Skybox);
 
 	PointLight1 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight1, Texture_Quag, PLModelMat1);
@@ -475,24 +514,16 @@ void InitialSetup()
 	Scene4 = new CScene();
 
 	HeightMapInfo infoNoise;
-	infoNoise.FilePath = "Resources/Textures/Noise/.raw";
+	infoNoise.FilePath = "Resources/Textures/Heightmap0.raw";
 	infoNoise.Width = 512;
 	infoNoise.Depth = 512;
 	infoNoise.CellSpacing = 1.0f;
-
-	HeightMapInfo info;
-	info.FilePath = "Resources/Textures/Heightmap0.raw";
-	info.Width = 512;
-	info.Depth = 512;
-	info.CellSpacing = 1.0f;
 
 	// noise texture
 
 	Texture_Noise = LoadTexture("Resources/Textures/Noise/" + std::to_string(NoiseMap->GetSeed()) + ".jpg");
 
 	HeightMapNoise = new CHeightMap(infoNoise, Program_HeightMap, HeightMapTextures);
-	HeightMap = new CHeightMap(info, Program_HeightMap, HeightMapTextures);
-
 	// load noise texture after creating heightmap
 	Texture_PerlinMap = LoadTexture("Resources/Textures/Noise/COLOURED.jpg");
 
@@ -501,7 +532,7 @@ void InitialSetup()
 	Scene1->AddObject(PointLight1);
 	//Scene1->AddObject(PointLight2);
 	Scene3->AddHeightMap(HeightMapNoise);
-	Scene2->AddHeightMap(HeightMap);
+	Scene3->AddObject(Model);
 
 	// set background colour
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
@@ -544,7 +575,7 @@ void Update()
 	PreviousTime = CurrentTime;
 
 	// calculate quad model matrix once
-	QuadModelMat = MakeModelMatrix(glm::vec3(1000.0f, 1000.0f, 1000.0f), 10.0f, 180.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+	QuadModelMat = MakeModelMatrix(glm::vec3(1000.0f, 0.0f, 1000.0f), 10.0f, 180.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 
 	// combine for MVP
 	QuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;
@@ -553,16 +584,37 @@ void Update()
 	Camera->Update(iWindowSize, Window, g_MousePos, deltaTime);	
 	//Camera->PrintCamPos();
 
-	// models update
-	PointLight1->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
-	PointLight2->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
+	switch (g_iSceneNumber)
+	{
+	case 1:
+		FrameBuffer->Bind();
+		Scene1->RenderShadow(Program_ShadowMap, LightManager->GetVP());
+		FrameBuffer->Unbind();
+		break;
+	case 2:
+		// particles
+		Particles->Update(deltaTime);
+		break;
+	case 3:
+		// models update
+		// calculate model matrix
+		TranslationMat = glm::translate(glm::mat4(1.0f), SoldierPosition);
+		RotationMat = glm::rotate(glm::mat4(1.0f), glm::radians((SoldierRotationAngle) * 10), glm::vec3(1.0f, 1.0f, 1.0f));
+		ScaleMat = glm::scale(glm::mat4(1.0f), SoldierScale);
+		SoldierModelMat = TranslationMat * RotationMat * ScaleMat;
 
-	// height map
-	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
-	HeightMapNoise->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
+		SoldierModelMat = Camera->GetProjMat() * Camera->GetViewMat() * SoldierModelMat;
 
-	// particles
-	Particles->Update(deltaTime);
+		Model->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), SoldierModelMat);
+
+		// point light update
+		PointLight1->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat1);
+		PointLight2->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat2);
+
+		HeightMapNoise->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), QuadModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
+
+		break;
+	}
 
 	//NoiseMap->AnimationGrowth(Texture_Quag, Texture_Awesome);
 
@@ -604,6 +656,7 @@ void Render()
 		PerlinQuad->UpdateTexture(Texture_PerlinMap);
 		PerlinQuad->Render(*Camera);
 		Scene3->Render();
+		//Model->Render();
 		//FrameBufferQuad->SetProgram(Program_RenderBuffer);
 		//FrameBufferQuad->UpdateTexture(FrameBuffer->GetRenderTexture());
 		//FrameBufferQuad->Render();
@@ -681,7 +734,6 @@ int main()
 	delete PointLight1;
 	delete PointLight2;
 
-	delete HeightMap;
 	delete HeightMapNoise;
 
 	delete NoiseMap;
