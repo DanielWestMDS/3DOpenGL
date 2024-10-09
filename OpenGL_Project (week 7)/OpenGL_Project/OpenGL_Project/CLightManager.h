@@ -92,10 +92,10 @@ private:
     // direction light (only one needed)
     DirectionalLight m_DirectionLight;
 
-    glm::mat4 m_LightProjMat = glm::ortho(-24.0f, -14.0f, -24.0f, -14.0f, 0.1f, 2000.0f);
+    glm::mat4 m_LightProjMat;
     glm::mat4 m_LightViewMat;
 
     glm::mat4 m_VPMat;
 
-    float m_fDirScalar = -1.0f * 500.0f;
+    float m_fDirScalar = -1.0f * 700.0f;
 };

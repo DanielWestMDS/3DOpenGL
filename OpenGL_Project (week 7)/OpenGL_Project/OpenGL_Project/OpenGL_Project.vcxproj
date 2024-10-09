@@ -189,6 +189,8 @@
     <None Include="Resources\Shaders\FrameBuffer\InverseColour.frag" />
     <None Include="Resources\Shaders\FrameBuffer\Rain.frag" />
     <None Include="Resources\Shaders\FrameBuffer\RenderBuffer.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\ShadowPass.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\ShadowPass.vert" />
     <None Include="Resources\Shaders\HeightMap.vert" />
     <None Include="Resources\Shaders\Lighting_HeightMap.frag" />
     <None Include="Resources\Shaders\onePointLight.frag" />
@@ -197,8 +199,6 @@
     <None Include="Resources\Shaders\PointLight1.frag" />
     <None Include="Resources\Shaders\PointLight2.frag" />
     <None Include="Resources\Shaders\RenderBuffer.vert" />
-    <None Include="Resources\Shaders\ShadowPass.frag" />
-    <None Include="Resources\Shaders\ShadowPass.vert" />
     <None Include="Resources\Shaders\Squares.frag" />
     <None Include="Resources\Shaders\Squares.vert" />
   </ItemGroup>

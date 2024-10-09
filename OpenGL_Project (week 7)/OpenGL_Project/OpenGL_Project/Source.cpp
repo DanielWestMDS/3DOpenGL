@@ -45,6 +45,8 @@ CLightManager* LightManager;
 CModel* PointLight1;
 CModel* PointLight2;
 
+// shadow model
+
 // stencil objects
 CModel* Skull;
 CModel* Dandelion;
@@ -417,10 +419,11 @@ void InitialSetup()
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
 
-	Texture_Quag = LoadTexture("Resources/Textures/SkyboxBack.jpg");
-	Texture_Awesome = LoadTexture("Resources/Textures/360_F_107140090_3eRlMItNMxEcw67BDq0lPAppu5q62QUw.jpg");
-	Texture_3 = LoadTexture("Resources/Textures/pexels-pixmike-413195.jpg");
+	Texture_Awesome = LoadTexture("Resources/Textures/SkyboxBack.jpg");
+	Texture_Quag = LoadTexture("Resources/Textures/PolygonAncientWorlds_Texture_01_A.png");
+	Texture_3 = LoadTexture("Resources/Textures/FamilyPortrait.png");
 	Texture_4 = LoadTexture("Resources/Textures/PolygonAncientWorlds_Statue_01.png");
+	
 	Texture_RainNoise = LoadTexture("Resources/Textures/ad56fba948dfba9ae698198c109e71f118a54d209c0ea50d77ea546abad89c57.png");
 	HeightMapTextures[0] = Texture_Quag;
 	HeightMapTextures[1] = Texture_Awesome;
@@ -544,7 +547,7 @@ void Update()
 	PreviousTime = CurrentTime;
 
 	// calculate quad model matrix once
-	QuadModelMat = MakeModelMatrix(glm::vec3(1000.0f, 1000.0f, 1000.0f), 10.0f, 180.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+	QuadModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 10.0f, 180.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 
 	// combine for MVP
 	QuadModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ QuadModelMat;

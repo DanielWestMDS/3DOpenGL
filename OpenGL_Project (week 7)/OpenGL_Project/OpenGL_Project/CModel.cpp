@@ -100,11 +100,12 @@ CModel::~CModel()
     glDeleteBuffers(1, &InstanceBuffer);
 }
 
-void CModel::Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos)
+void CModel::Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _modelMat)
 {
     m_projMat = _projMat;
     m_viewMat = _viewMat;
     m_cameraPos = _cameraPos;
+    m_matrix = _modelMat;
 }
 
 void CModel::Render()

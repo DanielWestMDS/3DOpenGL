@@ -25,12 +25,16 @@ struct DirectionalLight
 in vec3 FragNormal;
 in vec2 FragTexCoords;
 in vec3 FragPos;
+in vec4 FragPos_LightSpace;
 
 // Uniform Inputs
 uniform sampler2D Texture0;
 // how strong ambient light is
 float AmbientStrength = 0.3f;
 vec3 AmbientColor = vec3(1.0f, 1.0f, 1.0f);
+
+// shadow
+uniform sampler2D Texture_ShadowMap;
 
 // diffuse
 uniform vec3 LightColor;
@@ -100,19 +104,41 @@ vec3 CalculateLight_Direction()
     return Light;
 }
 
+float CalculateShadow()
+{
+    // Perspective divide to get NDC range (-1 to 1)
+    vec3 NDC_Space = FragPos_LightSpace.xyz / FragPos_LightSpace.w;
+
+    // Convert to depth range (0 to 1)
+    vec3 ProjCoordinates = 0.5f * NDC_Space + 0.5f;
+
+    // Get the depth of the current fragment from the lights perspective
+    float CurrentDepth = ProjCoordinates.z;
+
+    // Get the closest depth value from the lught perspective along the projection
+    float LightClosestDepth = texture(Texture_ShadowMap, ProjCoordinates.xy).r;
+
+    float Shadow = CurrentDepth > LightClosestDepth ? 1.0f : 0.0f;
+    return Shadow;
+}
+
 void main()
 {
     // Ambient component
     vec3 Ambient = AmbientStrength * AmbientColor;
     
     // ambient
-    vec3 TotalLightOutput = Ambient;
+    vec3 TotalLightOutput = vec3(0.0f);
+    TotalLightOutput += CalculateLight_Direction();
 
+    float Shadow = CalculateShadow();
+    vec3 LightShadow = Ambient + ((1.0f - Shadow) * TotalLightOutput);
     // direction
-   if (bPointLightOn)
-   {
-        TotalLightOutput += CalculateLight_Direction();
-   }
+//   if (bPointLightOn)
+//   {
+//        
+//   }
+
 
    // point light
    if (bPointLightOn)
@@ -124,5 +150,5 @@ void main()
    }
 
    // final color
-    FinalColor = vec4(TotalLightOutput, 1.0f) * texture(Texture0, FragTexCoords); 
+    FinalColor = vec4(LightShadow, 1.0f) * texture(Texture0, FragTexCoords); 
 }

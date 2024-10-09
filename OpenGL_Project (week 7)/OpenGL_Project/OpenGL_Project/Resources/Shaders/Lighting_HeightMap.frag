@@ -154,5 +154,5 @@ void main()
         texColor = mix(texture(TextureArray[2], FragTexCoords), texture(TextureArray[3], FragTexCoords), blendFactor);
     }
 
-    FinalColor = vec4(TotalLightOutput, 1.0f) * texColor;
+    FinalColor = vec4(LightShadow, 1.0f) * texColor;
 }
