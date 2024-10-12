@@ -45,6 +45,11 @@ CParticleSystem::CParticleSystem(CCamera* _camera, GLuint _renderProgram, GLuint
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	m_iSeedLife = (int)rand;
+	m_iSeedX = (int)rand;
+	m_iSeedY = (int)rand;
+	m_iSeedZ = (int)rand;
 }
 
 CParticleSystem::~CParticleSystem()

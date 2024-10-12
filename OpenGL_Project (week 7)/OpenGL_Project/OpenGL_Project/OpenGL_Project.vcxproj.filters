@@ -168,12 +168,6 @@
     <None Include="Resources\Shaders\FrameBuffer\Rain.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Resources\Shaders\ShadowPass.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Resources\Shaders\ShadowPass.frag">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="Resources\Shaders\ComputeParticles.comp">
       <Filter>Resource Files</Filter>
     </None>
@@ -181,6 +175,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="Resources\Shaders\Particles.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\FrameBuffer\ShadowPass.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\FrameBuffer\ShadowPass.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

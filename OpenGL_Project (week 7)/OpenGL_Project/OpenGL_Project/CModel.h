@@ -63,7 +63,7 @@ public:
 	/// <param name="_projMat"></param>
 	/// <param name="_viewMat"></param>
 	/// <param name="_cameraPos"></param>
-	virtual void Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _modelMat);
+	virtual void Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _modelMat, GLint _shadowTexture);
 
 	/// <summary>
 	/// Binds VAO and passes matrices into shader
@@ -93,6 +93,7 @@ protected:
 
 	GLint m_program = 0;
 	GLint m_texture = 0;
+	GLint m_shadowTexture = 0;
 	glm::mat4 m_matrix = glm::mat4();
 	glm::mat4 m_projMat = glm::mat4();
 	glm::mat4 m_viewMat = glm::mat4();

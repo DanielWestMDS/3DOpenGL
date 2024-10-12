@@ -21,14 +21,16 @@ CLightManager::CLightManager()
     std::vector<PointLight> m_PointLights;
 
     // directional light
-    m_DirectionLight.Direction = glm::vec3(0.0f, -0.5f, 0.5f);
+    m_DirectionLight.Direction = glm::vec3(-1.0f, -1.0f, 0.0f);
     m_DirectionLight.Color = glm::vec3(0.3f, 0.3f, 0.3f);
     m_DirectionLight.SpecularStrength = 0.0f;
 
-    m_LightProjMat = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 1000.0f);
-    m_LightViewMat = glm::lookAt((m_DirectionLight.Direction) * m_fDirScalar, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    m_ShadowDir = glm::vec3(10.0f, -20.0f, -20.0f);
 
-    m_VPMat = m_LightProjMat * m_LightViewMat;
+    m_ShadowProjMat = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 1000.0f);
+    m_ShadowViewMat = glm::lookAt((m_ShadowDir) * m_fDirScalar, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    m_VPMat = m_ShadowProjMat * m_ShadowViewMat;
 }
 
 CLightManager::~CLightManager()

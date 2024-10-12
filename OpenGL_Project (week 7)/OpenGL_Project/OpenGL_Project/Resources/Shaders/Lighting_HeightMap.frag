@@ -99,13 +99,31 @@ float CalculateShadow()
     // Convert to depth range (0 to 1)
     vec3 ProjCoordinates = 0.5f * NDC_Space + 0.5f;
 
+	float shadowbias = 0.005f;
+
     // Get the depth of the current fragment from the lights perspective
-    float CurrentDepth = ProjCoordinates.z;
+    float CurrentDepth = ProjCoordinates.z - shadowbias;
+	
 
+	vec2 TexelSize = 1.0f/textureSize(Texture_ShadowMap,0);
+	float Shadow = 0.0f;
+	int Count = 0;
+	for (int Row = -1; Row <= 1; Row++)
+	{
+		for (int Col = -1; Col <= 1; Col++)
+		{
+			vec2 TextureCoordOffset = ProjCoordinates.xy + vec2(Row, Col) * TexelSize;
+			float PCF_Depth = texture(Texture_ShadowMap, TextureCoordOffset).x;
+			Shadow += CurrentDepth > PCF_Depth ? 1.0f : 0.0f;
+			Count++;
+		}
+	}
+	
+	Shadow /= float(Count);
     // Get the closest depth value from the lught perspective along the projection
-    float LightClosestDepth = texture(Texture_ShadowMap, ProjCoordinates.xy).r;
+    //float LightClosestDepth = texture(Texture_ShadowMap, ProjCoordinates.xy).r;
 
-    float Shadow = CurrentDepth > LightClosestDepth ? 1.0f : 0.0f;
+    //float Shadow = CurrentDepth > LightClosestDepth ? 1.0f : 0.0f;
     return Shadow;
 }
 

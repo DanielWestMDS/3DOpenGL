@@ -8,11 +8,15 @@ CShadowMap::CShadowMap(int _windowWidth, int _windowHeight)
 
 	// data is initialised as null. Filled each frame
 	// gl_depth_component used to store a single component
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, _windowWidth, _windowHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, _windowWidth * 4, _windowHeight * 4, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
 
 	// mipmap linear
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	// create the framebuffer
@@ -45,10 +49,15 @@ void CShadowMap::Bind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, 3200, 3200);
+
+	glEnable(GL_DEPTH_TEST);
 }
 
 void CShadowMap::Unbind()
 {
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, 800, 800);
 
 }
