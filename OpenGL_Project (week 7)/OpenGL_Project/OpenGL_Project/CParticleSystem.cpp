@@ -7,11 +7,6 @@ CParticleSystem::CParticleSystem(CCamera* _camera, GLuint _renderProgram, GLuint
 	this->m_Program_Compute = _computeProgram;
 	this->m_EmitterOrigin = _origin;
 
-	int m_iSeedLife = 1;
-	int m_iSeedX = 2;
-	int m_iSeedY = 3;
-	int m_iSeedZ = 4;
-
 	m_iGroupCountX = 1000;
 	m_iWorkGroupSizeX = 128;
 	m_iNumParticles = m_iWorkGroupSizeX * m_iGroupCountX;
@@ -46,75 +41,59 @@ CParticleSystem::CParticleSystem(CCamera* _camera, GLuint _renderProgram, GLuint
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	m_iSeedLife = (int)rand;
-	m_iSeedX = (int)rand;
-	m_iSeedY = (int)rand;
-	m_iSeedZ = (int)rand;
+	m_iSeedLife = (int)rand();
+	m_iSeedX = (int)rand();
+	m_iSeedY = (int)rand();
+	m_iSeedZ = (int)rand();
 }
 
 CParticleSystem::~CParticleSystem()
 {
+	glDeleteBuffers(1, &VBO_PositionLife);
+	glDeleteBuffers(1, &VBO_Velocity);
+	glDeleteVertexArrays(1, &VAO);
 }
 
 void CParticleSystem::Update(float _dt)
 {
 	glm::vec3 Gravity = glm::vec3(0.0f, -9.8f, 0.0f) * _dt;
-	m_VelocityLifeChange = glm::vec4(Gravity, _dt);
+	m_VelocityLifeChange = glm::vec4(Gravity, _dt); // gravity and delta time for velocity update
 }
 
 void CParticleSystem::Render()
 {
-	// bind program
 	glUseProgram(m_Program_Compute);
 	glBindVertexArray(VAO);
 
 	// pass in seeds
-	GLint SeedLifeLoc = glGetUniformLocation(m_Program_Compute, "SeedLife");
-	glUniform1i(SeedLifeLoc, m_iSeedLife);
-
-	GLint SeedXLoc = glGetUniformLocation(m_Program_Compute, "SeedX");
-	glUniform1i(SeedXLoc, m_iSeedX);
-
-	GLint SeedYLoc = glGetUniformLocation(m_Program_Compute, "SeedY");
-	glUniform1i(SeedYLoc, m_iSeedY);
-
-	GLint SeedZLoc = glGetUniformLocation(m_Program_Compute, "SeedZ");
-	glUniform1i(SeedZLoc, m_iSeedZ);
+	glUniform1i(glGetUniformLocation(m_Program_Compute, "SeedLife"), m_iSeedLife);
+	glUniform1i(glGetUniformLocation(m_Program_Compute, "SeedX"), m_iSeedX);
+	glUniform1i(glGetUniformLocation(m_Program_Compute, "SeedY"), m_iSeedY);
+	glUniform1i(glGetUniformLocation(m_Program_Compute, "SeedZ"), m_iSeedZ);
 
 	// pass in velocity life change
-	GLint VelocityLifeLoc = glGetUniformLocation(m_Program_Compute, "VelocityLifeChange");
-	glUniform4fv(VelocityLifeLoc, 1, glm::value_ptr(m_VelocityLifeChange));
+	glUniform4fv(glGetUniformLocation(m_Program_Compute, "VelocityLifeChange"), 1, glm::value_ptr(m_VelocityLifeChange));
 
 	// pass in emitter origin
-	GLint EmitterLoc = glGetUniformLocation(m_Program_Compute, "EmitterOrigin");
-	glUniform3fv(EmitterLoc, 1, glm::value_ptr(m_EmitterOrigin));
+	glUniform3fv(glGetUniformLocation(m_Program_Compute, "EmitterOrigin"), 1, glm::value_ptr(m_EmitterOrigin));
 
 	// bind the storage buffers for compute shader manipulations
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, VBO_PositionLife);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, VBO_Velocity);
 
-	//set the compute shader going
-	glDispatchCompute(	m_iGroupCountX, // X
-						1,				// Y
-						1);				// Z
-
-	// wait for the compute shader completion and sync all threads
+	// dispatch compute shader
+	glDispatchCompute(m_iGroupCountX, 1, 1);
 	glMemoryBarrier(GL_ALL_BARRIER_BITS);
 
-	// second pass - standard render pipeline
+	// render pass
 	glUseProgram(m_Program_Render);
-
-	// uniforms
-	glUniformMatrix4fv(glGetUniformLocation(m_Program_Render, "VP"),
-		1, GL_FALSE, glm::value_ptr(m_ActiveCamera->GetVP()));
-
 	glBindVertexArray(VAO);
+	glUniformMatrix4fv(glGetUniformLocation(m_Program_Render, "VP"), 1, GL_FALSE, glm::value_ptr(m_ActiveCamera->GetVP()));
 	glDrawArrays(GL_POINTS, 0, m_iNumParticles);
 
 	// unbinding
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 	glUseProgram(0);
 }

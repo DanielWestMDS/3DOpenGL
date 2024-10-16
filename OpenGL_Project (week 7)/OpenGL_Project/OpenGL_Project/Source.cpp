@@ -602,9 +602,18 @@ void Update()
 	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), HeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
 	HeightMapNoise->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), HeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
 
-	// particles
-	Particles->Update(deltaTime);
-
+	// scenes
+	switch (g_iSceneNumber)
+	{
+	case 1:
+		break;
+	case 2:
+		// particles
+		Particles->Update(deltaTime);
+		break;
+	case 3:
+		break;
+	}
 	//NoiseMap->AnimationGrowth(Texture_Quag, Texture_Awesome);
 
 	// UI perlin noise

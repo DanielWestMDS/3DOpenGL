@@ -17,7 +17,6 @@ uniform int SeedZ;
 uniform vec4 VelocityLifeChange;
 uniform vec3 EmitterOrigin;
 
-// function prototypes
 void ResetParticle(uint Index);
 double RandomValue(uint ID, int Seed);
 
@@ -35,28 +34,32 @@ double RandomValue(uint ID, int Seed)
 void ResetParticle(uint Index)
 {
 	float LifeModifier = 5.0f;
-	float Speed_XZ = 8.0f;
-	float Speed_Y = 20.0f;
+	float SpeedFactor = 20.0f; 
 
 	PositionLife[Index] = vec4(EmitterOrigin.xyz,					// Initial Position
 		(RandomValue(Index, SeedLife) + 1) * 0.5f * LifeModifier);	// Initial Lifespan
-	
-	Velocity[Index] = vec4(
-		Speed_XZ * RandomValue(Index, SeedX),							// initial x velocity
-		Speed_Y  * (RandomValue(Index, SeedY) + 1.0f) * 0.5f + 10.0f,	// initial y Velocity
-		Speed_XZ * RandomValue(Index, SeedZ),							// initial z velocity
-		0.0f);
+
+	vec3 randomDirection = normalize(vec3(
+		RandomValue(Index, SeedX) * 2.0 - 1.0,
+		RandomValue(Index, SeedY) * 2.0 - 1.0,
+		RandomValue(Index, SeedZ) * 2.0 - 1.0
+	));
+	Velocity[Index] = vec4(randomDirection * SpeedFactor, 0.0f);
 }
 
 void main()
 {
 	uint Index = gl_GlobalInvocationID.x;
 
+	// apply gravity
 	Velocity[Index].xyz += VelocityLifeChange.xyz;
-	PositionLife[Index].xyz += Velocity[Index].xyz * VelocityLifeChange.w;
-	PositionLife[Index].w -= VelocityLifeChange.w;
+	// move particle
+	PositionLife[Index].xyz += Velocity[Index].xyz * VelocityLifeChange.w; 
+	// decrease lifespan
+	PositionLife[Index].w -= VelocityLifeChange.w; 
 
-	if(PositionLife[Index].w <= 0.0f) // lifespan
+	// lifespan
+	if(PositionLife[Index].w <= 0.0f) 
 	{
 		ResetParticle(Index);
 	}
