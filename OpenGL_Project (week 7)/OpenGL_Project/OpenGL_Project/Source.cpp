@@ -142,7 +142,7 @@ float PreviousTime;
 float deltaTime;
 
 // for input object
-float MoveSpeed = 10.0f;
+float MoveSpeed = 50.0f;
 
 // toggle bools
 bool g_bShowMousePosition = false;
@@ -511,7 +511,7 @@ void InitialSetup()
 	Scene4 = new CScene();
 
 	HeightMapInfo infoNoise;
-	infoNoise.FilePath = "Resources/Textures/Noise/.raw";
+	infoNoise.FilePath = "Resources/Textures/Noise/Heightmap0.raw";
 	infoNoise.Width = 512;
 	infoNoise.Depth = 512;
 	infoNoise.CellSpacing = 1.0f;
@@ -581,7 +581,7 @@ void Update()
 	PreviousTime = CurrentTime;
 
 	// calculate quad model matrix evert frame
-	HeightMapModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	HeightMapModelMat = MakeModelMatrix(glm::vec3(-100.0f, -30.0f, 50.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	SoldierModelMat = MakeModelMatrix(SoldierPosition, 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 

@@ -27,7 +27,7 @@ CLightManager::CLightManager()
 
     m_ShadowDir = glm::vec3(10.0f, -20.0f, -20.0f);
 
-    m_ShadowProjMat = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 1000.0f);
+    m_ShadowProjMat = glm::ortho(-10.0f, 170.0f, -100.0f, 100.0f, 0.1f, 1000.0f);
     m_ShadowViewMat = glm::lookAt((m_ShadowDir) * m_fDirScalar, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
     m_VPMat = m_ShadowProjMat * m_ShadowViewMat;
