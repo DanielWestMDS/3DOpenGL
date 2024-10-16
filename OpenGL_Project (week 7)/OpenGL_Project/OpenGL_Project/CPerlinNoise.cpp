@@ -106,8 +106,6 @@ CPerlinNoise::CPerlinNoise(int _ScreenWidth, int _ScreenHeight)
 
     // create coloured jpg
     stbi_write_jpg("Resources/Textures/Noise/COLOURED.jpg", _ScreenWidth, _ScreenHeight, 3, pixelsRGBA, 100);
-    // create black white jpg
-    stbi_write_jpg(("Resources/Textures/Noise/" + std::to_string(m_iSeed) + ".jpg").c_str(), _ScreenWidth, _ScreenHeight, 1, pixels, 100);
 
     delete[] pixelsRGBA;
     delete[] pixels;
