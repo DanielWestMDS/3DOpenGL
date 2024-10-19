@@ -27,6 +27,7 @@
 #include "CFramebuffer.h"
 #include "CShadowMap.h"
 #include "CParticleSystem.h"
+#include "CGeometryBuffer.h"
 
 // global variables
 GLFWwindow* Window = nullptr;
@@ -36,7 +37,7 @@ int iWindowSize = 800;
 // pointer to shape objects
 CCamera* Camera;
 // tree
-//CModel* Tree;
+CModel* Tree;
 // skybox
 CSkyBox* Skybox;
 // light manager
@@ -47,6 +48,9 @@ CModel* PointLight2;
 
 // shadow model
 CModel* Soldier;
+
+// deferred rendering models
+std::vector<CModel*> DeferredModels;
 
 // stencil objects
 CModel* Skull;
@@ -73,6 +77,9 @@ CShadowMap* ShadowMap;
 // particle effects
 CParticleSystem* Particles;
 
+// geometry buffer
+CGeometryBuffer* GeometryBuffer;
+
 // scenes
 CScene* Scene1;
 CScene* Scene2;
@@ -82,6 +89,7 @@ CScene* Scene4;
 // programs
 GLuint Program_3DModel;
 GLuint Program_Lighting;
+GLuint Program_InstancedLighting;
 GLuint Program_Skybox;
 GLuint Program_PointLight1;
 GLuint Program_PointLight2;
@@ -98,6 +106,7 @@ GLuint Program_ShadowMap;
 // compute program for particles
 GLuint Program_ComputeParticles;
 GLuint Program_Particles;
+GLuint Program_DeferredRender;
 
 // texture
 GLuint Texture_Awesome;
@@ -167,6 +176,11 @@ glm::mat4 QuadRotationMat;
 
 glm::vec3 QuadScale = glm::vec3(2.0f, 2.0f, 2.0f);
 glm::mat4 QuadScaleMat;
+
+// Vector for instanced matrices
+std::vector<glm::mat4> MVPVec;
+// for random tree positions
+std::vector<glm::vec3> RandomLocations;
 
 
 // Define the six faces of the cube map in a vector
@@ -310,11 +324,11 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 		// use camera forward
 		SoldierPosition -= Camera->GetRight() * deltaTime * MoveSpeed;
 	}
-	//// toggle lighting
-	//if (_Key == GLFW_KEY_1 && _Action == GLFW_PRESS)
-	//{
-	//	g_bPointLightActive = !g_bPointLightActive;
-	//}
+	// toggle lighting
+	if (_Key == GLFW_KEY_P && _Action == GLFW_PRESS)
+	{
+		g_bPointLightActive = !g_bPointLightActive;
+	}
 
 }
 
@@ -389,6 +403,10 @@ void InitialSetup()
 	Program_Lighting = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
 		"Resources/Shaders/Lighting_BlinnPhong.frag");
 
+	// program for lighting
+	Program_InstancedLighting = ShaderLoader::CreateProgram("Resources/Shaders/InstancedArray_Standard.vert",
+		"Resources/Shaders/Lighting_PointLights.frag");
+
 	// program for skybox
 	Program_Skybox = ShaderLoader::CreateProgram("Resources/Shaders/Skybox.vert",
 		"Resources/Shaders/Skybox.frag");
@@ -436,7 +454,7 @@ void InitialSetup()
 	Program_Cartoon = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
 		"Resources/Shaders/FrameBuffer/Cartoon.frag");
 
-	// renderbuffer with cartoon effect
+	// renderbuffer for shadow texture
 	Program_ShadowMap = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/ShadowPass.vert",
 		"Resources/Shaders/FrameBuffer/ShadowPass.frag");
 
@@ -446,6 +464,10 @@ void InitialSetup()
 
 	// particle compute shader
 	Program_ComputeParticles = ShaderLoader::CreateProgram_C("ComputeParticles.comp");
+
+	// geometry buffer
+	Program_DeferredRender = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/DeferredRender.vert",
+		"Resources/Shaders/FrameBuffer/DeferredRender.frag");
 
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
@@ -465,10 +487,10 @@ void InitialSetup()
 	SoldierModelMat = MakeModelMatrix(SoldierPosition, 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// for point lights
-	PLModelMat1 = MakeModelMatrix(glm::vec3(20.0f, 0.0f, 20.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	PLModelMat1 = MakeModelMatrix(glm::vec3(10.0f, 0.0f, 5.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// point light 2
-	PLModelMat2 = MakeModelMatrix(glm::vec3(-20.0f, 0.0f, -20.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	PLModelMat2 = MakeModelMatrix(glm::vec3(10.0f, 0.0f, -5.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// for instanced matrices
 	TreeModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.005f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -479,6 +501,8 @@ void InitialSetup()
 	// initialise objects
 	Camera = new CCamera();
 
+	Tree = new CModel("Resources/Models/SM_Env_Tree_Palm_01.obj", Program_Lighting, Texture_3, TreeModelMat);
+
 	Skybox = new CSkyBox(sFaces, "Resources/Models/cube.obj", Program_Skybox);
 
 	PointLight1 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight1, Texture_Quag, PLModelMat1);
@@ -487,10 +511,18 @@ void InitialSetup()
 
 	Soldier = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_Lighting, Texture_Quag, SoldierModelMat);
 
+	// create 5 models for deferred rendering
+	for (int i = 0; i < 5; i++)
+	{
+		glm::mat4 NewModelMat = MakeModelMatrix(glm::vec3(i * 5, 0.0f, 0.0f), 0.005f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+		CModel* NewSoldier = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_Lighting, Texture_Quag, NewModelMat);
+		DeferredModels.push_back(NewSoldier);
+	}
+
 	LightManager = new CLightManager();
 
-	LightManager->AddPointLight(glm::vec3(20.0f, 0.0f, 20.0f), glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
-	LightManager->AddPointLight(glm::vec3(-20.0f, 0.0f, -20.0f), glm::vec3(1.0f, 0.0f, 0.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
+	LightManager->AddPointLight(glm::vec3(10.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
+	LightManager->AddPointLight(glm::vec3(10.0f, 0.0f, -5.0f), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
 
 	NoiseMap = new CPerlinNoise(512, 512);
 
@@ -499,6 +531,8 @@ void InitialSetup()
 	FrameBufferQuad = new CFrameBufferQuad(Texture_Awesome, Texture_RainNoise, Program_RenderBuffer);
 
 	FrameBuffer = new CFramebuffer(iWindowSize, iWindowSize);
+
+	GeometryBuffer = new CGeometryBuffer();
 
 	ShadowMap = new CShadowMap(iWindowSize, iWindowSize);
 
@@ -532,13 +566,47 @@ void InitialSetup()
 	// load noise texture after creating heightmap
 	Texture_PerlinMap = LoadTexture("Resources/Textures/Noise/COLOURED.jpg");
 
+	// clear vector just in case
+	MVPVec.clear();
+	// add matrices to matrix vec for each tree
+	for (unsigned int i = 0; i < g_objCount; i++)
+	{
+		// randomize x and z positions to disperse trees
+		RandomLocations.push_back(glm::vec3((rand() % 8000) - 4000, 0, (rand() % 8000) - 4000)); // random square around 0, 0, 0
+		// add random matrix to MVP so that the size is correct
+		MVPVec.push_back(SoldierModelMat);
+	}
+
+	// set matrices as instanced vertex attribute
+	GLuint VBO_Instanced;
+	glGenBuffers(1, &VBO_Instanced);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_Instanced);
+	glBufferData(GL_ARRAY_BUFFER, 1000 * sizeof(glm::mat4), &RandomLocations[0], GL_STATIC_DRAW);
+
+	// bind instance buffer to attribue location
+	glBindVertexArray(Tree->GetVAO());
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+	glVertexAttribDivisor(3, 1);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+
 	// add objects to scenes
 	//Scene1->AddObject(Skybox);
-	Scene1->AddObject(PointLight1);
+	//Scene1->AddObject(PointLight1);
 	//Scene1->AddObject(PointLight2);
 	Scene3->AddHeightMap(HeightMapNoise);
 	Scene3->AddObject(Soldier);
-	Scene2->AddHeightMap(HeightMap);
+
+	// deferred rendering
+	for (auto soldier : DeferredModels)
+	{
+		Scene2->AddObject(soldier);
+	}
+
+	Scene2->AddObject(PointLight1);
+	Scene2->AddObject(PointLight2);
 
 	// set background colour
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
@@ -606,10 +674,15 @@ void Update()
 	switch (g_iSceneNumber)
 	{
 	case 1:
-		break;
-	case 2:
 		// particles
 		Particles->Update(deltaTime);
+		break;
+	case 2:
+		for (auto iter : DeferredModels)
+		{
+			glm::mat4 modelMat = iter->GetModelMat();
+			iter->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), modelMat, ShadowMap->GetShadowTexture());
+		}
 		break;
 	case 3:
 		break;
@@ -629,19 +702,23 @@ void Render()
 
 	// lighting
 	LightManager->UpdateShader(Program_Lighting, g_bPointLightActive);
+	LightManager->UpdateShader(Program_InstancedLighting, g_bPointLightActive);
 	LightManager->UpdateShader(Program_HeightMap, g_bPointLightActive);
 
 	// scenes
 	switch (g_iSceneNumber)
 	{
 	case 1:
-		//FrameBuffer->Bind();
-		//Scene1->RenderShadow(Program_ShadowMap, LightManager->GetVP());
-		//FrameBuffer->Unbind();
+		Particles->Render();
 		break;
 	case 2:
-		Scene2->RenderShadow(Program_ShadowMap, LightManager->GetVP());
-		Particles->Render();
+		GeometryBuffer->Bind();
+		Scene2->RenderGeometry(Program_DeferredRender);
+		GeometryBuffer->Unbind();
+
+		Scene2->Render();
+		Tree->RenderInstanced(Program_InstancedLighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
+
 		break;
 	case 3:
 		ShadowMap->Bind();
@@ -722,7 +799,7 @@ int main()
 	// delete dynamically allocated memory
 	delete Camera;
 
-	//delete Tree;
+	delete Tree;
 
 	delete Skybox;
 

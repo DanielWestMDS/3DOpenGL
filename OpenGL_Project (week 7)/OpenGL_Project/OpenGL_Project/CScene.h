@@ -34,11 +34,17 @@ public:
 	void Render();
 
 	/// <summary>
-	/// 
+	/// Render for shadowmap buffer
 	/// </summary>
 	/// <param name="_ShadowProgram"></param>
 	/// <param name="_LightVP"></param>
 	void RenderShadow(GLuint _ShadowProgram, glm::mat4 _LightVP);
+
+	/// <summary>
+	/// Render for deferred rendering/geometry buffer
+	/// </summary>
+	/// <param name="_GeometryProgram"></param>
+	void RenderGeometry(GLuint _GeometryProgram);
 
 	/// <summary>
 	/// adds an object to be rendered to the scene

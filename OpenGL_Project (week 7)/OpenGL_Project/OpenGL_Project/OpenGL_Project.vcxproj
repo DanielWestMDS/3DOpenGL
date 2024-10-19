@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClCompile Include="CCamera.cpp" />
     <ClCompile Include="CFramebuffer.cpp" />
+    <ClCompile Include="CGeometryBuffer.cpp" />
     <ClCompile Include="CHeightMap.cpp" />
     <ClCompile Include="CLightManager.cpp" />
     <ClCompile Include="CModel.cpp" />
@@ -159,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="CCamera.h" />
     <ClInclude Include="CFramebuffer.h" />
+    <ClInclude Include="CGeometryBuffer.h" />
     <ClInclude Include="CHeightMap.h" />
     <ClInclude Include="CLightManager.h" />
     <ClInclude Include="CModel.h" />
@@ -184,6 +186,8 @@
     <None Include="PointLight2.frag" />
     <None Include="Resources\Shaders\ComputeParticles.comp" />
     <None Include="Resources\Shaders\FrameBuffer\Cartoon.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\DeferredRender.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\DeferredRender.vert" />
     <None Include="Resources\Shaders\FrameBuffer\Effect.frag" />
     <None Include="Resources\Shaders\FrameBuffer\Greyscale.frag" />
     <None Include="Resources\Shaders\FrameBuffer\InverseColour.frag" />
@@ -193,6 +197,7 @@
     <None Include="Resources\Shaders\FrameBuffer\ShadowPass.vert" />
     <None Include="Resources\Shaders\HeightMap.vert" />
     <None Include="Resources\Shaders\Lighting_HeightMap.frag" />
+    <None Include="Resources\Shaders\Lighting_PointLights.frag" />
     <None Include="Resources\Shaders\onePointLight.frag" />
     <None Include="Resources\Shaders\Particles.frag" />
     <None Include="Resources\Shaders\Particles.vert" />

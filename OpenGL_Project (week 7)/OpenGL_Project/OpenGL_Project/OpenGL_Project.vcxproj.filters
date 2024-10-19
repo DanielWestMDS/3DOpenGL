@@ -57,6 +57,9 @@
     <ClCompile Include="CParticleSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CGeometryBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderLoader.h">
@@ -96,6 +99,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CParticleSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CGeometryBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -181,6 +187,15 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="Resources\Shaders\FrameBuffer\ShadowPass.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\FrameBuffer\DeferredRender.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\FrameBuffer\DeferredRender.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\Lighting_PointLights.frag">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

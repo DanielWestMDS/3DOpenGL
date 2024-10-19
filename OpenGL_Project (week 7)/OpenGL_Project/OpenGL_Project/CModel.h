@@ -71,18 +71,26 @@ public:
 	virtual void Render();
 
 	/// <summary>
-	/// 
+	/// Calculates shadow. passes in necessary uniforms
 	/// </summary>
 	virtual void RenderShadow(GLuint _ShadowProgram, glm::mat4 _LightVP);
 
-	// unused instanced rendering function
-	//virtual void RenderInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos, glm::mat4 _VP);
+	virtual void RenderGeometry(GLuint _GeometryProgram);
+
+	// instanced rendering function
+	virtual void RenderInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos, glm::mat4 _VP);
 
 	/// <summary>
 	/// getter for VAO
 	/// </summary>
 	/// <returns></returns>
 	GLuint GetVAO() { return VAO; };
+
+	/// <summary>
+	/// getter for model matrix
+	/// </summary>
+	/// <returns></returns>
+	glm::mat4 GetModelMat() { return m_matrix; };
 
 protected:
 	GLuint VAO;
@@ -98,5 +106,7 @@ protected:
 	glm::mat4 m_projMat = glm::mat4();
 	glm::mat4 m_viewMat = glm::mat4();
 	glm::vec3 m_cameraPos = glm::vec3();
+
+	float m_fShininess;
 };
 

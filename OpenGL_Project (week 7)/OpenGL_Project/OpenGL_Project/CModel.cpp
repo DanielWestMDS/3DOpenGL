@@ -156,41 +156,59 @@ void CModel::RenderShadow(GLuint _ShadowProgram, glm::mat4 _LightVP)
     glBindVertexArray(0);
 }
 
-//void CModel::RenderInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos, glm::mat4 _VP)
-//{
-//    // bind program and VAO
-//    glUseProgram(_program);
-//    glBindVertexArray(VAO);
-//
-//    // Model matrix
-//    GLint ModelMatrix = glGetUniformLocation(_program, "ModelMat");
-//    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_modelMat));
-//
-//    // Activate and bind the textures
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, _texture);
-//    glUniform1i(glGetUniformLocation(_program, "Texture0"), 0);
-//
-//    // pass camera position in via uniform
-//    GLint CameraPosLoc = glGetUniformLocation(_program, "CameraPos");
-//    glUniform3fv(CameraPosLoc, 1, glm::value_ptr(_cameraPos));
-//
-//    // pass in view projection
-//    GLint VPMat = glGetUniformLocation(_program, "VP");
-//    glUniformMatrix4fv(VPMat, 1, GL_FALSE, glm::value_ptr(_VP));
-//
-//    // Bind and fill the instance buffer
-//    glBindBuffer(GL_ARRAY_BUFFER, InstanceBuffer);
-//    glBufferData(GL_ARRAY_BUFFER, _instancePositions.size() * sizeof(glm::vec3), _instancePositions.data(), GL_DYNAMIC_DRAW);
-//
-//    // Set the instancePosition attribute (location 3)
-//    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-//    glEnableVertexAttribArray(3);
-//   // glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-//   // glVertexAttribDivisor(3, 1); // Divisor for instancing
-//
-//    // render
-//    glDrawArraysInstanced(DrawType, 0, DrawCount, _instancePositions.size());
-//
-//    glBindVertexArray(0);
-//}
+void CModel::RenderGeometry(GLuint _GeometryProgram)
+{
+    glUseProgram(_GeometryProgram);
+
+    // Activate and bind the textures
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+    glUniform1i(glGetUniformLocation(_GeometryProgram, "Texture0"), 0);
+
+    // pass in shininess
+    GLint ShininessLoc = glGetUniformLocation(_GeometryProgram, "ObjectShininess");
+    glUniform1f(ShininessLoc, m_fShininess);
+
+    glDrawArrays(DrawType, 0, DrawCount);
+
+    glBindVertexArray(0);
+}
+
+void CModel::RenderInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos, glm::mat4 _VP)
+{
+    // bind program and VAO
+    glUseProgram(_program);
+    glBindVertexArray(VAO);
+
+    // Model matrix
+    GLint ModelMatrix = glGetUniformLocation(_program, "ModelMat");
+    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_modelMat));
+
+    // Activate and bind the textures
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _texture);
+    glUniform1i(glGetUniformLocation(_program, "Texture0"), 0);
+
+    // pass camera position in via uniform
+    GLint CameraPosLoc = glGetUniformLocation(_program, "CameraPos");
+    glUniform3fv(CameraPosLoc, 1, glm::value_ptr(_cameraPos));
+
+    // pass in view projection
+    GLint VPMat = glGetUniformLocation(_program, "VP");
+    glUniformMatrix4fv(VPMat, 1, GL_FALSE, glm::value_ptr(_VP));
+
+    // Bind and fill the instance buffer
+    glBindBuffer(GL_ARRAY_BUFFER, InstanceBuffer);
+    glBufferData(GL_ARRAY_BUFFER, _instancePositions.size() * sizeof(glm::vec3), _instancePositions.data(), GL_DYNAMIC_DRAW);
+
+    // Set the instancePosition attribute (location 3)
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+    glEnableVertexAttribArray(3);
+   // glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+   // glVertexAttribDivisor(3, 1); // Divisor for instancing
+
+    // render
+    glDrawArraysInstanced(DrawType, 0, DrawCount, _instancePositions.size());
+
+    glBindVertexArray(0);
+}
