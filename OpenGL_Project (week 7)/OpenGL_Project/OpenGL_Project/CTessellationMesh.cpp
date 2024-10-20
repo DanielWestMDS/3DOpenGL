@@ -12,8 +12,8 @@ CTessellationMesh::CTessellationMesh()
 	// sets quad patch
 	glPatchParameteri(GL_PATCH_VERTICES, 4);
 
-    glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, glm::value_ptr(glm::vec4(4.0f, 4.0f, 4.0f, 4.0f)));
-    glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, glm::value_ptr(glm::vec2(4.0f, 4.0f)));
+    //glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, glm::value_ptr(glm::vec4(4.0f, 4.0f, 4.0f, 4.0f)));
+    //glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, glm::value_ptr(glm::vec2(4.0f, 4.0f)));
 
 	m_DrawCount = (unsigned int)Vertices.size();
 	m_DrawType = GL_PATCHES;
@@ -38,9 +38,15 @@ CTessellationMesh::~CTessellationMesh()
 {
 }
 
-void CTessellationMesh::Render()
+void CTessellationMesh::Render(GLint _program, glm::mat4 _PVM)
 {
+    glUseProgram(_program);
     glBindVertexArray(VAO);
+
+    // pass in PVM
+    GLint ModelMatrix = glGetUniformLocation(_program, "PVM");
+    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_PVM));
+
     glDrawArrays(m_DrawType, 0, m_DrawCount);
     glBindVertexArray(0);
 }

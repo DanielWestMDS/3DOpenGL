@@ -35,6 +35,9 @@ public:
     /// </summary>
     void Render();
 
+    /// <summary>
+    /// Render that passes no uniforms
+    /// </summary>
     void RenderLightingPass();
 
     /// <summary>

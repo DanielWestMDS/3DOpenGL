@@ -27,7 +27,7 @@ public:
 
 	void Update();
 
-	void Render();
+	void Render(GLint _program, glm::mat4 _PVM);
 
 private:
 	GLuint m_DrawCount;

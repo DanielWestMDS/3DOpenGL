@@ -222,5 +222,17 @@
     <None Include="Resources\Shaders\FrameBuffer\LightingPassHeightMap.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Resources\Shaders\Tessellation.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\Tessellation.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\Tessellation.tcs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\Tessellation.tes">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -62,16 +62,21 @@ GLuint ShaderLoader::CreateProgram_C(std::string ComputeShaderFilename)
 	return program;
 }
 
-GLuint ShaderLoader::CreateProgram_VTF(const char* vertex, const char* TCS, const char* TES, const char* Fragment)
+GLuint ShaderLoader::CreateProgram_VTF(const char* vertex, const char* TCS, const char* TES, const char* fragment)
 {
 	std::string PathPrefix = "Resources/Shaders/";
 
+	// Create the shaders from the filepath
+	GLuint vertexShaderID = CreateShader(GL_VERTEX_SHADER, (PathPrefix + vertex).c_str());
 	GLuint TCS_ShaderID = CreateShader(GL_TESS_CONTROL_SHADER, (PathPrefix + TCS).c_str());
-	GLuint TES_ShaderID = CreateShader(GL_TESS_EVALUATION_SHADER, (PathPrefix + TCS).c_str());
+	GLuint TES_ShaderID = CreateShader(GL_TESS_EVALUATION_SHADER, (PathPrefix + TES).c_str());
+	GLuint fragmentShaderID = CreateShader(GL_FRAGMENT_SHADER, (PathPrefix + fragment).c_str());
 
 	GLuint program = glCreateProgram();
+	glAttachShader(program, vertexShaderID);
 	glAttachShader(program, TCS_ShaderID);
 	glAttachShader(program, TES_ShaderID);
+	glAttachShader(program, fragmentShaderID);
 
 	glLinkProgram(program);
 
@@ -81,13 +86,15 @@ GLuint ShaderLoader::CreateProgram_VTF(const char* vertex, const char* TCS, cons
 	//glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
 	if (link_result == GL_FALSE)
 	{
-		std::string programName = vertex + *TCS + *TES + *Fragment;
+		std::string programName = vertex + *TCS + *TES + *fragment;
 		PrintErrorDetails(false, program, programName.c_str());
 		return 0;
 	}
 
 	glDeleteShader(TCS_ShaderID);
 	glDeleteShader(TES_ShaderID);
+	glDeleteShader(vertexShaderID);
+	glDeleteShader(fragmentShaderID);
 
 	return program;
 }

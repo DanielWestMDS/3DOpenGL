@@ -100,8 +100,6 @@ void CFrameBufferQuad::RenderLightingPass()
     }
 }
 
-
-
 void CFrameBufferQuad::UpdateTexture(GLuint textureID) 
 {
     m_texture = textureID;

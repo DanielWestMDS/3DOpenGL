@@ -214,6 +214,10 @@
     <None Include="Resources\Shaders\RenderBuffer.vert" />
     <None Include="Resources\Shaders\Squares.frag" />
     <None Include="Resources\Shaders\Squares.vert" />
+    <None Include="Resources\Shaders\Tessellation.frag" />
+    <None Include="Resources\Shaders\Tessellation.tcs" />
+    <None Include="Resources\Shaders\Tessellation.tes" />
+    <None Include="Resources\Shaders\Tessellation.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

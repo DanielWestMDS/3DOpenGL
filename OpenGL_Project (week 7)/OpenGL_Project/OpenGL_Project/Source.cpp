@@ -28,6 +28,7 @@
 #include "CShadowMap.h"
 #include "CParticleSystem.h"
 #include "CGeometryBuffer.h"
+#include "CTessellationMesh.h"
 
 // global variables
 GLFWwindow* Window = nullptr;
@@ -77,6 +78,9 @@ CParticleSystem* Particles;
 // geometry buffer
 CGeometryBuffer* GeometryBuffer;
 
+// tessellation
+CTessellationMesh* TessQuad;
+
 // scenes
 CScene* Scene1;
 CScene* Scene2;
@@ -107,6 +111,7 @@ GLuint Program_GeometryPass;
 GLuint Program_GeometryPassHeightMap;
 GLuint Program_LightingPass;
 GLuint Program_LightingPassHeightMap;
+GLuint Program_Tessellation;
 
 // texture
 GLuint Texture_Awesome;
@@ -141,6 +146,10 @@ glm::mat4 DeferredHeightMapModelMat;
 
 glm::mat4 PerlinHeightMapModelMat;
 
+glm::mat4 TessMatrix;
+
+glm::mat4 TessMVP;
+
 int x = 0;
 int y = 0;
 
@@ -160,6 +169,7 @@ bool g_bShowMousePosition = false;
 bool g_bPointLightActive = true;
 bool g_bShowMouse = true;
 bool g_UIChange = false;
+bool g_bWireframe = false;
 
 // scene number 
 int g_iSceneNumber = 1;
@@ -326,12 +336,29 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 		// use camera forward
 		SoldierPosition -= Camera->GetRight() * deltaTime * MoveSpeed;
 	}
+
+
 	// toggle lighting
 	if (_Key == GLFW_KEY_P && _Action == GLFW_PRESS)
 	{
 		g_bPointLightActive = !g_bPointLightActive;
 	}
 
+
+	// toggle wireframe
+	if (_Key == GLFW_KEY_L && _Action == GLFW_PRESS)
+	{
+		g_bWireframe = !g_bWireframe;
+
+		if (g_bWireframe)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		else
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+	}
 }
 
 /// <summary>
@@ -481,6 +508,12 @@ void InitialSetup()
 	Program_LightingPassHeightMap = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/LightingPassHeightMap.vert",
 		"Resources/Shaders/FrameBuffer/LightingPassHeightMap.frag");
 
+	// tessellation program
+	Program_Tessellation = ShaderLoader::CreateProgram_VTF("Tessellation.vert", 
+		"Tessellation.tcs", 
+		"Tessellation.tes", 
+		"Tessellation.frag");
+
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
 
@@ -509,6 +542,8 @@ void InitialSetup()
 
 	// for Perlin noise quad
 	PerlinHeightMapModelMat = MakeModelMatrix(glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	TessMatrix = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 100.0f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// initialise objects
 	Camera = new CCamera();
@@ -541,6 +576,8 @@ void InitialSetup()
 	ShadowMap = new CShadowMap(iWindowSize, iWindowSize);
 
 	Particles = new CParticleSystem(Camera, Program_Particles, Program_ComputeParticles, glm::vec3(0.0f, 0.0f, 0.0f));
+
+	TessQuad = new CTessellationMesh();
 
 	// scenes
 	Scene1 = new CScene();
@@ -669,6 +706,9 @@ void Update()
 	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), DeferredHeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
 	HeightMapNoise->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), HeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
 
+	// tessellation
+	TessMVP = Camera->GetVP() * TessMatrix;
+
 	// scenes
 	switch (g_iSceneNumber)
 	{
@@ -738,6 +778,11 @@ void Render()
 		//FrameBufferQuad->SetProgram(Program_RenderBuffer);
 		//FrameBufferQuad->UpdateTexture(FrameBuffer->GetRenderTexture());
 		//FrameBufferQuad->Render();
+		break;
+	case 4:
+		TessQuad->Render(Program_Tessellation, TessMVP);
+		break;
+	default:
 		break;
 	}
 
@@ -818,6 +863,8 @@ int main()
 	delete NoiseMap;
 
 	delete PerlinQuad;
+
+	delete TessQuad;
 
 	return 0;
 }
