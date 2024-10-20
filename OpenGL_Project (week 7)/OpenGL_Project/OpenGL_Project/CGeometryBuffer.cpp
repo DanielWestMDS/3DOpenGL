@@ -76,17 +76,37 @@ void CGeometryBuffer::Unbind()
 void CGeometryBuffer::PopulateProgram(GLuint _Program, glm::vec3 _cameraPos)
 {
 	// Activate and bind the textures
-	glActiveTexture(GL_TEXTURE0);
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, m_TexturePosition);
+	//glUniform1i(glGetUniformLocation(_Program, "Texture_Position"), 0);
+
+	glUseProgram(_Program);
+	//glBindVertexArray(m_VAO);
+
+	GLint PositionTexture = glGetUniformLocation(_Program, "Texture_Position");
+	glUniform1i(PositionTexture, 0);
+	glActiveTexture(GL_TEXTURE0 + 0);
 	glBindTexture(GL_TEXTURE_2D, m_TexturePosition);
-	glUniform1i(glGetUniformLocation(_Program, "Texture_Position"), 0);
 
-	glActiveTexture(GL_TEXTURE1);
+	GLint NormalTexture = glGetUniformLocation(_Program, "Texture_Normal");
+	glUniform1i(NormalTexture, 1);
+	glActiveTexture(GL_TEXTURE0 + 1);
 	glBindTexture(GL_TEXTURE_2D, m_TextureNormal);
-	glUniform1i(glGetUniformLocation(_Program, "Texture_Normal"), 1);
 
-	glActiveTexture(GL_TEXTURE2);
+	GLint AlbedoTexture = glGetUniformLocation(_Program, "Texture_AlbedoShininess");
+	glUniform1i(AlbedoTexture, 3);
+	glActiveTexture(GL_TEXTURE0 + 3);
 	glBindTexture(GL_TEXTURE_2D, m_TextureAlbedoShininess);
-	glUniform1i(glGetUniformLocation(_Program, "Texture_AlbedoShininess"), 2);
+
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, m_TextureNormal);
+	//glUniform1i(glGetUniformLocation(_Program, "Texture_Normal"), 0);
+
+	//glActiveTexture(GL_TEXTURE2);
+	//glBindTexture(GL_TEXTURE_2D, m_TextureAlbedoShininess);
+	//glUniform1i(glGetUniformLocation(_Program, "Texture_AlbedoShininess"), 2);
+
+
 
 	// pass camera position in via uniform
 	GLint CameraPosLoc = glGetUniformLocation(_Program, "CameraPos");

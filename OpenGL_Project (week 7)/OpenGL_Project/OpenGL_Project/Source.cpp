@@ -697,13 +697,13 @@ void Render()
 		Particles->Render();
 		break;
 	case 2:
+		FrameBufferQuad->SetProgram(Program_LightingPass);
 		GeometryBuffer->Bind();
 		//Scene2->RenderGeometry(Program_DeferredRender);
 		Tree->RenderGeometryInstanced(Program_GeometryPass, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
 		GeometryBuffer->PopulateProgram(Program_LightingPass, Camera->GetPosition());
 		GeometryBuffer->Unbind();
 
-		FrameBufferQuad->SetProgram(Program_LightingPass);
 		//FrameBufferQuad->UpdateTexture(FrameBuffer->GetRenderTexture());
 		FrameBufferQuad->RenderLightingPass();
 
