@@ -46,13 +46,13 @@ void CScene::RenderShadow(GLuint _ShadowProgram, glm::mat4 _LightVP)
 	}
 }
 
-void CScene::RenderGeometry(GLuint _GeometryProgram)
-{
-	for (auto Model : m_Objects)
-	{
-		Model->RenderGeometry(_GeometryProgram);
-	}
-}
+//void CScene::RenderGeometry(GLuint _GeometryProgram)
+//{
+//	for (auto Model : m_Objects)
+//	{
+//		Model->RenderGeometry(_GeometryProgram);
+//	}
+//}
 
 void CScene::AddObject(CModel* _Model)
 {

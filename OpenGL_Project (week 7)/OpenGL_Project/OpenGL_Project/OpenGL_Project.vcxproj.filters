@@ -189,13 +189,13 @@
     <None Include="Resources\Shaders\FrameBuffer\ShadowPass.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Resources\Shaders\FrameBuffer\DeferredRender.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Resources\Shaders\FrameBuffer\DeferredRender.frag">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="Resources\Shaders\Lighting_PointLights.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\FrameBuffer\GeometryPass.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\FrameBuffer\GeometryPass.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

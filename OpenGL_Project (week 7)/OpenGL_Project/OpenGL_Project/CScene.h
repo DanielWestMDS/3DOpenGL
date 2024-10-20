@@ -44,7 +44,7 @@ public:
 	/// Render for deferred rendering/geometry buffer
 	/// </summary>
 	/// <param name="_GeometryProgram"></param>
-	void RenderGeometry(GLuint _GeometryProgram);
+	//void RenderGeometry(GLuint _GeometryProgram);
 
 	/// <summary>
 	/// adds an object to be rendered to the scene

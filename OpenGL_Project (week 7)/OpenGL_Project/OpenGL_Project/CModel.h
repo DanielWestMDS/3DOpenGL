@@ -75,7 +75,7 @@ public:
 	/// </summary>
 	virtual void RenderShadow(GLuint _ShadowProgram, glm::mat4 _LightVP);
 
-	virtual void RenderGeometry(GLuint _GeometryProgram);
+	virtual void RenderGeometryInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos, glm::mat4 _VP);
 
 	// instanced rendering function
 	virtual void RenderInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos, glm::mat4 _VP);

@@ -49,9 +49,6 @@ CModel* PointLight2;
 // shadow model
 CModel* Soldier;
 
-// deferred rendering models
-std::vector<CModel*> DeferredModels;
-
 // stencil objects
 CModel* Skull;
 CModel* Dandelion;
@@ -106,7 +103,7 @@ GLuint Program_ShadowMap;
 // compute program for particles
 GLuint Program_ComputeParticles;
 GLuint Program_Particles;
-GLuint Program_DeferredRender;
+GLuint Program_GeometryPass;
 
 // texture
 GLuint Texture_Awesome;
@@ -466,8 +463,8 @@ void InitialSetup()
 	Program_ComputeParticles = ShaderLoader::CreateProgram_C("ComputeParticles.comp");
 
 	// geometry buffer
-	Program_DeferredRender = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/DeferredRender.vert",
-		"Resources/Shaders/FrameBuffer/DeferredRender.frag");
+	Program_GeometryPass = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/GeometryPass.vert",
+		"Resources/Shaders/FrameBuffer/GeometryPass.frag");
 
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
@@ -510,14 +507,6 @@ void InitialSetup()
 	PointLight2 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight2, Texture_Quag, PLModelMat2);
 
 	Soldier = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_Lighting, Texture_Quag, SoldierModelMat);
-
-	// create 5 models for deferred rendering
-	for (int i = 0; i < 5; i++)
-	{
-		glm::mat4 NewModelMat = MakeModelMatrix(glm::vec3(i * 5, 0.0f, 0.0f), 0.005f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-		CModel* NewSoldier = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_Lighting, Texture_Quag, NewModelMat);
-		DeferredModels.push_back(NewSoldier);
-	}
 
 	LightManager = new CLightManager();
 
@@ -599,12 +588,6 @@ void InitialSetup()
 	Scene3->AddHeightMap(HeightMapNoise);
 	Scene3->AddObject(Soldier);
 
-	// deferred rendering
-	for (auto soldier : DeferredModels)
-	{
-		Scene2->AddObject(soldier);
-	}
-
 	Scene2->AddObject(PointLight1);
 	Scene2->AddObject(PointLight2);
 
@@ -678,11 +661,6 @@ void Update()
 		Particles->Update(deltaTime);
 		break;
 	case 2:
-		for (auto iter : DeferredModels)
-		{
-			glm::mat4 modelMat = iter->GetModelMat();
-			iter->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), modelMat, ShadowMap->GetShadowTexture());
-		}
 		break;
 	case 3:
 		break;
@@ -713,7 +691,8 @@ void Render()
 		break;
 	case 2:
 		GeometryBuffer->Bind();
-		Scene2->RenderGeometry(Program_DeferredRender);
+		//Scene2->RenderGeometry(Program_DeferredRender);
+		Tree->RenderGeometryInstanced(Program_GeometryPass, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
 		GeometryBuffer->Unbind();
 
 		Scene2->Render();

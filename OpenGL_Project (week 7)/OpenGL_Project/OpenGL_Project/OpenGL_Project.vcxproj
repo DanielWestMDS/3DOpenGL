@@ -186,9 +186,9 @@
     <None Include="PointLight2.frag" />
     <None Include="Resources\Shaders\ComputeParticles.comp" />
     <None Include="Resources\Shaders\FrameBuffer\Cartoon.frag" />
-    <None Include="Resources\Shaders\FrameBuffer\DeferredRender.frag" />
-    <None Include="Resources\Shaders\FrameBuffer\DeferredRender.vert" />
     <None Include="Resources\Shaders\FrameBuffer\Effect.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\GeometryPass.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\GeometryPass.vert" />
     <None Include="Resources\Shaders\FrameBuffer\Greyscale.frag" />
     <None Include="Resources\Shaders\FrameBuffer\InverseColour.frag" />
     <None Include="Resources\Shaders\FrameBuffer\Rain.frag" />
