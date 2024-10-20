@@ -60,6 +60,9 @@
     <ClCompile Include="CGeometryBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CTessellationMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderLoader.h">
@@ -102,6 +105,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CGeometryBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CTessellationMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -202,6 +208,18 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="Resources\Shaders\FrameBuffer\LightingPass.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\FrameBuffer\GeometryPassHeightMap.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\FrameBuffer\GeometryPassHeightMap.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\FrameBuffer\LightingPassHeightMap.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\FrameBuffer\LightingPassHeightMap.frag">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

@@ -13,6 +13,8 @@ public:
 
 	static GLuint CreateProgram_C(std::string ComputeShaderFilename);
 
+	static GLuint CreateProgram_VTF(const char* vertex, const char* TCS, const char* TES, const char* Fragment);
+
 private:
 	ShaderLoader(void);
 	~ShaderLoader(void);

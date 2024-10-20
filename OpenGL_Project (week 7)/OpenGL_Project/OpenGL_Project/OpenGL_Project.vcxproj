@@ -154,6 +154,7 @@
     <ClCompile Include="CScene.cpp" />
     <ClCompile Include="CShadowMap.cpp" />
     <ClCompile Include="CSkyBox.cpp" />
+    <ClCompile Include="CTessellationMesh.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
@@ -171,6 +172,7 @@
     <ClInclude Include="CScene.h" />
     <ClInclude Include="CShadowMap.h" />
     <ClInclude Include="CSkyBox.h" />
+    <ClInclude Include="CTessellationMesh.h" />
     <ClInclude Include="ShaderLoader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -189,10 +191,14 @@
     <None Include="Resources\Shaders\FrameBuffer\Effect.frag" />
     <None Include="Resources\Shaders\FrameBuffer\GeometryPass.frag" />
     <None Include="Resources\Shaders\FrameBuffer\GeometryPass.vert" />
+    <None Include="Resources\Shaders\FrameBuffer\GeometryPassHeightMap.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\GeometryPassHeightMap.vert" />
     <None Include="Resources\Shaders\FrameBuffer\Greyscale.frag" />
     <None Include="Resources\Shaders\FrameBuffer\InverseColour.frag" />
     <None Include="Resources\Shaders\FrameBuffer\LightingPass.frag" />
     <None Include="Resources\Shaders\FrameBuffer\LightingPass.vert" />
+    <None Include="Resources\Shaders\FrameBuffer\LightingPassHeightMap.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\LightingPassHeightMap.vert" />
     <None Include="Resources\Shaders\FrameBuffer\Rain.frag" />
     <None Include="Resources\Shaders\FrameBuffer\RenderBuffer.frag" />
     <None Include="Resources\Shaders\FrameBuffer\ShadowPass.frag" />

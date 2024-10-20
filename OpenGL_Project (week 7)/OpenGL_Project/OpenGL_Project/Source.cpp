@@ -104,7 +104,9 @@ GLuint Program_ShadowMap;
 GLuint Program_ComputeParticles;
 GLuint Program_Particles;
 GLuint Program_GeometryPass;
+GLuint Program_GeometryPassHeightMap;
 GLuint Program_LightingPass;
+GLuint Program_LightingPassHeightMap;
 
 // texture
 GLuint Texture_Awesome;
@@ -134,6 +136,8 @@ glm::mat4 PLModelMat2;
 glm::mat4 TreeModelMat;
 
 glm::mat4 HeightMapModelMat;
+
+glm::mat4 DeferredHeightMapModelMat;
 
 glm::mat4 PerlinHeightMapModelMat;
 
@@ -467,9 +471,15 @@ void InitialSetup()
 	Program_GeometryPass = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/GeometryPass.vert",
 		"Resources/Shaders/FrameBuffer/GeometryPass.frag");
 
+	Program_GeometryPassHeightMap = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/GeometryPassHeightMap.vert",
+		"Resources/Shaders/FrameBuffer/GeometryPassHeightMap.frag");
+
 	// screen space render pass buffer
 	Program_LightingPass = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/LightingPass.vert",
 		"Resources/Shaders/FrameBuffer/LightingPass.frag");
+
+	Program_LightingPassHeightMap = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/LightingPassHeightMap.vert",
+		"Resources/Shaders/FrameBuffer/LightingPassHeightMap.frag");
 
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
@@ -638,6 +648,7 @@ void Update()
 
 	// calculate quad model matrix evert frame
 	HeightMapModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	DeferredHeightMapModelMat = MakeModelMatrix(glm::vec3(-50.0f, 0.0f, -30.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	SoldierModelMat = MakeModelMatrix(SoldierPosition, 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
@@ -655,7 +666,7 @@ void Update()
 	Soldier->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), SoldierModelMat, ShadowMap->GetShadowTexture());
 
 	// height map
-	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), HeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
+	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), DeferredHeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
 	HeightMapNoise->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), HeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
 
 	// scenes
@@ -699,13 +710,15 @@ void Render()
 	case 2:
 		FrameBufferQuad->SetProgram(Program_LightingPass);
 		GeometryBuffer->Bind();
-		//Scene2->RenderGeometry(Program_DeferredRender);
 		Tree->RenderGeometryInstanced(Program_GeometryPass, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
+		HeightMap->RenderGeometry(Program_GeometryPassHeightMap);
 		GeometryBuffer->PopulateProgram(Program_LightingPass, Camera->GetPosition());
 		GeometryBuffer->Unbind();
 
 		//FrameBufferQuad->UpdateTexture(FrameBuffer->GetRenderTexture());
 		FrameBufferQuad->RenderLightingPass();
+		//HeightMap->Render();
+		//Tree->RenderGeometryInstanced(Program_GeometryPass, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
 		//Tree->RenderGeometryInstanced(Program_InstancedLighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
 
 

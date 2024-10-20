@@ -62,6 +62,36 @@ GLuint ShaderLoader::CreateProgram_C(std::string ComputeShaderFilename)
 	return program;
 }
 
+GLuint ShaderLoader::CreateProgram_VTF(const char* vertex, const char* TCS, const char* TES, const char* Fragment)
+{
+	std::string PathPrefix = "Resources/Shaders/";
+
+	GLuint TCS_ShaderID = CreateShader(GL_TESS_CONTROL_SHADER, (PathPrefix + TCS).c_str());
+	GLuint TES_ShaderID = CreateShader(GL_TESS_EVALUATION_SHADER, (PathPrefix + TCS).c_str());
+
+	GLuint program = glCreateProgram();
+	glAttachShader(program, TCS_ShaderID);
+	glAttachShader(program, TES_ShaderID);
+
+	glLinkProgram(program);
+
+	// Check for link errors
+	int link_result = 0;
+	glGetProgramiv(program, GL_LINK_STATUS, &link_result);
+	//glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+	if (link_result == GL_FALSE)
+	{
+		std::string programName = vertex + *TCS + *TES + *Fragment;
+		PrintErrorDetails(false, program, programName.c_str());
+		return 0;
+	}
+
+	glDeleteShader(TCS_ShaderID);
+	glDeleteShader(TES_ShaderID);
+
+	return program;
+}
+
 GLuint ShaderLoader::CreateShader(GLenum shaderType, const char* shaderName)
 {
 	// Read the shader files and save the source code as strings

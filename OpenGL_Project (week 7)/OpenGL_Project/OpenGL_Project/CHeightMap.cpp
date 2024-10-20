@@ -105,6 +105,54 @@ void CHeightMap::RenderShadow(GLuint _ShadowProgram)
     glBindVertexArray(0);
 }
 
+void CHeightMap::RenderGeometry(GLuint _ShadowProgram)
+{
+    glUseProgram(_ShadowProgram);
+    glBindVertexArray(m_VAO);
+
+    // Set textures
+    for (int i = 0; i < 4; i++)
+    {
+        std::string uniformName = "TextureArray[" + std::to_string(i) + "]";
+        GLint location = glGetUniformLocation(_ShadowProgram, uniformName.c_str());
+        glUniform1i(location, i);
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, m_textureArray[i]);
+    }
+
+    GLint ModelMatrix = glGetUniformLocation(_ShadowProgram, "model");
+    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(m_matrix));
+
+    GLint ViewMatrix = glGetUniformLocation(_ShadowProgram, "view");
+    glUniformMatrix4fv(ViewMatrix, 1, GL_FALSE, glm::value_ptr(m_viewMat));
+
+    GLint ProjMatrix = glGetUniformLocation(_ShadowProgram, "projection");
+    glUniformMatrix4fv(ProjMatrix, 1, GL_FALSE, glm::value_ptr(m_projMat));
+
+    GLint CameraPosLoc = glGetUniformLocation(_ShadowProgram, "CameraPos");
+    glUniform3fv(CameraPosLoc, 1, glm::value_ptr(m_cameraPos));
+
+    // Pass height levels to the shader
+    GLint HeightLevelsLoc = glGetUniformLocation(_ShadowProgram, "HeightLevels");
+    glUniform1fv(HeightLevelsLoc, 3, m_fHeightLevels);
+
+    // pass in view projection for shadows
+    GLint VPMat = glGetUniformLocation(_ShadowProgram, "VPLight");
+    glUniformMatrix4fv(VPMat, 1, GL_FALSE, glm::value_ptr(m_lightVP));
+
+    // pass shadow texture to shader
+    GLint ShadowTexture = glGetUniformLocation(_ShadowProgram, "Texture_ShadowMap");
+    glUniform1i(ShadowTexture, 5);
+    glActiveTexture(GL_TEXTURE0 + 5);
+    glBindTexture(GL_TEXTURE_2D, m_ShadowTexture);
+
+    // shadow texture
+
+    glDrawElements(GL_TRIANGLES, m_DrawCount, GL_UNSIGNED_INT, 0);
+
+    glBindVertexArray(0);
+}
+
 bool CHeightMap::LoadHeightMap(HeightMapInfo& _BuildInfo)
 {
     unsigned int VertexCount = _BuildInfo.Width * _BuildInfo.Depth;

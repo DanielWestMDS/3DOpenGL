@@ -86,6 +86,8 @@ public:
 	/// </summary>
 	void RenderShadow(GLuint _ShadowProgram);
 
+	void RenderGeometry(GLuint _ShadowProgram);
+
 private:
 
 	/// <summary>

@@ -93,6 +93,7 @@ CModel::CModel(std::string FilePath, GLint _program, GLint _texture, glm::mat4 _
     m_program = _program;
     m_texture = _texture;
     m_matrix = _matrix;
+    m_fShininess = 0.5f;
 }
 
 CModel::~CModel()
