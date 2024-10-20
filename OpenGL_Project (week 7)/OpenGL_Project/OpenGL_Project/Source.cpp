@@ -128,7 +128,7 @@ GLint HeightMapTextures[4];
 // model to be combined with view and projection
 glm::mat4 SoldierModelMat;
 
-glm::vec3 SoldierPosition = glm::vec3(100.0f, 0.0f, 20.0f);
+glm::vec3 SoldierPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 
 glm::mat4 PLScaleMat;
 
