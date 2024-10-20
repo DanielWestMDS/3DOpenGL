@@ -1,7 +1,7 @@
 #include "CTessellationMesh.h"
 #include "vector"
 
-CTessellationMesh::CTessellationMesh()
+CTessellationMesh::CTessellationMesh(GLuint _Texture)
 {
 	std::vector<VertexPoint> Vertices;
 	Vertices.push_back(glm::vec3(glm::sin(glm::radians(0.0f)), glm::cos(glm::radians(0.0f)), 0.0f));
@@ -31,6 +31,9 @@ CTessellationMesh::CTessellationMesh()
 
     // Unbind the VAO to avoid accidental modifications
     glBindVertexArray(0);
+
+    // set texture
+    m_Texture = _Texture;
 }
 
 CTessellationMesh::~CTessellationMesh()
@@ -41,6 +44,12 @@ void CTessellationMesh::Render(GLint _program, glm::mat4 _PVM)
 {
     glUseProgram(_program);
     glBindVertexArray(VAO);
+
+    // pass in texture
+    GLint PositionTexture = glGetUniformLocation(_program, "Texture_Position");
+    glUniform1i(PositionTexture, 0);
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_2D, m_Texture);
 
     // pass in PVM
     GLint ModelMatrix = glGetUniformLocation(_program, "PVM");

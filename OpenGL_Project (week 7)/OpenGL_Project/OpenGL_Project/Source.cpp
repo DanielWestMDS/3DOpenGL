@@ -577,7 +577,7 @@ void InitialSetup()
 
 	Particles = new CParticleSystem(Camera, Program_Particles, Program_ComputeParticles, glm::vec3(0.0f, 0.0f, 0.0f));
 
-	TessQuad = new CTessellationMesh();
+	TessQuad = new CTessellationMesh(Texture_Awesome);
 
 	// scenes
 	Scene1 = new CScene();

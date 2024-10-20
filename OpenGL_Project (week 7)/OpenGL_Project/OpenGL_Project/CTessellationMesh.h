@@ -22,7 +22,7 @@ public:
 class CTessellationMesh
 {
 public:
-	CTessellationMesh();
+	CTessellationMesh(GLuint _texture);
 	~CTessellationMesh();
 
 	void Update();
@@ -32,6 +32,8 @@ public:
 private:
 	GLuint m_DrawCount;
 	int m_DrawType;
+
+	GLuint m_Texture;
 
 	GLuint VAO;
 };
