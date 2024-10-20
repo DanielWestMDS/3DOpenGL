@@ -706,6 +706,7 @@ void Render()
 
 		//FrameBufferQuad->UpdateTexture(FrameBuffer->GetRenderTexture());
 		FrameBufferQuad->RenderLightingPass();
+		//Tree->RenderGeometryInstanced(Program_InstancedLighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
 
 
 
