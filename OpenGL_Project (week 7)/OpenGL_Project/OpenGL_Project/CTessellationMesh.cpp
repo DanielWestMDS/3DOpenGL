@@ -4,13 +4,12 @@
 CTessellationMesh::CTessellationMesh()
 {
 	std::vector<VertexPoint> Vertices;
-	Vertices.push_back(glm::vec3(0.5f, -0.5f, 0.0f));
-	Vertices.push_back(glm::vec3(-0.5f, -0.5f, 0.0f));
-	Vertices.push_back(glm::vec3(0.5f, 0.5f, 0.0f));
-	Vertices.push_back(glm::vec3(-0.5f, 0.5f, 0.0f));
+	Vertices.push_back(glm::vec3(glm::sin(glm::radians(0.0f)), glm::cos(glm::radians(0.0f)), 0.0f));
+	Vertices.push_back(glm::vec3(glm::sin(glm::radians(240.0f)), glm::cos(glm::radians(240.0f)), 0.0f));
+	Vertices.push_back(glm::vec3(glm::sin(glm::radians(120.0f)), glm::cos(glm::radians(120.0f)), 0.0f));
 
 	// sets quad patch
-	glPatchParameteri(GL_PATCH_VERTICES, 4);
+	glPatchParameteri(GL_PATCH_VERTICES, 3);
 
     //glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, glm::value_ptr(glm::vec4(4.0f, 4.0f, 4.0f, 4.0f)));
     //glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, glm::value_ptr(glm::vec2(4.0f, 4.0f)));
