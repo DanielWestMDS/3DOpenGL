@@ -191,6 +191,8 @@
     <None Include="Resources\Shaders\FrameBuffer\GeometryPass.vert" />
     <None Include="Resources\Shaders\FrameBuffer\Greyscale.frag" />
     <None Include="Resources\Shaders\FrameBuffer\InverseColour.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\LightingPass.frag" />
+    <None Include="Resources\Shaders\FrameBuffer\LightingPass.vert" />
     <None Include="Resources\Shaders\FrameBuffer\Rain.frag" />
     <None Include="Resources\Shaders\FrameBuffer\RenderBuffer.frag" />
     <None Include="Resources\Shaders\FrameBuffer\ShadowPass.frag" />

@@ -80,6 +80,28 @@ void CFrameBufferQuad::Render()
     }
 }
 
+void CFrameBufferQuad::RenderLightingPass()
+{
+    if (m_program)
+    {
+        glUseProgram(m_program);
+    }
+    else
+    {
+        return;
+    }
+
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+    if (m_program)
+    {
+        glUseProgram(0);
+    }
+}
+
+
+
 void CFrameBufferQuad::UpdateTexture(GLuint textureID) 
 {
     m_texture = textureID;

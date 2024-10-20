@@ -104,6 +104,7 @@ GLuint Program_ShadowMap;
 GLuint Program_ComputeParticles;
 GLuint Program_Particles;
 GLuint Program_GeometryPass;
+GLuint Program_LightingPass;
 
 // texture
 GLuint Texture_Awesome;
@@ -466,6 +467,10 @@ void InitialSetup()
 	Program_GeometryPass = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/GeometryPass.vert",
 		"Resources/Shaders/FrameBuffer/GeometryPass.frag");
 
+	// screen space render pass buffer
+	Program_LightingPass = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/LightingPass.vert",
+		"Resources/Shaders/FrameBuffer/LightingPass.frag");
+
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
 
@@ -682,6 +687,8 @@ void Render()
 	LightManager->UpdateShader(Program_Lighting, g_bPointLightActive);
 	LightManager->UpdateShader(Program_InstancedLighting, g_bPointLightActive);
 	LightManager->UpdateShader(Program_HeightMap, g_bPointLightActive);
+	//LightManager->UpdateShader(Program_GeometryPass, g_bPointLightActive);
+	LightManager->UpdateShader(Program_LightingPass, g_bPointLightActive);
 
 	// scenes
 	switch (g_iSceneNumber)
@@ -693,10 +700,14 @@ void Render()
 		GeometryBuffer->Bind();
 		//Scene2->RenderGeometry(Program_DeferredRender);
 		Tree->RenderGeometryInstanced(Program_GeometryPass, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
+		GeometryBuffer->PopulateProgram(Program_LightingPass, Camera->GetPosition());
 		GeometryBuffer->Unbind();
 
-		Scene2->Render();
-		Tree->RenderInstanced(Program_InstancedLighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
+		FrameBufferQuad->SetProgram(Program_LightingPass);
+		//FrameBufferQuad->UpdateTexture(FrameBuffer->GetRenderTexture());
+		FrameBufferQuad->RenderLightingPass();
+
+
 
 		break;
 	case 3:

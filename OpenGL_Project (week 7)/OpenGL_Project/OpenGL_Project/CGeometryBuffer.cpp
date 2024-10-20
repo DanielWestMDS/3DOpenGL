@@ -56,6 +56,10 @@ CGeometryBuffer::CGeometryBuffer()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+CGeometryBuffer::~CGeometryBuffer()
+{
+}
+
 
 void CGeometryBuffer::Bind()
 {
@@ -67,4 +71,24 @@ void CGeometryBuffer::Bind()
 void CGeometryBuffer::Unbind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void CGeometryBuffer::PopulateProgram(GLuint _Program, glm::vec3 _cameraPos)
+{
+	// Activate and bind the textures
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_TexturePosition);
+	glUniform1i(glGetUniformLocation(_Program, "Texture_Position"), 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_TextureNormal);
+	glUniform1i(glGetUniformLocation(_Program, "Texture_Normal"), 1);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, m_TextureAlbedoShininess);
+	glUniform1i(glGetUniformLocation(_Program, "Texture_AlbedoShininess"), 2);
+
+	// pass camera position in via uniform
+	GLint CameraPosLoc = glGetUniformLocation(_Program, "CameraPos");
+	glUniform3fv(CameraPosLoc, 1, glm::value_ptr(_cameraPos));
 }

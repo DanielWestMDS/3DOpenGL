@@ -198,5 +198,11 @@
     <None Include="Resources\Shaders\FrameBuffer\GeometryPass.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Resources\Shaders\FrameBuffer\LightingPass.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\FrameBuffer\LightingPass.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

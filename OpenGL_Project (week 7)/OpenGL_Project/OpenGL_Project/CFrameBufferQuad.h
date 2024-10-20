@@ -35,6 +35,8 @@ public:
     /// </summary>
     void Render();
 
+    void RenderLightingPass();
+
     /// <summary>
     /// Updates the texture being displayed to the quad
     /// </summary>

@@ -13,7 +13,12 @@ public:
 	void Bind();
 	void Unbind();
 
-	void PopulateProgram(GLuint _Program);
+	/// <summary>
+	/// Send generated textures from the geometry buffer to the lighting pass
+	/// </summary>
+	/// <param name="_Program"></param>
+	/// <param name="_cameraPos"></param>
+	void PopulateProgram(GLuint _Program, glm::vec3 _cameraPos);
 
 private:
 	GLuint m_FBO;
