@@ -8,14 +8,17 @@ struct VertexPoint
 {
 public:
 	glm::vec3 position;
+	glm::vec2 texcoord;
 
 	VertexPoint()
 	{
 		position = glm::vec3(0.0f);
+		texcoord = glm::vec2(0.0f);
 	};
-	VertexPoint(glm::vec3 pos)
+	VertexPoint(glm::vec3 _pos, glm::vec2 _texcoord)
 	{
-		position = pos;
+		position = _pos;
+		texcoord = _texcoord;
 	}
 };
 

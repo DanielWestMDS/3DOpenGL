@@ -3,10 +3,11 @@
 
 CTessellationMesh::CTessellationMesh(GLuint _Texture)
 {
-	std::vector<VertexPoint> Vertices;
-	Vertices.push_back(glm::vec3(glm::sin(glm::radians(0.0f)), glm::cos(glm::radians(0.0f)), 0.0f));
-	Vertices.push_back(glm::vec3(glm::sin(glm::radians(240.0f)), glm::cos(glm::radians(240.0f)), 0.0f));
-	Vertices.push_back(glm::vec3(glm::sin(glm::radians(120.0f)), glm::cos(glm::radians(120.0f)), 0.0f));
+    std::vector<VertexPoint> Vertices;
+    Vertices.push_back({ glm::vec3(glm::sin(glm::radians(0.0f)), glm::cos(glm::radians(0.0f)), 0.0f), glm::vec2(0, 0) });
+    Vertices.push_back({ glm::vec3(glm::sin(glm::radians(240.0f)), glm::cos(glm::radians(240.0f)), 0.0f), glm::vec2(glm::sin(glm::radians(240.0f)), glm::cos(glm::radians(240.0f))) });
+    Vertices.push_back({ glm::vec3(glm::sin(glm::radians(120.0f)), glm::cos(glm::radians(120.0f)), 0.0f), glm::vec2(glm::sin(glm::radians(120.0f)), glm::cos(glm::radians(120.0f)))
+});
 
 	// sets quad patch
 	glPatchParameteri(GL_PATCH_VERTICES, 3);
@@ -28,6 +29,8 @@ CTessellationMesh::CTessellationMesh(GLuint _Texture)
     // attribute pointers
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPoint), (void*)(offsetof(VertexPoint, VertexPoint::position)));
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexPoint), (void*)(offsetof(VertexPoint, VertexPoint::texcoord)));
+    glEnableVertexAttribArray(1);
 
     // Unbind the VAO to avoid accidental modifications
     glBindVertexArray(0);

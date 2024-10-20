@@ -17,6 +17,5 @@ void main()
 	gl_Position = PVM * Pos;
 
 	FragTexCoords = gl_TessCoord.x * TesTexCoords[0] +
-					gl_TessCoord.y * TesTexCoords[1] +
-					gl_TessCoord.z * TesTexCoords[2];
+					gl_TessCoord.y * TesTexCoords[1];
 }

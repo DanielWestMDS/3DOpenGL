@@ -2,13 +2,25 @@
 
 layout (vertices = 3) out;
 
+// Input from vertex shader
+in vec2 TcsTexCoords[];
+
+// Output to tessellation evaluation shader
+out vec2 TesTexCoords[];
+
+// Main function
 void main()
 {
+    // Pass texture coordinates to tessellation evaluation shader
+    TesTexCoords[gl_InvocationID] = TcsTexCoords[gl_InvocationID];
+
+    // Set tessellation levels (outer and inner tessellation factors)
     gl_TessLevelOuter[0] = 5.0f;
     gl_TessLevelOuter[1] = 5.0f;
     gl_TessLevelOuter[2] = 5.0f;
 
     gl_TessLevelInner[0] = 7.0f;
 
+    // Pass position data to next stage (Tessellation Evaluation Shader)
     gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
 }
