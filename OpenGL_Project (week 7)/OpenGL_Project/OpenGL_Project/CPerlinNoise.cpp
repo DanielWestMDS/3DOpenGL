@@ -96,13 +96,13 @@ CPerlinNoise::CPerlinNoise(int _ScreenWidth, int _ScreenHeight)
     }
 
     // save data to a file
-    std::string SaveFilePath = "Resources/Textures/Noise/";
-    std::ofstream rawFile(SaveFilePath + ".raw", std::ios_base::binary);
-    if (rawFile)
-    {
-        rawFile.write((char*)&pixels[0], (std::streamsize)((int)_ScreenWidth * (int)_ScreenHeight));
-        rawFile.close();
-    }
+    //std::string SaveFilePath = "Resources/Textures/Noise/";
+    //std::ofstream rawFile(SaveFilePath + ".raw", std::ios_base::binary);
+    //if (rawFile)
+    //{
+    //    rawFile.write((char*)&pixels[0], (std::streamsize)((int)_ScreenWidth * (int)_ScreenHeight));
+    //    rawFile.close();
+    //}
 
     // create coloured jpg
     stbi_write_jpg("Resources/Textures/Noise/COLOURED.jpg", _ScreenWidth, _ScreenHeight, 3, pixelsRGBA, 100);
