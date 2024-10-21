@@ -712,22 +712,22 @@ void InitialSetup()
 	RedFirework = new CParticleSystem(Camera, Program_Particles, 
 		Program_ComputeParticles, 
 		glm::vec3((int)rand() % 40, (int)rand() % 40, (int)rand() % 40),
-		glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		glm::vec3(1.0f, 0.0f, 0.0f));
 
 	CyanFirework = new CParticleSystem(Camera, Program_Particles,
 		Program_ComputeParticles,
 		glm::vec3((int)rand() % 40, (int)rand() % 40, (int)rand() % 40),
-		glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+		glm::vec3(0.0f, 1.0f, 1.0f));
 
 	MagentaFirework = new CParticleSystem(Camera, Program_Particles,
 		Program_ComputeParticles,
 		glm::vec3((int)rand() % 40, (int)rand() % 40, (int)rand() % 40),
-		glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
+		glm::vec3(1.0f, 0.0f, 1.0f));
 
 	YellowFirework = new CParticleSystem(Camera, Program_Particles,
 		Program_ComputeParticles,
 		glm::vec3((int)rand() % 40, (int)rand() % 40, (int)rand() % 40),
-		glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+		glm::vec3(1.0f, 1.0f, 0.0f));
 	
 	TessQuad = new CTessellationMesh(Texture_Quag);
 

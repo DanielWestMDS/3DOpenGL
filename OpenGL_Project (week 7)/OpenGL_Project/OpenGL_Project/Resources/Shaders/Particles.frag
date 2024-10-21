@@ -4,10 +4,12 @@
 out vec4 FinalColor;
 
 // Uniform to control color
-uniform vec4 Color;
+uniform vec3 Color;
+
+in float Alpha;
 
 void main()
 {
     // Final color
-    FinalColor = Color;
+    FinalColor = vec4(Color, Alpha);
 }

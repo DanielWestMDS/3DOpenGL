@@ -1,6 +1,6 @@
 #include "CParticleSystem.h"
 
-CParticleSystem::CParticleSystem(CCamera* _camera, GLuint _renderProgram, GLuint _computeProgram, glm::vec3 _origin, glm::vec4 _color)
+CParticleSystem::CParticleSystem(CCamera* _camera, GLuint _renderProgram, GLuint _computeProgram, glm::vec3 _origin, glm::vec3 _color)
 {
     this->m_ActiveCamera = _camera;
     this->m_Program_Render = _renderProgram;
@@ -63,7 +63,6 @@ CParticleSystem::~CParticleSystem()
 void CParticleSystem::TriggerFirework()
 {
     m_bFireworkActive = true;
-    m_bKeyPressed = false; // reset key press flag
     m_iSeedLife = (int)rand();
     m_iSeedX = (int)rand();
     m_iSeedY = (int)rand();
@@ -126,6 +125,11 @@ void CParticleSystem::Render()
     // pass in emitter origin
     glUniform3fv(glGetUniformLocation(m_Program_Compute, "EmitterOrigin"), 1, glm::value_ptr(m_EmitterOrigin));
 
+    // pass the boolean _pointlight into the shader
+    glUniform1i(glGetUniformLocation(m_Program_Compute, "bExplode"), m_bKeyPressed);
+
+    if (m_bKeyPressed) m_bKeyPressed = false; // reset key press flag
+
     // bind the storage buffers for compute shader manipulations
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, VBO_PositionLife);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, VBO_Velocity);
@@ -138,7 +142,7 @@ void CParticleSystem::Render()
 
     // update color
     GLint colorLocation = glGetUniformLocation(m_Program_Render, "Color");
-    glUniform4fv(colorLocation, 1, glm::value_ptr(m_Color));
+    glUniform3fv(colorLocation, 1, glm::value_ptr(m_Color));
 
     // render pass
     glUseProgram(m_Program_Render);

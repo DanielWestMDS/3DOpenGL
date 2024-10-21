@@ -11,7 +11,7 @@ public:
 	/// <param name="_renderProgram"></param>
 	/// <param name="_computeProgram"></param>
 	/// <param name="_origin"></param>
-	CParticleSystem(CCamera* _camera, GLuint _renderProgram, GLuint _computeProgram, glm::vec3 _origin, glm::vec4 _color);
+	CParticleSystem(CCamera* _camera, GLuint _renderProgram, GLuint _computeProgram, glm::vec3 _origin, glm::vec3 _color);
 
 	/// <summary>
 	/// Destructor
@@ -56,7 +56,7 @@ private:
 	int m_iSeedZ;
 
 	// each firework a different colour
-	glm::vec4 m_Color;
+	glm::vec3 m_Color;
 	bool m_bFireworkActive;
 	bool m_bKeyPressed;
 };
