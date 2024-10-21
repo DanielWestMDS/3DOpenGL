@@ -11,18 +11,22 @@ public:
 	/// <param name="_renderProgram"></param>
 	/// <param name="_computeProgram"></param>
 	/// <param name="_origin"></param>
-	CParticleSystem(CCamera* _camera, GLuint _renderProgram, GLuint _computeProgram, glm::vec3 _origin);
+	CParticleSystem(CCamera* _camera, GLuint _renderProgram, GLuint _computeProgram, glm::vec3 _origin, glm::vec4 _color);
 
 	/// <summary>
 	/// Destructor
 	/// </summary>
 	~CParticleSystem();
 
-	void Update(float _dt);
+	void Update(float _dt, bool _keypressed);
 
 	void Render();
 
 private:
+	// for triggering fireworks when f pressed
+	void TriggerFirework();
+	bool CheckAllParticlesExpired();
+
 	CCamera* m_ActiveCamera;
 	GLuint m_Program_Render;
 	GLuint m_Program_Compute;
@@ -50,5 +54,10 @@ private:
 	int m_iSeedX;
 	int m_iSeedY;
 	int m_iSeedZ;
+
+	// each firework a different colour
+	glm::vec4 m_Color;
+	bool m_bFireworkActive;
+	bool m_bKeyPressed;
 };
 

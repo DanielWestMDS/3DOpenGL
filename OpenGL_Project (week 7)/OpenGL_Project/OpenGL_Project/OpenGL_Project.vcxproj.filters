@@ -135,18 +135,6 @@
     <None Include="Resources\Shaders\onePointLight.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="PointLight1.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="PointLight2.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Resources\Shaders\PointLight1.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Resources\Shaders\PointLight2.frag">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="Resources\Shaders\Lighting_HeightMap.frag">
       <Filter>Resource Files</Filter>
     </None>
@@ -232,6 +220,36 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="Resources\Shaders\Tessellation.tes">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\PointLights\PointLight1.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\PointLights\PointLight2.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\PointLights\PointLight3.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\PointLights\PointLight4.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\PointLights\PointLight5.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\PointLights\PointLight6.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\PointLights\PointLight7.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\PointLights\PointLight8.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\PointLights\PointLight9.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\PointLights\PointLight10.frag">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

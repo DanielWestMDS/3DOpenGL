@@ -81,7 +81,10 @@ CFramebuffer* FrameBuffer;
 CShadowMap* ShadowMap;
 
 // particle effects
-CParticleSystem* Particles;
+CParticleSystem* RedFirework;
+CParticleSystem* CyanFirework;
+CParticleSystem* YellowFirework;
+CParticleSystem* MagentaFirework;
 
 // geometry buffer
 CGeometryBuffer* GeometryBuffer;
@@ -196,6 +199,7 @@ bool g_bPointLightActive = true;
 bool g_bShowMouse = true;
 bool g_UIChange = false;
 bool g_bWireframe = false;
+bool g_bFKeyPressed = false;
 
 // scene number 
 int g_iSceneNumber = 1;
@@ -384,6 +388,16 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
+	}
+
+	// fireworks
+	if (_Key == GLFW_KEY_F && _Action == GLFW_PRESS)
+	{
+		g_bFKeyPressed = true;
+	}
+	else
+	{
+		g_bFKeyPressed = false;
 	}
 }
 
@@ -695,8 +709,26 @@ void InitialSetup()
 
 	ShadowMap = new CShadowMap(iWindowSize, iWindowSize);
 
-	Particles = new CParticleSystem(Camera, Program_Particles, Program_ComputeParticles, glm::vec3(0.0f, 0.0f, 0.0f));
+	RedFirework = new CParticleSystem(Camera, Program_Particles, 
+		Program_ComputeParticles, 
+		glm::vec3((int)rand() % 40, (int)rand() % 40, (int)rand() % 40),
+		glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
+	CyanFirework = new CParticleSystem(Camera, Program_Particles,
+		Program_ComputeParticles,
+		glm::vec3((int)rand() % 40, (int)rand() % 40, (int)rand() % 40),
+		glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+
+	MagentaFirework = new CParticleSystem(Camera, Program_Particles,
+		Program_ComputeParticles,
+		glm::vec3((int)rand() % 40, (int)rand() % 40, (int)rand() % 40),
+		glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
+
+	YellowFirework = new CParticleSystem(Camera, Program_Particles,
+		Program_ComputeParticles,
+		glm::vec3((int)rand() % 40, (int)rand() % 40, (int)rand() % 40),
+		glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+	
 	TessQuad = new CTessellationMesh(Texture_Quag);
 
 	// scenes
@@ -850,7 +882,10 @@ void Update()
 	{
 	case 1:
 		// particles
-		Particles->Update(deltaTime);
+		RedFirework->Update(deltaTime, g_bFKeyPressed);
+		CyanFirework->Update(deltaTime, g_bFKeyPressed);
+		MagentaFirework->Update(deltaTime, g_bFKeyPressed);
+		YellowFirework->Update(deltaTime, g_bFKeyPressed);
 		break;
 	case 2:
 		break;
@@ -881,7 +916,17 @@ void Render()
 	switch (g_iSceneNumber)
 	{
 	case 1:
-		Particles->Render();
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		RedFirework->Render();
+		CyanFirework->Render();
+		MagentaFirework->Render();
+		YellowFirework->Render();
+
+		glDisable(GL_BLEND);
+
 		break;
 	case 2:
 		FrameBufferQuad->SetProgram(Program_LightingPass);
