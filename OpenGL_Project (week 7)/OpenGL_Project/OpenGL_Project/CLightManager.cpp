@@ -15,7 +15,7 @@
 CLightManager::CLightManager()
 {
     // lights
-    AmbientStrength = 0.3;
+    AmbientStrength = 0.3f;
     AmbientColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
     std::vector<PointLight> m_PointLights;
@@ -75,7 +75,7 @@ void CLightManager::UpdateShader(GLuint program, bool _pointlight)
     glUniform1i(glGetUniformLocation(program, "bPointLightOn"), _pointlight);
 
     // pass point light count into shader
-    glUniform1i(glGetUniformLocation(program, "PointLightCount"), m_PointLights.size());
+    glUniform1i(glGetUniformLocation(program, "PointLightCount"), (GLint)m_PointLights.size());
 
     std::string sDirection = "DirectionLight";
     glUniform3fv(glGetUniformLocation(program, (sDirection + ".Direction").c_str()), 1, &m_DirectionLight.Direction[0]);

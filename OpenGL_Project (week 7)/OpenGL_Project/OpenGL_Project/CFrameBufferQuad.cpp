@@ -66,7 +66,7 @@ void CFrameBufferQuad::Render()
     glUseProgram(m_program);
     glUniform2f(glGetUniformLocation(m_program, "iResolution"), 800.0f, 800.0f);
 
-    float timeValue = glfwGetTime();
+    float timeValue = (float)glfwGetTime();
     glUniform1f(glGetUniformLocation(m_program, "iTime"), timeValue);
 
 

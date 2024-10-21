@@ -325,8 +325,8 @@ float CHeightMap::Average(unsigned int _row, unsigned int _col, HeightMapInfo& _
     {
         for (int Col = -1; Col <= 1; ++Col)
         {
-            int NeighborRow = _row + Row;
-            int NeighborCol = _col + Col;
+            unsigned int NeighborRow = _row + Row;
+            unsigned int NeighborCol = _col + Col;
 
             if (NeighborRow >= 0 && NeighborRow < _BuildInfo.Width &&
                 NeighborCol >= 0 && NeighborCol < _BuildInfo.Depth)

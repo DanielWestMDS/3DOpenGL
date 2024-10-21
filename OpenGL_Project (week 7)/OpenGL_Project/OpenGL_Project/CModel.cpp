@@ -191,7 +191,7 @@ void CModel::RenderGeometryInstanced(GLint _program, GLint _texture, std::vector
     // glVertexAttribDivisor(3, 1); // Divisor for instancing
 
      // render
-    glDrawArraysInstanced(DrawType, 0, DrawCount, _instancePositions.size());
+    glDrawArraysInstanced(DrawType, 0, DrawCount, (GLsizei)_instancePositions.size());
 
     glBindVertexArray(0);
 }
@@ -230,7 +230,7 @@ void CModel::RenderInstanced(GLint _program, GLint _texture, std::vector<glm::ve
    // glVertexAttribDivisor(3, 1); // Divisor for instancing
 
     // render
-    glDrawArraysInstanced(DrawType, 0, DrawCount, _instancePositions.size());
+    glDrawArraysInstanced(DrawType, 0, DrawCount, (GLsizei)_instancePositions.size());
 
     glBindVertexArray(0);
 }

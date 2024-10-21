@@ -716,7 +716,7 @@ void InitialSetup()
 
 	CyanFirework = new CParticleSystem(Camera, Program_Particles,
 		Program_ComputeParticles,
-		glm::vec3((int)rand() % 40, (int)rand() % 40, (int)rand() % 40),
+		glm::vec3((int)rand() % 40, (int)rand() % 40, (int)rand() % 40), 
 		glm::vec3(0.0f, 1.0f, 1.0f));
 
 	MagentaFirework = new CParticleSystem(Camera, Program_Particles,
@@ -762,7 +762,7 @@ void InitialSetup()
 	// clear vector just in case
 	MVPVec.clear();
 	// add matrices to matrix vec for each tree
-	for (unsigned int i = 0; i < g_objCount; i++)
+	for (int i = 0; i < g_objCount; i++)
 	{
 		// randomize x and z positions to disperse trees
 		RandomLocations.push_back(glm::vec3((rand() % 8000) - 4000, 0, (rand() % 8000) - 4000)); // random square around 0, 0, 0
