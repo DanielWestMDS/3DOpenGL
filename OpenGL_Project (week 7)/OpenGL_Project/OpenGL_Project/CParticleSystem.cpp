@@ -1,3 +1,16 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CParticleSystem.cpp
+// Description : uses a compute shader to render a firework effect of particles. 
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
+
 #include "CParticleSystem.h"
 
 CParticleSystem::CParticleSystem(CCamera* _camera, GLuint _renderProgram, GLuint _computeProgram, glm::vec3 _origin, glm::vec3 _color)
@@ -59,7 +72,6 @@ CParticleSystem::~CParticleSystem()
     glDeleteVertexArrays(1, &VAO);
 }
 
-// Function to trigger the firework
 void CParticleSystem::TriggerFirework()
 {
     m_bFireworkActive = true;
@@ -69,7 +81,6 @@ void CParticleSystem::TriggerFirework()
     m_iSeedZ = (int)rand();
 }
 
-// Check if all particles have expired (i.e., lifespan <= 0.0)
 bool CParticleSystem::CheckAllParticlesExpired()
 {
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, VBO_PositionLife);
@@ -78,7 +89,7 @@ bool CParticleSystem::CheckAllParticlesExpired()
     bool allExpired = true;
     for (int i = 0; i < m_iNumParticles; ++i)
     {
-        if (positions[i].w > 0.0f)  // any particle still has life left
+        if (positions[i].w > 0.0f)
         {
             allExpired = false;
             break;

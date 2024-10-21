@@ -142,36 +142,28 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CCamera.cpp" />
-    <ClCompile Include="CFramebuffer.cpp" />
     <ClCompile Include="CGeometryBuffer.cpp" />
     <ClCompile Include="CHeightMap.cpp" />
     <ClCompile Include="CLightManager.cpp" />
     <ClCompile Include="CModel.cpp" />
     <ClCompile Include="CParticleSystem.cpp" />
-    <ClCompile Include="CPerlinNoise.cpp" />
-    <ClCompile Include="CQuad.cpp" />
     <ClCompile Include="CFrameBufferQuad.cpp" />
     <ClCompile Include="CScene.cpp" />
     <ClCompile Include="CShadowMap.cpp" />
-    <ClCompile Include="CSkyBox.cpp" />
     <ClCompile Include="CTessellationMesh.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCamera.h" />
-    <ClInclude Include="CFramebuffer.h" />
     <ClInclude Include="CGeometryBuffer.h" />
     <ClInclude Include="CHeightMap.h" />
     <ClInclude Include="CLightManager.h" />
     <ClInclude Include="CModel.h" />
     <ClInclude Include="CParticleSystem.h" />
-    <ClInclude Include="CPerlinNoise.h" />
-    <ClInclude Include="CQuad.h" />
     <ClInclude Include="CFrameBufferQuad.h" />
     <ClInclude Include="CScene.h" />
     <ClInclude Include="CShadowMap.h" />
-    <ClInclude Include="CSkyBox.h" />
     <ClInclude Include="CTessellationMesh.h" />
     <ClInclude Include="ShaderLoader.h" />
   </ItemGroup>

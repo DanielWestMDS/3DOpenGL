@@ -1,3 +1,15 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CParticleSystem.h
+// Description : uses a compute shader to render a firework effect of particles. 
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #pragma once
 #include "CCamera.h"
 
@@ -18,13 +30,29 @@ public:
 	/// </summary>
 	~CParticleSystem();
 
+	/// <summary>
+	/// sends uniform info to compute shader
+	/// </summary>
+	/// <param name="_dt"></param>
+	/// <param name="_keypressed"></param>
 	void Update(float _dt, bool _keypressed);
 
+	/// <summary>
+	/// sends uniform info and sets vao info
+	/// </summary>
 	void Render();
 
 private:
-	// for triggering fireworks when f pressed
+
+	/// <summary>
+	/// resets values for a random firework
+	/// </summary>
 	void TriggerFirework();
+
+	/// <summary>
+	/// checks the lifetime of all particles in this particle system
+	/// </summary>
+	/// <returns></returns>
 	bool CheckAllParticlesExpired();
 
 	CCamera* m_ActiveCamera;

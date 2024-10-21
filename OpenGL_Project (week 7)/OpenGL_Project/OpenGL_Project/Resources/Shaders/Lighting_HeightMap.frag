@@ -134,14 +134,6 @@ void main()
 
     TotalLightOutput += CalculateLight_Direction();
 
-    if (bPointLightOn)
-    {
-        for (int i = 0; i < PointLightCount; i++)
-        {
-            TotalLightOutput += CalculateLight_Point(i);
-        }
-    }
-
     // shadows
     float Shadow = CalculateShadow();
     vec3 LightShadow = Ambient + ((1.0f - Shadow) * TotalLightOutput);

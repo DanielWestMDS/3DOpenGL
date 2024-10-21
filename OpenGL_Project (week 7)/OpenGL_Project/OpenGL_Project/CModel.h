@@ -75,6 +75,15 @@ public:
 	/// </summary>
 	virtual void RenderShadow(GLuint _ShadowProgram, glm::mat4 _LightVP);
 
+	/// <summary>
+	/// Instanced rendering with uniforms for geometry
+	/// </summary>
+	/// <param name="_program"></param>
+	/// <param name="_texture"></param>
+	/// <param name="_instancePositions"></param>
+	/// <param name="_modelMat"></param>
+	/// <param name="_cameraPos"></param>
+	/// <param name="_VP"></param>
 	virtual void RenderGeometryInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos, glm::mat4 _VP);
 
 	// instanced rendering function

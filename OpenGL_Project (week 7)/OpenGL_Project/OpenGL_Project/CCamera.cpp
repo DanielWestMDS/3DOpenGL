@@ -144,6 +144,13 @@ void CCamera::PrintCamPos()
 	std::cout << "X: " << m_position.x << "Y: " << m_position.y << "Z: " << m_position.z << std::endl;
 }
 
+void CCamera::LookAt(glm::vec3 _place)
+{
+	m_lookDir = glm::normalize(_place - m_position);
+	m_upDir = glm::normalize(glm::cross(GetRight(), m_lookDir));
+	m_viewMat = glm::lookAt(m_position, _place, m_upDir);
+}
+
 glm::vec3 CCamera::GetMove(GLFWwindow* _Window, float _dt)
 {
 	return ((float)(TriHoriz(_Window)) * -GetRight()) + ((float)(-TriVerti(_Window)) * GetForward());

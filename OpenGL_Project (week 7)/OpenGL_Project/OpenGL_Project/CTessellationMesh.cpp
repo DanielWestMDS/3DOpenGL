@@ -1,3 +1,15 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CTessellationMesh.cpp
+// Description : creates a triangles mesh which has vertices set in the tcs and tes shaders. 
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #include "CTessellationMesh.h"
 #include "vector"
 

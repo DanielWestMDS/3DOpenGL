@@ -1,3 +1,15 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CGeometryBuffer.cpp
+// Description : uses framebuffers to create 3 textures for normal position and shininess so that lighting calculations can be applied as a whole. 
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #include "CGeometryBuffer.h"
 #include <iostream>
 

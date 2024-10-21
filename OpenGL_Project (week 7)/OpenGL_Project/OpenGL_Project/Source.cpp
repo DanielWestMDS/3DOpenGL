@@ -17,14 +17,10 @@
 
 #include "ShaderLoader.h"
 #include "CModel.h"
-#include "CSkyBox.h"
 #include "CLightManager.h"
 #include "CHeightMap.h"
-#include "CPerlinNoise.h"
 #include "CScene.h"
 #include "CFrameBufferQuad.h"
-#include "CQuad.h"
-#include "CFramebuffer.h"
 #include "CShadowMap.h"
 #include "CParticleSystem.h"
 #include "CGeometryBuffer.h"
@@ -39,8 +35,6 @@ int iWindowSize = 800;
 CCamera* Camera;
 // tree
 CModel* Tree;
-// skybox
-CSkyBox* Skybox;
 // light manager
 CLightManager* LightManager;
 // point lights
@@ -58,24 +52,11 @@ CModel* PointLight10;
 // shadow model
 CModel* Soldier;
 
-// stencil objects
-CModel* Skull;
-CModel* Dandelion;
-CModel* Halberd;
-
 // height map
 CHeightMap* HeightMap;
 CHeightMap* HeightMapNoise;
 
-// perlin noise
-CPerlinNoise* NoiseMap;
-
-// ui quad for perlin noise
-CQuad* PerlinQuad;
 CFrameBufferQuad* FrameBufferQuad;
-
-// framebuffer
-CFramebuffer* FrameBuffer;
 
 // Shadows
 CShadowMap* ShadowMap;
@@ -102,7 +83,6 @@ CScene* Scene4;
 GLuint Program_3DModel;
 GLuint Program_Lighting;
 GLuint Program_InstancedLighting;
-GLuint Program_Skybox;
 
 GLuint Program_PointLight1;
 GLuint Program_PointLight2;
@@ -117,13 +97,6 @@ GLuint Program_PointLight10;
 
 GLuint Program_HeightMap;
 GLuint Program_Squares;
-GLuint Program_RenderBuffer;
-GLuint Program_InverseColour;
-GLuint Program_GreyScale;
-GLuint Program_RenderBufferNone;
-GLuint Program_Effect;
-GLuint Program_Cartoon;
-GLuint Program_Rain;
 GLuint Program_ShadowMap;
 // compute program for particles
 GLuint Program_ComputeParticles;
@@ -149,7 +122,7 @@ GLint HeightMapTextures[4];
 // model to be combined with view and projection
 glm::mat4 SoldierModelMat;
 
-glm::vec3 SoldierPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 SoldierPosition = glm::vec3(-20.0f, 6.0f, 8.0f);
 
 glm::mat4 PLScaleMat;
 
@@ -296,75 +269,33 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-	if (_Key == GLFW_KEY_TAB && _Action == GLFW_PRESS)
-	{
-		if (g_iProgram <= 4)
-		{
-			g_iProgram++;
-		}
-		else
-		{
-			g_iProgram = 0;
-		}
-
-		switch (g_iProgram)
-		{
-		case 0:
-			Program_RenderBuffer = Program_RenderBufferNone;
-			break;
-
-		case 1:
-			Program_RenderBuffer = Program_GreyScale;
-			break;
-
-		case 2:
-			Program_RenderBuffer = Program_InverseColour;
-			break;
-
-		case 3:
-			Program_RenderBuffer = Program_Rain;
-			break;
-
-		case 4:
-			Program_RenderBuffer = Program_Effect;
-			break;
-
-		case 5:
-			Program_RenderBuffer = Program_Cartoon;
-			break;
-
-		default:
-			break;
-		}
-	}
-
 	// for object
 // move forward
 	if (glfwGetKey(_Window, GLFW_KEY_UP))
 	{
 		// use camera forward
-		SoldierPosition -= Camera->GetForward() * deltaTime * MoveSpeed;
+		SoldierPosition.x += deltaTime * MoveSpeed;
 	}
 
 	// move back
 	if (glfwGetKey(_Window, GLFW_KEY_DOWN))
 	{
 		// use camera forward but reverse
-		SoldierPosition += Camera->GetForward() * deltaTime * MoveSpeed;
+		SoldierPosition.x -= deltaTime * MoveSpeed;
 	}
 
 	// move left
 	if (glfwGetKey(_Window, GLFW_KEY_LEFT))
 	{
 		// use camera right but reverse
-		SoldierPosition += Camera->GetRight() * deltaTime * MoveSpeed;
+		SoldierPosition.z -= deltaTime * MoveSpeed;
 	}
 
 	// move right
 	if (glfwGetKey(_Window, GLFW_KEY_RIGHT))
 	{
 		// use camera forward
-		SoldierPosition -= Camera->GetRight() * deltaTime * MoveSpeed;
+		SoldierPosition.z += deltaTime * MoveSpeed;
 	}
 
 
@@ -476,10 +407,6 @@ void InitialSetup()
 	Program_InstancedLighting = ShaderLoader::CreateProgram("Resources/Shaders/InstancedArray_Standard.vert",
 		"Resources/Shaders/Lighting_PointLights.frag");
 
-	// program for skybox
-	Program_Skybox = ShaderLoader::CreateProgram("Resources/Shaders/Skybox.vert",
-		"Resources/Shaders/Skybox.frag");
-
 	// program for point light 1
 	Program_PointLight1 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
 		"Resources/Shaders/PointLights/PointLight1.frag");
@@ -527,34 +454,6 @@ void InitialSetup()
 	Program_Squares = ShaderLoader::CreateProgram("Resources/Shaders/Squares.vert",
 		"Resources/Shaders/Squares.frag");
 
-	// base renderbuffer
-	Program_RenderBuffer = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
-		"Resources/Shaders/FrameBuffer/RenderBuffer.frag");
-
-	// renderbuffer with no effects
-	Program_RenderBufferNone = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
-		"Resources/Shaders/FrameBuffer/RenderBuffer.frag");
-
-	// renderbuffer with inverse colour
-	Program_InverseColour = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
-		"Resources/Shaders/FrameBuffer/InverseColour.frag");
-
-	// renderbuffer with luminosity method greyscale
-	Program_GreyScale = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
-		"Resources/Shaders/FrameBuffer/Greyscale.frag");
-
-	// renderbuffer with something idk
-	Program_Effect = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
-		"Resources/Shaders/FrameBuffer/Effect.frag");
-
-	// renderbuffer with rain
-	Program_Rain = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
-		"Resources/Shaders/FrameBuffer/Rain.frag");
-
-	// renderbuffer with cartoon effect
-	Program_Cartoon = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/RenderBuffer.vert",
-		"Resources/Shaders/FrameBuffer/Cartoon.frag");
-
 	// renderbuffer for shadow texture
 	Program_ShadowMap = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/ShadowPass.vert",
 		"Resources/Shaders/FrameBuffer/ShadowPass.frag");
@@ -591,7 +490,7 @@ void InitialSetup()
 
 	Texture_Awesome = LoadTexture("Resources/Textures/SkyboxBack.jpg");
 	Texture_Quag = LoadTexture("Resources/Textures/PolygonAncientWorlds_Texture_01_A.png");
-	Texture_3 = LoadTexture("Resources/Textures/FamilyPortrait.png");
+	Texture_3 = LoadTexture("Resources/Textures/Halfrack logo.png");
 	Texture_4 = LoadTexture("Resources/Textures/PolygonAncientWorlds_Statue_01.png");
 	
 	Texture_RainNoise = LoadTexture("Resources/Textures/ad56fba948dfba9ae698198c109e71f118a54d209c0ea50d77ea546abad89c57.png");
@@ -646,8 +545,6 @@ void InitialSetup()
 
 	Tree = new CModel("Resources/Models/SM_Env_Tree_Palm_01.obj", Program_Lighting, Texture_3, TreeModelMat);
 
-	Skybox = new CSkyBox(sFaces, "Resources/Models/cube.obj", Program_Skybox);
-
 	PointLight1 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight1, Texture_Quag, PLModelMat1);
 
 	PointLight2 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight2, Texture_Quag, PLModelMat2);
@@ -697,13 +594,7 @@ void InitialSetup()
 	// dark blue
 	LightManager->AddPointLight(glm::vec3(-20.0f, 5.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.5f), 1.0f, 1.4f, 0.045f, exponent);
 
-	NoiseMap = new CPerlinNoise(512, 512);
-
-	PerlinQuad = new CQuad(10, 10, 100, 100, Texture_3, Program_Squares);
-
-	FrameBufferQuad = new CFrameBufferQuad(Texture_Awesome, Texture_RainNoise, Program_RenderBuffer);
-
-	FrameBuffer = new CFramebuffer(iWindowSize, iWindowSize);
+	FrameBufferQuad = new CFrameBufferQuad(Texture_Awesome, Texture_RainNoise, Program_LightingPass);
 
 	GeometryBuffer = new CGeometryBuffer();
 
@@ -750,9 +641,6 @@ void InitialSetup()
 	info.CellSpacing = 1.0f;
 
 	// noise texture
-
-	Texture_Noise = LoadTexture("Resources/Textures/Noise/" + std::to_string(NoiseMap->GetSeed()) + ".jpg");
-
 	HeightMapNoise = new CHeightMap(infoNoise, Program_HeightMap, HeightMapTextures);
 	HeightMap = new CHeightMap(info, Program_HeightMap, HeightMapTextures);
 
@@ -881,15 +769,16 @@ void Update()
 	switch (g_iSceneNumber)
 	{
 	case 1:
+
+		break;
+	case 2:
+		break;
+	case 3:
 		// particles
 		RedFirework->Update(deltaTime, g_bFKeyPressed);
 		CyanFirework->Update(deltaTime, g_bFKeyPressed);
 		MagentaFirework->Update(deltaTime, g_bFKeyPressed);
 		YellowFirework->Update(deltaTime, g_bFKeyPressed);
-		break;
-	case 2:
-		break;
-	case 3:
 		break;
 	}
 	//NoiseMap->AnimationGrowth(Texture_Quag, Texture_Awesome);
@@ -909,23 +798,18 @@ void Render()
 	LightManager->UpdateShader(Program_Lighting, g_bPointLightActive);
 	LightManager->UpdateShader(Program_InstancedLighting, g_bPointLightActive);
 	LightManager->UpdateShader(Program_HeightMap, g_bPointLightActive);
-	//LightManager->UpdateShader(Program_GeometryPass, g_bPointLightActive);
 	LightManager->UpdateShader(Program_LightingPass, g_bPointLightActive);
 
 	// scenes
 	switch (g_iSceneNumber)
 	{
 	case 1:
+		ShadowMap->Bind();
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		Scene3->RenderShadow(Program_ShadowMap, LightManager->GetVP());
 
-		RedFirework->Render();
-		CyanFirework->Render();
-		MagentaFirework->Render();
-		YellowFirework->Render();
-
-		glDisable(GL_BLEND);
+		ShadowMap->Unbind();
+		Scene3->Render();
 
 		break;
 	case 2:
@@ -936,7 +820,6 @@ void Render()
 		GeometryBuffer->PopulateProgram(Program_LightingPass, Camera->GetPosition());
 		GeometryBuffer->Unbind();
 
-		//FrameBufferQuad->UpdateTexture(FrameBuffer->GetRenderTexture());
 		FrameBufferQuad->RenderLightingPass();
 
 		GeometryBuffer->WriteDepth();
@@ -948,27 +831,20 @@ void Render()
 		Scene2->Render();
 
 		glDisable(GL_BLEND);
-		//HeightMap->Render();
-		//Tree->RenderGeometryInstanced(Program_GeometryPass, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
-		//Tree->RenderGeometryInstanced(Program_InstancedLighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
-
-
 
 		break;
 	case 3:
-		ShadowMap->Bind();
-		//FrameBuffer->Bind();
 
-		Scene3->RenderShadow(Program_ShadowMap, LightManager->GetVP());
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		ShadowMap->Unbind();
-		//FrameBuffer->Unbind();
-		PerlinQuad->UpdateTexture(Texture_PerlinMap);
-		PerlinQuad->Render(*Camera);
-		Scene3->Render();
-		//FrameBufferQuad->SetProgram(Program_RenderBuffer);
-		//FrameBufferQuad->UpdateTexture(FrameBuffer->GetRenderTexture());
-		//FrameBufferQuad->Render();
+		RedFirework->Render();
+		CyanFirework->Render();
+		MagentaFirework->Render();
+		YellowFirework->Render();
+
+		glDisable(GL_BLEND);
+
 		break;
 	case 4:
 		TessQuad->Render(Program_Tessellation, TessMVP);
@@ -1041,8 +917,6 @@ int main()
 
 	delete Tree;
 
-	delete Skybox;
-
 	delete LightManager;
 
 	delete PointLight1;
@@ -1050,10 +924,6 @@ int main()
 
 	delete HeightMap;
 	delete HeightMapNoise;
-
-	delete NoiseMap;
-
-	delete PerlinQuad;
 
 	delete TessQuad;
 

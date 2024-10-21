@@ -1,3 +1,15 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : CShadowMap.cpp
+// Description : uses framebuffers to create a shadow texture to be applied to objects in the scene.
+// Author : Daniel West
+// Mail : daniel.west@mds.ac.nz
+
 #include "CShadowMap.h"
 
 CShadowMap::CShadowMap(int _windowWidth, int _windowHeight)

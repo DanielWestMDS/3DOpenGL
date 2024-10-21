@@ -43,6 +43,9 @@ public:
 	void Input(GLFWwindow* _Window, float _dt);
 	void PrintCamPos();
 
+	// look at something
+	void LookAt(glm::vec3 _place);
+
 	// for model movement related to camera
 	// forward vector
 	glm::vec3 GetForward() { return glm::normalize(-m_lookDir); };
