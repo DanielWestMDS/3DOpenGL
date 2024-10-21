@@ -98,3 +98,13 @@ void CGeometryBuffer::PopulateProgram(GLuint _Program, glm::vec3 _cameraPos)
 	GLint CameraPosLoc = glGetUniformLocation(_Program, "CameraPos");
 	glUniform3fv(CameraPosLoc, 1, glm::value_ptr(_cameraPos));
 }
+
+void CGeometryBuffer::WriteDepth()
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_FBO);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBlitFramebuffer(0, 0, 800, 800, //source
+		0, 0, 800, 800, // destination
+		GL_DEPTH_BUFFER_BIT, GL_NEAREST); // mask/filter
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}

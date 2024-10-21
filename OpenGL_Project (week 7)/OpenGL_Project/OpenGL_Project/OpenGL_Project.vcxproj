@@ -184,8 +184,6 @@
     <Text Include="Resources\Shaders\Skybox.vert" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="PointLight1.frag" />
-    <None Include="PointLight2.frag" />
     <None Include="Resources\Shaders\ComputeParticles.comp" />
     <None Include="Resources\Shaders\FrameBuffer\Cartoon.frag" />
     <None Include="Resources\Shaders\FrameBuffer\Effect.frag" />
@@ -209,8 +207,16 @@
     <None Include="Resources\Shaders\onePointLight.frag" />
     <None Include="Resources\Shaders\Particles.frag" />
     <None Include="Resources\Shaders\Particles.vert" />
-    <None Include="Resources\Shaders\PointLight1.frag" />
-    <None Include="Resources\Shaders\PointLight2.frag" />
+    <None Include="Resources\Shaders\PointLights\PointLight1.frag" />
+    <None Include="Resources\Shaders\PointLights\PointLight10.frag" />
+    <None Include="Resources\Shaders\PointLights\PointLight2.frag" />
+    <None Include="Resources\Shaders\PointLights\PointLight3.frag" />
+    <None Include="Resources\Shaders\PointLights\PointLight4.frag" />
+    <None Include="Resources\Shaders\PointLights\PointLight5.frag" />
+    <None Include="Resources\Shaders\PointLights\PointLight6.frag" />
+    <None Include="Resources\Shaders\PointLights\PointLight7.frag" />
+    <None Include="Resources\Shaders\PointLights\PointLight8.frag" />
+    <None Include="Resources\Shaders\PointLights\PointLight9.frag" />
     <None Include="Resources\Shaders\RenderBuffer.vert" />
     <None Include="Resources\Shaders\Squares.frag" />
     <None Include="Resources\Shaders\Squares.vert" />

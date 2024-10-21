@@ -46,6 +46,14 @@ CLightManager* LightManager;
 // point lights
 CModel* PointLight1;
 CModel* PointLight2;
+CModel* PointLight3;
+CModel* PointLight4;
+CModel* PointLight5;
+CModel* PointLight6;
+CModel* PointLight7;
+CModel* PointLight8;
+CModel* PointLight9;
+CModel* PointLight10;
 
 // shadow model
 CModel* Soldier;
@@ -92,8 +100,18 @@ GLuint Program_3DModel;
 GLuint Program_Lighting;
 GLuint Program_InstancedLighting;
 GLuint Program_Skybox;
+
 GLuint Program_PointLight1;
 GLuint Program_PointLight2;
+GLuint Program_PointLight3;
+GLuint Program_PointLight4;
+GLuint Program_PointLight5;
+GLuint Program_PointLight6;
+GLuint Program_PointLight7;
+GLuint Program_PointLight8;
+GLuint Program_PointLight9;
+GLuint Program_PointLight10;
+
 GLuint Program_HeightMap;
 GLuint Program_Squares;
 GLuint Program_RenderBuffer;
@@ -137,6 +155,14 @@ glm::mat4 PLModelMat1;
 
 // model to be combined with view and projection
 glm::mat4 PLModelMat2;
+glm::mat4 PLModelMat3;
+glm::mat4 PLModelMat4;
+glm::mat4 PLModelMat5;
+glm::mat4 PLModelMat6;
+glm::mat4 PLModelMat7;
+glm::mat4 PLModelMat8;
+glm::mat4 PLModelMat9;
+glm::mat4 PLModelMat10;
 
 glm::mat4 TreeModelMat;
 
@@ -442,11 +468,43 @@ void InitialSetup()
 
 	// program for point light 1
 	Program_PointLight1 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
-		"Resources/Shaders/PointLight1.frag");
+		"Resources/Shaders/PointLights/PointLight1.frag");
 
 	// program for point light 2
 	Program_PointLight2 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
-		"Resources/Shaders/PointLight2.frag");
+		"Resources/Shaders/PointLights/PointLight2.frag");
+
+	// program for point light 3
+	Program_PointLight3 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
+		"Resources/Shaders/PointLights/PointLight3.frag");
+
+	// program for point light 4
+	Program_PointLight4 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
+		"Resources/Shaders/PointLights/PointLight4.frag");
+
+	// program for point light 5
+	Program_PointLight5 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
+		"Resources/Shaders/PointLights/PointLight5.frag");
+
+	// program for point light 6
+	Program_PointLight6 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
+		"Resources/Shaders/PointLights/PointLight6.frag");
+
+	// program for point light 7
+	Program_PointLight7 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
+		"Resources/Shaders/PointLights/PointLight7.frag");
+
+	// program for point light 8
+	Program_PointLight8 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
+		"Resources/Shaders/PointLights/PointLight8.frag");
+
+	// program for point light 9
+	Program_PointLight9 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
+		"Resources/Shaders/PointLights/PointLight9.frag");
+
+	// program for point light 10
+	Program_PointLight10 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
+		"Resources/Shaders/PointLights/PointLight10.frag");
 
 	Program_HeightMap = ShaderLoader::CreateProgram("Resources/Shaders/HeightMap.vert",
 		"Resources/Shaders/Lighting_HeightMap.frag");
@@ -532,10 +590,34 @@ void InitialSetup()
 	SoldierModelMat = MakeModelMatrix(SoldierPosition, 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// for point lights
-	PLModelMat1 = MakeModelMatrix(glm::vec3(10.0f, 0.0f, 5.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	PLModelMat1 = MakeModelMatrix(glm::vec3(10.0f, 5.0f, 10.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// point light 2
-	PLModelMat2 = MakeModelMatrix(glm::vec3(10.0f, 0.0f, -5.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	PLModelMat2 = MakeModelMatrix(glm::vec3(10.0f, 5.0f, 0.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	// point light 3
+	PLModelMat3 = MakeModelMatrix(glm::vec3(10.0f, 5.0f, -10.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	// point light 4
+	PLModelMat4 = MakeModelMatrix(glm::vec3(0.0f, 5.0f, 10.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+												  
+	// point light 5							  
+	PLModelMat5 = MakeModelMatrix(glm::vec3(0.0f, 5.0f, 0.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+												  
+	// point light 6							  
+	PLModelMat6 = MakeModelMatrix(glm::vec3(0.0f, 5.0f, -10.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	// point light 7
+	PLModelMat7 = MakeModelMatrix(glm::vec3(-10.0f, 5.0f, 10.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	// point light 8
+	PLModelMat8 = MakeModelMatrix(glm::vec3(-10.0f, 5.0f, 0.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	// point light 9
+	PLModelMat9 = MakeModelMatrix(glm::vec3(-10.0f, 5.0f, -10.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	// point light 10
+	PLModelMat10 = MakeModelMatrix(glm::vec3(-20.0f, 5.0f, 0.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// for instanced matrices
 	TreeModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.005f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -556,12 +638,50 @@ void InitialSetup()
 
 	PointLight2 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight2, Texture_Quag, PLModelMat2);
 
+	PointLight3 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight3, Texture_Quag, PLModelMat3);
+
+	PointLight4 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight4, Texture_Quag, PLModelMat4);
+
+	PointLight5 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight5, Texture_Quag, PLModelMat5);
+
+	PointLight6 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight6, Texture_Quag, PLModelMat6);
+
+	PointLight7 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight7, Texture_Quag, PLModelMat7);
+
+	PointLight8 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight8, Texture_Quag, PLModelMat8);
+
+	PointLight9 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight9, Texture_Quag, PLModelMat9);
+
+	PointLight10 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight10, Texture_Quag, PLModelMat10);
+
+
 	Soldier = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_Lighting, Texture_Quag, SoldierModelMat);
 
 	LightManager = new CLightManager();
 
-	LightManager->AddPointLight(glm::vec3(10.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
-	LightManager->AddPointLight(glm::vec3(10.0f, 0.0f, -5.0f), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, 1.0f, 0.045f, 0.0075f);
+	// change attenuation so you can see all the different point lights
+	float exponent = 0.1f;
+
+	// blue
+	LightManager->AddPointLight(glm::vec3(10.0f, 5.0f, 10.0f), glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, 1.4f, 0.045f, exponent);
+	// green
+	LightManager->AddPointLight(glm::vec3(10.0f, 5.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, 1.4f, 0.045f, exponent);
+	// red
+	LightManager->AddPointLight(glm::vec3(10.0f, 5.0f, -10.0f), glm::vec3(1.0f, 0.0f, 0.0f), 1.0f, 1.5f, 0.045f, exponent);
+	// cyan
+	LightManager->AddPointLight(glm::vec3(0.0f, 5.0f, 10.0f), glm::vec3(0.0f, 1.0f, 1.0f), 1.0f, 1.4f, 0.045f, exponent);
+	// yellow
+	LightManager->AddPointLight(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), 1.0f, 1.4f, 0.045f, exponent);
+	// magenta
+	LightManager->AddPointLight(glm::vec3(0.0f, 5.0f, -10.0f), glm::vec3(1.0f, 0.0f, 1.0f), 1.0f, 1.4f, 0.045f, exponent);
+	// white
+	LightManager->AddPointLight(glm::vec3(-10.0f, 5.0f, 10.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 1.6f, 0.045f, exponent);
+	// purple?
+	LightManager->AddPointLight(glm::vec3(-10.0f, 5.0f, 0.0f), glm::vec3(0.5f, 0.0f, 1.0f), 1.0f, 1.4f, 0.045f, exponent);
+	// orange?
+	LightManager->AddPointLight(glm::vec3(-10.0f, 5.0f, -10.0f), glm::vec3(1.0f, 0.5f, 0.5f), 1.0f, 1.4f, 0.045f, exponent);
+	// dark blue
+	LightManager->AddPointLight(glm::vec3(-20.0f, 5.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.5f), 1.0f, 1.4f, 0.045f, exponent);
 
 	NoiseMap = new CPerlinNoise(512, 512);
 
@@ -642,6 +762,14 @@ void InitialSetup()
 
 	Scene2->AddObject(PointLight1);
 	Scene2->AddObject(PointLight2);
+	Scene2->AddObject(PointLight3);
+	Scene2->AddObject(PointLight4);
+	Scene2->AddObject(PointLight5);
+	Scene2->AddObject(PointLight6);
+	Scene2->AddObject(PointLight7);
+	Scene2->AddObject(PointLight8);
+	Scene2->AddObject(PointLight9);
+	Scene2->AddObject(PointLight10);
 
 	// set background colour
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
@@ -699,6 +827,14 @@ void Update()
 	// models update
 	PointLight1->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat1, ShadowMap->GetShadowTexture());
 	PointLight2->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat2, ShadowMap->GetShadowTexture());
+	PointLight3->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat3, ShadowMap->GetShadowTexture());
+	PointLight4->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat4, ShadowMap->GetShadowTexture());
+	PointLight5->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat5, ShadowMap->GetShadowTexture());
+	PointLight6->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat6, ShadowMap->GetShadowTexture());
+	PointLight7->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat7, ShadowMap->GetShadowTexture());
+	PointLight8->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat8, ShadowMap->GetShadowTexture());
+	PointLight9->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat9, ShadowMap->GetShadowTexture());
+	PointLight10->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat10, ShadowMap->GetShadowTexture());
 
 	Soldier->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), SoldierModelMat, ShadowMap->GetShadowTexture());
 
@@ -757,6 +893,16 @@ void Render()
 
 		//FrameBufferQuad->UpdateTexture(FrameBuffer->GetRenderTexture());
 		FrameBufferQuad->RenderLightingPass();
+
+		GeometryBuffer->WriteDepth();
+
+		// Enable blending for point lights
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		Scene2->Render();
+
+		glDisable(GL_BLEND);
 		//HeightMap->Render();
 		//Tree->RenderGeometryInstanced(Program_GeometryPass, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
 		//Tree->RenderGeometryInstanced(Program_InstancedLighting, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
