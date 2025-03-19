@@ -30,22 +30,10 @@
     <ClCompile Include="CLightManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CSkyBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CHeightMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CFramebuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CPerlinNoise.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CScene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CQuad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CFrameBufferQuad.cpp">
@@ -77,22 +65,10 @@
     <ClInclude Include="CLightManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CSkyBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CHeightMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CFramebuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CPerlinNoise.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CScene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CQuad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CFrameBufferQuad.h">

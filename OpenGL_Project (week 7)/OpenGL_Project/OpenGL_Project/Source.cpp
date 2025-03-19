@@ -25,6 +25,7 @@
 #include "CParticleSystem.h"
 #include "CGeometryBuffer.h"
 #include "CTessellationMesh.h"
+#include <reactphysics3d/reactphysics3d.h>
 
 // global variables
 GLFWwindow* Window = nullptr;
@@ -867,6 +868,14 @@ void Render()
 /// <returns></returns>
 int main()
 {
+	// Create a physics world
+	reactphysics3d::PhysicsCommon physicsCommon;
+	reactphysics3d::PhysicsWorld* world = physicsCommon.createPhysicsWorld();
+
+	if (world) {
+		std::cout << "Physics world created!" << std::endl;
+	}
+
 	// initialise GLFW and set version to 4.6
 	glfwInit();
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
