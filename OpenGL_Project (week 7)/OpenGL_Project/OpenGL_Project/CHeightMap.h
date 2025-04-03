@@ -11,6 +11,7 @@
 // Mail : daniel.west@mds.ac.nz
 
 #pragma once
+
 #include "CCamera.h"
 #include <vector>
 #include <fstream>

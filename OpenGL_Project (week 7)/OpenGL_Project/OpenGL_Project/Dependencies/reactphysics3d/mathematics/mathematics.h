@@ -39,5 +39,6 @@
 #include <cstdio>
 #include <cassert>
 #include <cmath>
+#include <vector>
 
 #endif
