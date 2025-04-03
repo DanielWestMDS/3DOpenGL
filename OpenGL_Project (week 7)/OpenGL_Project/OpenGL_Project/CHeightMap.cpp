@@ -37,6 +37,13 @@ CHeightMap::CHeightMap(HeightMapInfo& _BuildInfo, GLint _program, GLint _texture
 
 CHeightMap::~CHeightMap()
 {
+   if (m_physicsCommon) 
+   {
+        if (m_heightField) 
+        {
+            m_physicsCommon->destroyHeightField(m_heightField);
+        }
+   }
 }
 
 void CHeightMap::Render()
@@ -151,6 +158,69 @@ void CHeightMap::RenderGeometry(GLuint _ShadowProgram)
     glDrawElements(GL_TRIANGLES, m_DrawCount, GL_UNSIGNED_INT, 0);
 
     glBindVertexArray(0);
+}
+
+void CHeightMap::CreateCollision(HeightMapInfo _BuildInfo, rp3d::PhysicsCommon* physicsCommon, rp3d::PhysicsWorld* physicsWorld)
+{
+    m_physicsCommon = physicsCommon;
+
+    // messages vector for error handling
+    std::vector<rp3d::Message> messages;
+
+    // make float array from height map data
+    std::vector<float> heightValues(m_fHeightMap.size());
+    for (size_t i = 0; i < m_fHeightMap.size(); i++) 
+    {
+        heightValues[i] = m_fHeightMap[i];
+    }
+
+    // create height field
+    m_heightField = m_physicsCommon->createHeightField(
+        _BuildInfo.Width,
+        _BuildInfo.Depth,
+        heightValues.data(),
+        rp3d::HeightField::HeightDataType::HEIGHT_FLOAT_TYPE,
+        messages);
+
+    // error messages
+    if (!messages.empty()) 
+    {
+        for (const rp3d::Message& message : messages) 
+        {
+            std::string messageType;
+            switch (message.type) 
+            {
+            case rp3d::Message::Type::Information:
+                messageType = "info";
+                break;
+            case rp3d::Message::Type::Warning:
+                messageType = "warning";
+                break;
+            case rp3d::Message::Type::Error:
+                messageType = "error";
+                break;
+            }
+            std::cout << "HeightField Message (" << messageType << "): " << message.text << std::endl;
+        }
+    }
+
+    assert(m_heightField != nullptr);
+
+    // create collision shape
+    rp3d::HeightFieldShape* heightFieldShape = m_physicsCommon->createHeightFieldShape(
+        m_heightField,
+        rp3d::Vector3(_BuildInfo.CellSpacing, 1.0f, _BuildInfo.CellSpacing));
+
+    // create rigid body
+    rp3d::Transform transform;
+    transform.setPosition(rp3d::Vector3(0.0f, 0.0f, 0.0f));
+    m_rigidBody = physicsWorld->createRigidBody(transform);
+
+    // set body to static (since terrain doesn't move)
+    m_rigidBody->setType(rp3d::BodyType::STATIC);
+
+    // add collision shape to body
+    rp3d::Collider* collider = m_rigidBody->addCollider(heightFieldShape, rp3d::Transform::identity());
 }
 
 bool CHeightMap::LoadHeightMap(HeightMapInfo& _BuildInfo)

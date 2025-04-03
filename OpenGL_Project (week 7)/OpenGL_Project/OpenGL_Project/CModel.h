@@ -63,7 +63,7 @@ public:
 	/// <param name="_projMat"></param>
 	/// <param name="_viewMat"></param>
 	/// <param name="_cameraPos"></param>
-	virtual void Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _modelMat, GLint _shadowTexture);
+	virtual void Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos);
 
 	/// <summary>
 	/// Binds VAO and passes matrices into shader
@@ -99,7 +99,21 @@ public:
 	/// getter for model matrix
 	/// </summary>
 	/// <returns></returns>
-	glm::mat4 GetModelMat() { return m_matrix; };
+	glm::mat4 GetModelMat() { return m_modelMat; };
+
+	/// <summary>
+	/// sets the new model matrix
+	/// </summary>
+	/// <param name="_newMatrix"></param>
+	void SetModelMat(glm::mat4 _newMatrix) { m_modelMat = _newMatrix; };
+
+	void SetPosition(glm::vec3 _newPosition);
+
+	void SetRotation(glm::vec3 _axis, float _amount);
+
+	void SetScale(float _newScale);
+
+	glm::vec3 GetPosition();
 
 protected:
 	GLuint VAO;
@@ -108,10 +122,15 @@ protected:
 	int DrawType;
 	int m_CountInstanced;
 
+	float m_fScale;
+	glm::vec3 m_Position;
+	float m_fRotationAngle;
+	glm::vec3 m_RotationAxis;
+
 	GLint m_program = 0;
 	GLint m_texture = 0;
 	GLint m_shadowTexture = 0;
-	glm::mat4 m_matrix = glm::mat4();
+	glm::mat4 m_modelMat = glm::mat4();
 	glm::mat4 m_projMat = glm::mat4();
 	glm::mat4 m_viewMat = glm::mat4();
 	glm::vec3 m_cameraPos = glm::vec3();

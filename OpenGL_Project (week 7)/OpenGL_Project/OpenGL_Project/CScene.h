@@ -11,9 +11,9 @@
 // Mail : daniel.west@mds.ac.nz
 
 #pragma once
-#include "CModel.h"
-#include "CHeightMap.h"
+
 #include <vector>
+#include "CCamera.h"
 
 class CScene
 {
@@ -33,27 +33,29 @@ public:
 	/// </summary>
 	void Render();
 
+	void Update(CCamera* Camera, float dt);
+
 	/// <summary>
 	/// Render for shadowmap buffer
 	/// </summary>
 	/// <param name="_ShadowProgram"></param>
 	/// <param name="_LightVP"></param>
-	void RenderShadow(GLuint _ShadowProgram, glm::mat4 _LightVP);
+	//void RenderShadow(GLuint _ShadowProgram, glm::mat4 _LightVP);
 
 	/// <summary>
 	/// adds an object to be rendered to the scene
 	/// </summary>
 	/// <param name="_Model"></param>
-	void AddObject(CModel* _Model);
+	void AddObject(class CObject* _Object);
 
 	/// <summary>
 	/// Adds the height map as it has a seperate render function (and typically will only be added once)
 	/// </summary>
 	/// <param name="_Heightmap"></param>
-	void AddHeightMap(CHeightMap* _Heightmap);
+	void AddHeightMap(class CHeightMap* _Heightmap);
 
 private:
-	std::vector<CModel*> m_Objects = {};
+	std::vector<CObject*> m_Objects = {};
 	CHeightMap* m_HeightMap = nullptr;
 };
 

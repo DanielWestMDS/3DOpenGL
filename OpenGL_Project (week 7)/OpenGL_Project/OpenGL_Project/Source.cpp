@@ -10,11 +10,7 @@
 // Author : Daniel West
 // Mail : daniel.west@mds.ac.nz
 
-#define STB_IMAGE_IMPLEMENTATION
-
-// library define 
-#define TINYOBJLOADER_IMPLEMENTATION
-
+#include "Utils.h"
 #include "ShaderLoader.h"
 #include "CModel.h"
 #include "CLightManager.h"
@@ -25,12 +21,24 @@
 #include "CParticleSystem.h"
 #include "CGeometryBuffer.h"
 #include "CTessellationMesh.h"
-#include <reactphysics3d/reactphysics3d.h>
+#include "CUserInterface.h"
+#include "CObject.h"
+#include "CContactListener.h"
+
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
+//#include <reactphysics3d/reactphysics3d.h>
+using namespace reactphysics3d;
 
 // global variables
 GLFWwindow* Window = nullptr;
 GLuint Program_FixedTri;
 int iWindowSize = 800;
+
+// editor mode
+bool g_bInEditor = true;
 
 // pointer to shape objects
 CCamera* Camera;
@@ -79,6 +87,7 @@ CScene* Scene1;
 CScene* Scene2;
 CScene* Scene3;
 CScene* Scene4;
+CScene* g_CurrentScene;
 
 // programs
 GLuint Program_3DModel;
@@ -198,7 +207,6 @@ std::vector<glm::mat4> MVPVec;
 // for random tree positions
 std::vector<glm::vec3> RandomLocations;
 
-
 // Define the six faces of the cube map in a vector
 std::vector<std::string> sFaces = {
 	"Resources/Textures/Right.png",
@@ -209,6 +217,26 @@ std::vector<std::string> sFaces = {
 	"Resources/Textures/Front.png"
 };
 
+// physics 
+PhysicsCommon g_physicsCommon;
+
+// create the physics world
+PhysicsWorld* g_physicsWorld = g_physicsCommon.createPhysicsWorld();
+
+void CreateActor()
+{
+	glm::vec3 newActorPosition;
+	// set new position to be in front of camera
+	newActorPosition = Camera->GetPosition() + (Camera->GetForward() * -50.f);
+
+	glm::mat4 newModelMat = MakeModelMatrix(newActorPosition, 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	CModel* NewModel = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_Lighting, Texture_Quag, newModelMat);
+
+	CObject* NewObject = new CObject(NewModel, newActorPosition, g_physicsWorld, g_physicsCommon);
+
+	g_CurrentScene->AddObject(NewObject);
+}
 
 // for position callback
 void CursorPositionInput(GLFWwindow* _Window, double _PosX, double _PosY)
@@ -229,6 +257,8 @@ void CursorPositionInput(GLFWwindow* _Window, double _PosX, double _PosY)
 	{
 		g_UIChange = false;
 	}
+
+	ImGui_ImplGlfw_CursorPosCallback(Window, _PosX, _PosY);
 }
 
 // for single key press
@@ -238,21 +268,25 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 	if (_Key == GLFW_KEY_1 && _Action == GLFW_PRESS)
 	{
 		g_iSceneNumber = 1;
+		g_CurrentScene = Scene1;
 	}
 
 	if (_Key == GLFW_KEY_2 && _Action == GLFW_PRESS)
 	{
 		g_iSceneNumber = 2;
+		g_CurrentScene = Scene2;
 	}
 
 	if (_Key == GLFW_KEY_3 && _Action == GLFW_PRESS)
 	{
 		g_iSceneNumber = 3;
+		g_CurrentScene = Scene3;
 	}
 
 	if (_Key == GLFW_KEY_4 && _Action == GLFW_PRESS)
 	{
 		g_iSceneNumber = 4;
+		g_CurrentScene = Scene4;
 	}
 
 
@@ -306,6 +340,11 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 		g_bPointLightActive = !g_bPointLightActive;
 	}
 
+	// create actor
+	if (_Key == GLFW_KEY_O && _Action == GLFW_PRESS)
+	{
+		CreateActor();
+	}
 
 	// toggle wireframe
 	if (_Key == GLFW_KEY_L && _Action == GLFW_PRESS)
@@ -369,26 +408,6 @@ GLuint LoadTexture(std::string _filepath)
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	return Texture;
-}
-
-/// <summary>
-/// Creates a model matrix for objects in the scene
-/// </summary>
-/// <param name="_position"></param>
-/// <param name="_scale"></param>
-/// <param name="_rotationAngle"></param>
-/// <param name="_rotationMat"></param>
-/// <returns></returns>
-glm::mat4 MakeModelMatrix(glm::vec3 _position, float _scale, float _rotationAngle, glm::vec3 _rotationMat)
-{
-	// calculate model matrix
-	glm::mat4 TranslationMat = glm::translate(glm::mat4(1.0f), _position);
-	glm::mat4 RotationMat = glm::rotate(glm::mat4(1.0f), glm::radians(_rotationAngle), _rotationMat);
-	glm::mat4 ScaleMat = glm::scale(glm::mat4(1.0f), glm::vec3(_scale, _scale, _scale));
-	glm::mat4 OutputMat = TranslationMat * RotationMat * ScaleMat;
-
-	//OutputMat = Camera->GetProjMat() * Camera->GetViewMat() * OutputMat;
-	return OutputMat;
 }
 
 /// <summary>
@@ -671,38 +690,49 @@ void InitialSetup()
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
 	glVertexAttribDivisor(3, 1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	glBindVertexArray(0);																
 
 
-	// add objects to scenes
+	// add objects to scenes															
 	//Scene1->AddObject(Skybox);
 	//Scene1->AddObject(PointLight1);
-	//Scene1->AddObject(PointLight2);
+	//Scene1->AddObject(PointLight2);													
 	Scene3->AddHeightMap(HeightMapNoise);
-	Scene3->AddObject(Soldier);
+	//Scene3->AddObject(Soldier);
+																						
+	Scene2->AddObject(new CObject(PointLight1, glm::vec3(10.0f, 5.0f, 10.0f), g_physicsWorld, g_physicsCommon));
+	Scene2->AddObject(new CObject(PointLight2, glm::vec3(10.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
+	Scene2->AddObject(new CObject(PointLight3, glm::vec3(10.0f, 5.0f, -10.0f), g_physicsWorld, g_physicsCommon));
+	Scene2->AddObject(new CObject(PointLight4, glm::vec3(0.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
+	Scene2->AddObject(new CObject(PointLight5, glm::vec3(0.0f, 5.0f, -10.0f), g_physicsWorld, g_physicsCommon));
+	Scene2->AddObject(new CObject(PointLight6, glm::vec3(-10.0f, 5.0f, 10.0f), g_physicsWorld, g_physicsCommon));
+	Scene2->AddObject(new CObject(PointLight7, glm::vec3(-10.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
+	Scene2->AddObject(new CObject(PointLight8, glm::vec3(-10.0f, 5.0f, -10.0f), g_physicsWorld, g_physicsCommon));
+	Scene2->AddObject(new CObject(PointLight9, glm::vec3(-20.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
+	Scene2->AddObject(new CObject(PointLight10, glm::vec3(0.0f, 5.0f, 10.0f), g_physicsWorld, g_physicsCommon));
 
-	Scene2->AddObject(PointLight1);
-	Scene2->AddObject(PointLight2);
-	Scene2->AddObject(PointLight3);
-	Scene2->AddObject(PointLight4);
-	Scene2->AddObject(PointLight5);
-	Scene2->AddObject(PointLight6);
-	Scene2->AddObject(PointLight7);
-	Scene2->AddObject(PointLight8);
-	Scene2->AddObject(PointLight9);
-	Scene2->AddObject(PointLight10);
+	g_CurrentScene = Scene3;
 
-	// set background colour
+	// physics 
+	g_physicsWorld->setGravity(Vector3(0.0f, -5.0f, 0.0f));
+	//CContactListener listener;
+	//g_physicsWorld->setEventListener(&listener);
+
+	// set background colour															
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 
-	// Map the ange of the window for when the buffer clears
+	// Map the ange of the window for when the buffer clears							
 	glViewport(0, 0, iWindowSize, iWindowSize);
 
-	// Height map terrain
+	// Height map terrain																
 	//Mesh_Terrain();
 
 	// Mouse Callback
 	glfwSetCursorPosCallback(Window, CursorPositionInput);
+
+	// for UI clicking
+	//glfwSetMouseButtonCallback(Window, CursorPositionInput);
+
 	// Toggle Callback
 	glfwSetKeyCallback(Window, KeyInput);
 
@@ -732,6 +762,24 @@ void Update()
 	deltaTime = CurrentTime - PreviousTime;
 	PreviousTime = CurrentTime;
 
+	// physics
+
+	Vector3 position(0, 20, 0);
+	Quaternion orientation = Quaternion::identity();
+	Transform transform(position, orientation);
+	RigidBody* body = g_physicsWorld->createRigidBody(transform);
+
+	for (int i = 0; i < 20; i++)
+	{
+		g_physicsWorld->update(1.f / 60.f);
+		const Transform& transform = body->getTransform();
+		const Vector3& position = transform.getPosition();
+
+		std::cout << "Body position: (" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
+	}
+
+
+
 	// calculate quad model matrix evert frame
 	HeightMapModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	DeferredHeightMapModelMat = MakeModelMatrix(glm::vec3(-50.0f, 0.0f, -30.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -746,18 +794,10 @@ void Update()
 	//Camera->PrintCamPos();
 
 	// models update
-	PointLight1->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat1, ShadowMap->GetShadowTexture());
-	PointLight2->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat2, ShadowMap->GetShadowTexture());
-	PointLight3->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat3, ShadowMap->GetShadowTexture());
-	PointLight4->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat4, ShadowMap->GetShadowTexture());
-	PointLight5->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat5, ShadowMap->GetShadowTexture());
-	PointLight6->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat6, ShadowMap->GetShadowTexture());
-	PointLight7->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat7, ShadowMap->GetShadowTexture());
-	PointLight8->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat8, ShadowMap->GetShadowTexture());
-	PointLight9->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat9, ShadowMap->GetShadowTexture());
-	PointLight10->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), PLModelMat10, ShadowMap->GetShadowTexture());
-
-	Soldier->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), SoldierModelMat, ShadowMap->GetShadowTexture());
+	Scene1->Update(Camera, deltaTime);
+	Scene2->Update(Camera, deltaTime);
+	Scene3->Update(Camera, deltaTime);
+	Scene4->Update(Camera, deltaTime);
 
 	// height map
 	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), DeferredHeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
@@ -788,6 +828,31 @@ void Update()
 	//PerlinQuad->Update(Program_Squares, Texture_Awesome, PerlinHeightMapModelMat, Camera->GetUIProjMat(), Camera->GetViewMat());
 }
 
+CUserInterface ui;
+
+void RenderGUI()
+{
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::Begin("My name is window bkvskfbsbf");
+	ImGui::Text("poop poop popoppopopoopoooop");
+	ImGui::End();
+
+	ui.Render();
+
+	ImGui::SetNextWindowSize(ImVec2(500, 500));
+	if (ImGui::Begin("Test", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
+	{
+		ImGui::Checkbox("Test Bool", &g_bPointLightActive);
+	}	ImGui::End();
+
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
 /// <summary>
 /// Runs once every tick. handles anything visual such as lighting and rendering
 /// </summary>
@@ -801,63 +866,67 @@ void Render()
 	LightManager->UpdateShader(Program_HeightMap, g_bPointLightActive);
 	LightManager->UpdateShader(Program_LightingPass, g_bPointLightActive);
 
+	g_CurrentScene->Render();
+
 	// scenes
-	switch (g_iSceneNumber)
-	{
-	case 1:
-		ShadowMap->Bind();
+	//switch (g_iSceneNumber)
+	//{
+	//case 1:
+	//	ShadowMap->Bind();
 
-		Scene3->RenderShadow(Program_ShadowMap, LightManager->GetVP());
+	//	//Scene3->RenderShadow(Program_ShadowMap, LightManager->GetVP());
 
-		ShadowMap->Unbind();
-		Scene3->Render();
+	//	ShadowMap->Unbind();
+	//	Scene3->Render();
 
-		break;
-	case 2:
-		FrameBufferQuad->SetProgram(Program_LightingPass);
-		GeometryBuffer->Bind();
-		Tree->RenderGeometryInstanced(Program_GeometryPass, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
-		HeightMap->RenderGeometry(Program_GeometryPassHeightMap);
-		GeometryBuffer->PopulateProgram(Program_LightingPass, Camera->GetPosition());
-		GeometryBuffer->Unbind();
+	//	break;
+	//case 2:
+	//	FrameBufferQuad->SetProgram(Program_LightingPass);
+	//	GeometryBuffer->Bind();
+	//	Tree->RenderGeometryInstanced(Program_GeometryPass, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
+	//	HeightMap->RenderGeometry(Program_GeometryPassHeightMap);
+	//	GeometryBuffer->PopulateProgram(Program_LightingPass, Camera->GetPosition());
+	//	GeometryBuffer->Unbind();
 
-		FrameBufferQuad->RenderLightingPass();
+	//	FrameBufferQuad->RenderLightingPass();
 
-		GeometryBuffer->WriteDepth();
+	//	GeometryBuffer->WriteDepth();
 
-		// Enable blending for point lights
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//	// Enable blending for point lights
+	//	glEnable(GL_BLEND);
+	//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		Scene2->Render();
+	//	Scene2->Render();
 
-		glDisable(GL_BLEND);
+	//	glDisable(GL_BLEND);
 
-		break;
-	case 3:
+	//	break;
+	//case 3:
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//	glEnable(GL_BLEND);
+	//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		RedFirework->Render();
-		CyanFirework->Render();
-		MagentaFirework->Render();
-		YellowFirework->Render();
+	//	RedFirework->Render();
+	//	CyanFirework->Render();
+	//	MagentaFirework->Render();
+	//	YellowFirework->Render();
 
-		glDisable(GL_BLEND);
+	//	glDisable(GL_BLEND);
 
-		break;
-	case 4:
-		TessQuad->Render(Program_Tessellation, TessMVP);
-		break;
-	default:
-		break;
-	}
+	//	break;
+	//case 4:
+	//	TessQuad->Render(Program_Tessellation, TessMVP);
+	//	break;
+	//default:
+	//	break;
+	//}
 
 	// unbind
 	glBindVertexArray(0);
 	
 	glUseProgram(0);
+
+	RenderGUI();
 
 	glfwSwapBuffers(Window);
 }
@@ -868,19 +937,12 @@ void Render()
 /// <returns></returns>
 int main()
 {
-	// Create a physics world
-	reactphysics3d::PhysicsCommon physicsCommon;
-	reactphysics3d::PhysicsWorld* world = physicsCommon.createPhysicsWorld();
-
-	if (world) {
-		std::cout << "Physics world created!" << std::endl;
-	}
-
 	// initialise GLFW and set version to 4.6
 	glfwInit();
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+
 
 	// Make a GLFW window
 	Window = glfwCreateWindow(iWindowSize, iWindowSize, "First OpenGL Window", NULL, NULL);
@@ -894,6 +956,14 @@ int main()
 	}
 
 	glfwMakeContextCurrent(Window);
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(Window, true);
+	ImGui_ImplOpenGL3_Init("#version 460");
+
 
 	// initialize GLEW for function pointers
 	if (glewInit() != GLEW_OK)
@@ -911,15 +981,24 @@ int main()
 	//Main Loop
 	while (glfwWindowShouldClose(Window) == false)
 	{
+
 		// update all objects
 		Update();
 
+
 		// render all objects
 		Render();
+
 	}
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
 	// shut down correctly
 	glfwTerminate();
+
+	g_physicsCommon.destroyPhysicsWorld(g_physicsWorld);
 
 	// delete dynamically allocated memory
 	delete Camera;
@@ -938,3 +1017,4 @@ int main()
 
 	return 0;
 }
+

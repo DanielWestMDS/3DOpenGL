@@ -15,6 +15,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include "reactphysics3d/reactphysics3d.h"
 
 /// <summary>
 /// struct that holds data for every vertex in the height map
@@ -88,6 +89,12 @@ public:
 
 	void RenderGeometry(GLuint _ShadowProgram);
 
+	rp3d::HeightField* GetHeightField() const { return m_heightField; }
+
+	rp3d::RigidBody* GetRigidBody() const { return m_rigidBody; }
+
+	void CreateCollision(HeightMapInfo _BuildInfo, rp3d::PhysicsCommon* physicsCommon, rp3d::PhysicsWorld* physicsWorld);
+
 private:
 
 	/// <summary>
@@ -129,5 +136,11 @@ private:
 	glm::mat4 m_lightVP = glm::mat4();
 
 	GLuint m_ShadowTexture;
+
+	// physics
+
+	rp3d::HeightField* m_heightField;
+	rp3d::RigidBody* m_rigidBody;
+	rp3d::PhysicsCommon* m_physicsCommon;
 };
 

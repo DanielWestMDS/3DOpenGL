@@ -1,5 +1,7 @@
 #include "CModel.h"
 
+#include "Utils.h"
+
 CModel::CModel(std::string FilePath, GLint _program, GLint _texture, glm::mat4 _matrix)
 {
     std::vector<VertexStandard> Vertices;
@@ -92,7 +94,7 @@ CModel::CModel(std::string FilePath, GLint _program, GLint _texture, glm::mat4 _
 
     m_program = _program;
     m_texture = _texture;
-    m_matrix = _matrix;
+    m_modelMat = _matrix;
     m_fShininess = 0.5f;
 }
 
@@ -101,13 +103,13 @@ CModel::~CModel()
     glDeleteBuffers(1, &InstanceBuffer);
 }
 
-void CModel::Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos, glm::mat4 _modelMat, GLint _shadowTexture)
+void CModel::Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos)
 {
     m_projMat = _projMat;
     m_viewMat = _viewMat;
     m_cameraPos = _cameraPos;
-    m_matrix = _modelMat;
-    m_shadowTexture = _shadowTexture;
+    // TODO: maybe make this not happen every frame for every single object?
+    MakeModelMatrix(m_Position, m_fScale, m_fRotationAngle, m_RotationAxis);
 }
 
 void CModel::Render()
@@ -118,7 +120,7 @@ void CModel::Render()
 
     // Model matrix
     GLint ModelMatrix = glGetUniformLocation(m_program, "ModelMat");
-    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(m_matrix));
+    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(m_modelMat));
 
     // pass camera position in via uniform
     GLint CameraPosLoc = glGetUniformLocation(m_program, "CameraPos");
@@ -146,7 +148,7 @@ void CModel::RenderShadow(GLuint _ShadowProgram, glm::mat4 _LightVP)
 
     // Model matrix
     GLint ModelMatrix = glGetUniformLocation(_ShadowProgram, "ModelMatrix");
-    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(m_matrix));
+    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(m_modelMat));
 
     // pass in view projection
     GLint VPMat = glGetUniformLocation(_ShadowProgram, "LightVP");
@@ -233,4 +235,25 @@ void CModel::RenderInstanced(GLint _program, GLint _texture, std::vector<glm::ve
     glDrawArraysInstanced(DrawType, 0, DrawCount, (GLsizei)_instancePositions.size());
 
     glBindVertexArray(0);
+}
+
+void CModel::SetPosition(glm::vec3 _newPosition)
+{
+    m_Position = _newPosition;
+}
+
+void CModel::SetRotation(glm::vec3 _axis, float _amount)
+{
+    m_fRotationAngle = _amount;
+    m_RotationAxis = _axis;
+}
+
+void CModel::SetScale(float _newScale)
+{
+    m_fScale = _newScale;
+}
+
+glm::vec3 CModel::GetPosition()
+{
+    return m_Position;
 }

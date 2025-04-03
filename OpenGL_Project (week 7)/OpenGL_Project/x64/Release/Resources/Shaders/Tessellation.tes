@@ -1,0 +1,21 @@
+#version 460 core
+
+layout (triangles, equal_spacing, cw) in;
+
+in vec2 TesTexCoords[];
+out vec2 FragTexCoords;
+
+uniform mat4 PVM;
+
+void main()
+{
+	// bilinear interpolation
+	vec4 Pos =  gl_TessCoord.x * gl_in[0].gl_Position +
+				gl_TessCoord.y * gl_in[1].gl_Position +
+				gl_TessCoord.z * gl_in[2].gl_Position;
+
+	gl_Position = PVM * Pos;
+
+	FragTexCoords = gl_TessCoord.x * TesTexCoords[0] +
+					gl_TessCoord.y * TesTexCoords[1];
+}

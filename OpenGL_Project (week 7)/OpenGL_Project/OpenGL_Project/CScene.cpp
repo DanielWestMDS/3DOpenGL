@@ -12,6 +12,11 @@
 
 #include "CScene.h"
 
+#include "CCamera.h"
+//#include "CModel.h"
+#include "CHeightMap.h"
+#include "CObject.h"
+
 CScene::CScene()
 {
 }
@@ -22,9 +27,9 @@ CScene::~CScene()
 
 void CScene::Render()
 {
-	for (auto Model : m_Objects)
+	for (auto Object : m_Objects)
 	{
-		Model->Render();
+		Object->GetModel()->Render();
 	}
 
 	if (m_HeightMap != nullptr)
@@ -33,18 +38,30 @@ void CScene::Render()
 	}
 }
 
-void CScene::RenderShadow(GLuint _ShadowProgram, glm::mat4 _LightVP)
+void CScene::Update(CCamera* Camera, float dt)
 {
-	for (auto Model : m_Objects)
+	for (auto Object : m_Objects)
 	{
-		Model->RenderShadow(_ShadowProgram, _LightVP);
-	}
+		// update model in relation to camera
+		Object->GetModel()->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
 
-	if (m_HeightMap != nullptr)
-	{
-		m_HeightMap->RenderShadow(_ShadowProgram);
+		// update object
+		Object->Update(dt);
 	}
 }
+
+//void CScene::RenderShadow(GLuint _ShadowProgram, glm::mat4 _LightVP)
+//{
+//	for (auto Object : m_Objects)
+//	{
+//		Object->GetModel()->RenderShadow(_ShadowProgram, _LightVP);
+//	}
+//
+//	if (m_HeightMap != nullptr)
+//	{
+//		m_HeightMap->RenderShadow(_ShadowProgram);
+//	}
+//}
 
 //void CScene::RenderGeometry(GLuint _GeometryProgram)
 //{
@@ -54,7 +71,7 @@ void CScene::RenderShadow(GLuint _ShadowProgram, glm::mat4 _LightVP)
 //	}
 //}
 
-void CScene::AddObject(CModel* _Model)
+void CScene::AddObject(CObject* _Model)
 {
 	m_Objects.push_back(_Model);
 }

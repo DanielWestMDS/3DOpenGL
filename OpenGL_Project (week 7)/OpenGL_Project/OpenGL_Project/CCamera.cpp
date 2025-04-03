@@ -115,7 +115,7 @@ glm::mat4 CCamera::GetVP()
 void CCamera::Input(GLFWwindow* _Window, float _dt)
 {
 	// get mouse input
-	if (glfwGetMouseButton(_Window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	if (glfwGetMouseButton(_Window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 	{
 		m_bMousePressed = true;
 	}

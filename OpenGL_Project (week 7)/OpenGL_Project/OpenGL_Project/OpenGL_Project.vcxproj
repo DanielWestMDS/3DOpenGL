@@ -116,12 +116,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)\Dependencies</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;reactphysics3d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Documents\React3D\reactphysics3d\build\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Documents\React3D\reactphysics3d\build\Release;D:\Documents\React3D\reactphysics3d\build\Debug;D:\Documents\School\Game Engine\3DOpenGL\OpenGL_Project %28week 7%29\OpenGL_Project\OpenGL_Project\Dependencies\GLEW</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -133,6 +134,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)\Dependencies</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -140,11 +142,12 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;reactphysics3d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Documents\React3D\reactphysics3d\build\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Documents\React3D\reactphysics3d\build\Release;D:\Documents\React3D\reactphysics3d\build\Debug;D:\Documents\School\Game Engine\3DOpenGL\OpenGL_Project %28week 7%29\OpenGL_Project\OpenGL_Project\Dependencies\GLEW</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CCamera.cpp" />
+    <ClCompile Include="CContactListener.cpp" />
     <ClCompile Include="CGeometryBuffer.cpp" />
     <ClCompile Include="CHeightMap.cpp" />
     <ClCompile Include="CLightManager.cpp" />
@@ -154,11 +157,21 @@
     <ClCompile Include="CScene.cpp" />
     <ClCompile Include="CShadowMap.cpp" />
     <ClCompile Include="CTessellationMesh.cpp" />
+    <ClCompile Include="CUserInterface.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_demo.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="CObject.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCamera.h" />
+    <ClInclude Include="CContactListener.h" />
     <ClInclude Include="CGeometryBuffer.h" />
     <ClInclude Include="CHeightMap.h" />
     <ClInclude Include="CLightManager.h" />
@@ -168,7 +181,18 @@
     <ClInclude Include="CScene.h" />
     <ClInclude Include="CShadowMap.h" />
     <ClInclude Include="CTessellationMesh.h" />
+    <ClInclude Include="CUserInterface.h" />
+    <ClInclude Include="Dependencies\imgui\imconfig.h" />
+    <ClInclude Include="Dependencies\imgui\imgui.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_internal.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_textedit.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
+    <ClInclude Include="CObject.h" />
     <ClInclude Include="ShaderLoader.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\Shaders\3DModel.frag" />
