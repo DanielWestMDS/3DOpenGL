@@ -14,6 +14,7 @@ CObject::CObject(CModel* model, glm::vec3 position,
     // Create collision shape
     CreateCollisionShape(shapeType, shapeDimensions);
     SetPosition(position);
+    SetGravityEnabled(true);
 }
 
 CObject::~CObject()

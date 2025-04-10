@@ -12,7 +12,9 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 
-#include "Utils.h"
+#define TINYOBJLOADER_IMPLEMENTATION
+
+//#include "Utils.h"
 #include "ShaderLoader.h"
 #include "CModel.h"
 #include "CLightManager.h"
@@ -737,8 +739,8 @@ void InitialSetup()
 
 	// physics 
 	g_physicsWorld->setGravity(Vector3(0.0f, -5.0f, 0.0f));
-	//CContactListener listener;
-	//g_physicsWorld->setEventListener(&listener);
+	CContactListener listener;
+	g_physicsWorld->setEventListener(&listener);
 
 	// set background colour															
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
@@ -786,19 +788,19 @@ void Update()
 
 	// physics
 
-	Vector3 position(0, 20, 0);
-	Quaternion orientation = Quaternion::identity();
-	Transform transform(position, orientation);
-	RigidBody* body = g_physicsWorld->createRigidBody(transform);
+	//Vector3 position(0, 20, 0);
+	//Quaternion orientation = Quaternion::identity();
+	//Transform transform(position, orientation);
+	//RigidBody* body = g_physicsWorld->createRigidBody(transform);
 
-	for (int i = 0; i < 20; i++)
-	{
-		g_physicsWorld->update(1.f / 60.f);
-		const Transform& transform = body->getTransform();
-		const Vector3& position = transform.getPosition();
+	//for (int i = 0; i < 20; i++)
+	//{
+	//	g_physicsWorld->update(1.f / 60.f);
+	//	const Transform& transform = body->getTransform();
+	//	const Vector3& position = transform.getPosition();
 
-		std::cout << "Body position: (" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
-	}
+	//	std::cout << "Body position: (" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
+	//}
 
 
 
