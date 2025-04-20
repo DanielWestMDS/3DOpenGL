@@ -1,5 +1,6 @@
 #include "CObject.h"
 #include "CModel.h"
+#include <iostream>
 
 CObject::CObject(CModel* model, glm::vec3 position,
     rp3d::PhysicsWorld* physicsWorld, rp3d::PhysicsCommon& physicsCommon,
@@ -84,6 +85,7 @@ void CObject::Update(float dt)
         const rp3d::Transform& transform = m_RigidBody->getTransform();
         const rp3d::Vector3& position = transform.getPosition();
         m_Model->SetPosition(glm::vec3(position.x, position.y, position.z));
+        std::cout << position.x << std::endl;
 
         // TODO: sync rotation
         //rp3d::Quaternion rotation = transform.getOrientation();
@@ -100,6 +102,11 @@ void CObject::SetPosition(glm::vec3 position)
         m_RigidBody->setTransform(transform);
     }
     m_Model->SetPosition(position);
+}
+
+glm::vec3 CObject::GetPosition()
+{
+    return m_Model->GetPosition();
 }
 
 void CObject::SetGravityEnabled(bool enabled)

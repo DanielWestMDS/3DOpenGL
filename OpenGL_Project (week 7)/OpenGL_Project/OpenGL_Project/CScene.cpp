@@ -40,6 +40,7 @@ void CScene::Render()
 
 void CScene::Update(CCamera* Camera, float dt)
 {
+	int i = 0;
 	for (auto Object : m_Objects)
 	{
 		// update model in relation to camera
@@ -47,6 +48,9 @@ void CScene::Update(CCamera* Camera, float dt)
 
 		// update object
 		Object->Update(dt);
+		//std::cout << "should have just updated object" << i << std::endl;
+
+		i++;
 	}
 }
 
@@ -79,4 +83,12 @@ void CScene::AddObject(CObject* _Model)
 void CScene::AddHeightMap(CHeightMap* _Heightmap)
 {
 	m_HeightMap = _Heightmap;
+}
+
+void CScene::MoveObjects()
+{
+	for (auto Object : m_Objects)
+	{
+		Object->SetPosition(glm::vec3(Object->GetPosition().x + 100));
+	}
 }

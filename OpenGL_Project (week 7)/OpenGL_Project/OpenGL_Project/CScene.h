@@ -54,6 +54,8 @@ public:
 	/// <param name="_Heightmap"></param>
 	void AddHeightMap(class CHeightMap* _Heightmap);
 
+	void MoveObjects();
+
 private:
 	std::vector<CObject*> m_Objects = {};
 	CHeightMap* m_HeightMap = nullptr;

@@ -116,13 +116,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)\Dependencies</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;reactphysics3d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Documents\React3D\reactphysics3d\build\Release;$(ProjectDir)/lib/Debug;D:\Documents\School\Game Engine\3DOpenGL\OpenGL_Project %28week 7%29\OpenGL_Project\OpenGL_Project\Dependencies\GLEW</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\lib\Debug</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,7 +142,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;reactphysics3d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Documents\React3D\reactphysics3d\build\Release;$(ProjectDir)/lib/Debug;D:\Documents\School\Game Engine\3DOpenGL\OpenGL_Project %28week 7%29\OpenGL_Project\OpenGL_Project\Dependencies\GLEW</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\lib\Release;$(ProjectDir)\lib\Debug</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

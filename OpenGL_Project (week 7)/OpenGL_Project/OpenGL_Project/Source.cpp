@@ -259,6 +259,7 @@ void CreateActor()
 
 	CObject* NewObject = new CObject(NewModel, newActorPosition, g_physicsWorld, g_physicsCommon);
 
+	// add the object to the scene
 	g_CurrentScene->AddObject(NewObject);
 }
 
@@ -368,6 +369,12 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 	if (_Key == GLFW_KEY_O && _Action == GLFW_PRESS)
 	{
 		CreateActor();
+	}
+
+	// testing
+	if (_Key == GLFW_KEY_I && _Action == GLFW_PRESS)
+	{
+		Scene3->MoveObjects();
 	}
 
 	// toggle wireframe
@@ -788,19 +795,19 @@ void Update()
 
 	// physics
 
-	//Vector3 position(0, 20, 0);
-	//Quaternion orientation = Quaternion::identity();
-	//Transform transform(position, orientation);
-	//RigidBody* body = g_physicsWorld->createRigidBody(transform);
+	Vector3 position(0, 20, 0);
+	Quaternion orientation = Quaternion::identity();
+	Transform transform(position, orientation);
+	RigidBody* body = g_physicsWorld->createRigidBody(transform);
 
-	//for (int i = 0; i < 20; i++)
-	//{
-	//	g_physicsWorld->update(1.f / 60.f);
-	//	const Transform& transform = body->getTransform();
-	//	const Vector3& position = transform.getPosition();
+	for (int i = 0; i < 20; i++)
+	{
+		g_physicsWorld->update(1.f / 60.f);
+		const Transform& transform = body->getTransform();
+		const Vector3& position = transform.getPosition();
 
-	//	std::cout << "Body position: (" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
-	//}
+		//std::cout << "Body position: (" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
+	}
 
 
 

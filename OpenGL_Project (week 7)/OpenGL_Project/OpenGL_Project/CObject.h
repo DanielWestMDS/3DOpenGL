@@ -25,6 +25,7 @@ public:
 
     void Update(float dt);
     void SetPosition(glm::vec3 position);
+    glm::vec3 GetPosition();
     void SetGravityEnabled(bool enabled);
     bool IsGravityEnabled() const;
 
