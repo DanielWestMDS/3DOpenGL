@@ -87,10 +87,7 @@ CGeometryBuffer* GeometryBuffer;
 CTessellationMesh* TessQuad;
 
 // scenes
-CScene* Scene1;
-CScene* Scene2;
 CScene* Scene3;
-CScene* Scene4;
 CScene* g_CurrentScene;
 
 // programs
@@ -253,9 +250,7 @@ void CreateActor()
 	// set new position to be in front of camera
 	newActorPosition = Camera->GetPosition() + (Camera->GetForward() * -50.f);
 
-	glm::mat4 newModelMat = MakeModelMatrix(newActorPosition, 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	CModel* NewModel = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_Lighting, Texture_Quag, newModelMat);
+	CModel* NewModel = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_Lighting, Texture_Quag, newActorPosition, 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	CObject* NewObject = new CObject(NewModel, newActorPosition, g_physicsWorld, g_physicsCommon);
 
@@ -289,18 +284,18 @@ void CursorPositionInput(GLFWwindow* _Window, double _PosX, double _PosY)
 // for single key press
 void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mods)
 {
-	// for sxene rendering
-	if (_Key == GLFW_KEY_1 && _Action == GLFW_PRESS)
-	{
-		g_iSceneNumber = 1;
-		g_CurrentScene = Scene1;
-	}
+	//// for sxene rendering
+	//if (_Key == GLFW_KEY_1 && _Action == GLFW_PRESS)
+	//{
+	//	g_iSceneNumber = 1;
+	//	g_CurrentScene = Scene1;
+	//}
 
-	if (_Key == GLFW_KEY_2 && _Action == GLFW_PRESS)
-	{
-		g_iSceneNumber = 2;
-		g_CurrentScene = Scene2;
-	}
+	//if (_Key == GLFW_KEY_2 && _Action == GLFW_PRESS)
+	//{
+	//	g_iSceneNumber = 2;
+	//	g_CurrentScene = Scene2;
+	//}
 
 	if (_Key == GLFW_KEY_3 && _Action == GLFW_PRESS)
 	{
@@ -308,11 +303,11 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 		g_CurrentScene = Scene3;
 	}
 
-	if (_Key == GLFW_KEY_4 && _Action == GLFW_PRESS)
-	{
-		g_iSceneNumber = 4;
-		g_CurrentScene = Scene4;
-	}
+	//if (_Key == GLFW_KEY_4 && _Action == GLFW_PRESS)
+	//{
+	//	g_iSceneNumber = 4;
+	//	g_CurrentScene = Scene4;
+	//}
 
 
 	if (_Key == GLFW_KEY_5 && _Action == GLFW_PRESS)
@@ -594,31 +589,6 @@ void InitialSetup()
 	// initialise objects
 	Camera = new CCamera();
 
-	Tree = new CModel("Resources/Models/SM_Env_Tree_Palm_01.obj", Program_Lighting, Texture_3, TreeModelMat);
-
-	PointLight1 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight1, Texture_Quag, PLModelMat1);
-
-	PointLight2 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight2, Texture_Quag, PLModelMat2);
-
-	PointLight3 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight3, Texture_Quag, PLModelMat3);
-
-	PointLight4 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight4, Texture_Quag, PLModelMat4);
-
-	PointLight5 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight5, Texture_Quag, PLModelMat5);
-
-	PointLight6 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight6, Texture_Quag, PLModelMat6);
-
-	PointLight7 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight7, Texture_Quag, PLModelMat7);
-
-	PointLight8 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight8, Texture_Quag, PLModelMat8);
-
-	PointLight9 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight9, Texture_Quag, PLModelMat9);
-
-	PointLight10 = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_PointLight10, Texture_Quag, PLModelMat10);
-
-
-	Soldier = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_Lighting, Texture_Quag, SoldierModelMat);
-
 	LightManager = new CLightManager();
 
 	// change attenuation so you can see all the different point lights
@@ -674,10 +644,7 @@ void InitialSetup()
 	TessQuad = new CTessellationMesh(Texture_Quag);
 
 	// scenes
-	Scene1 = new CScene();
-	Scene2 = new CScene();
 	Scene3 = new CScene();
-	Scene4 = new CScene();
 
 	HeightMapInfo infoNoise;
 	infoNoise.FilePath = "Resources/Textures/Noise/.raw";
@@ -696,32 +663,7 @@ void InitialSetup()
 	HeightMap = new CHeightMap(info, Program_HeightMap, HeightMapTextures);
 
 	// load noise texture after creating heightmap
-	Texture_PerlinMap = LoadTexture("Resources/Textures/Noise/COLOURED.jpg");
-
-	// clear vector just in case
-	MVPVec.clear();
-	// add matrices to matrix vec for each tree
-	for (int i = 0; i < g_objCount; i++)
-	{
-		// randomize x and z positions to disperse trees
-		RandomLocations.push_back(glm::vec3((rand() % 8000) - 4000, 0, (rand() % 8000) - 4000)); // random square around 0, 0, 0
-		// add random matrix to MVP so that the size is correct
-		MVPVec.push_back(SoldierModelMat);
-	}
-
-	// set matrices as instanced vertex attribute
-	GLuint VBO_Instanced;
-	glGenBuffers(1, &VBO_Instanced);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_Instanced);
-	glBufferData(GL_ARRAY_BUFFER, 1000 * sizeof(glm::mat4), &RandomLocations[0], GL_STATIC_DRAW);
-
-	// bind instance buffer to attribue location
-	glBindVertexArray(Tree->GetVAO());
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-	glVertexAttribDivisor(3, 1);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);																
+	Texture_PerlinMap = LoadTexture("Resources/Textures/Noise/COLOURED.jpg");														
 
 
 	// add objects to scenes															
@@ -731,16 +673,16 @@ void InitialSetup()
 	Scene3->AddHeightMap(HeightMapNoise);
 	//Scene3->AddObject(Soldier);
 																						
-	Scene2->AddObject(new CObject(PointLight1, glm::vec3(10.0f, 5.0f, 10.0f), g_physicsWorld, g_physicsCommon));
-	Scene2->AddObject(new CObject(PointLight2, glm::vec3(10.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
-	Scene2->AddObject(new CObject(PointLight3, glm::vec3(10.0f, 5.0f, -10.0f), g_physicsWorld, g_physicsCommon));
-	Scene2->AddObject(new CObject(PointLight4, glm::vec3(0.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
-	Scene2->AddObject(new CObject(PointLight5, glm::vec3(0.0f, 5.0f, -10.0f), g_physicsWorld, g_physicsCommon));
-	Scene2->AddObject(new CObject(PointLight6, glm::vec3(-10.0f, 5.0f, 10.0f), g_physicsWorld, g_physicsCommon));
-	Scene2->AddObject(new CObject(PointLight7, glm::vec3(-10.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
-	Scene2->AddObject(new CObject(PointLight8, glm::vec3(-10.0f, 5.0f, -10.0f), g_physicsWorld, g_physicsCommon));
-	Scene2->AddObject(new CObject(PointLight9, glm::vec3(-20.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
-	Scene2->AddObject(new CObject(PointLight10, glm::vec3(0.0f, 5.0f, 10.0f), g_physicsWorld, g_physicsCommon));
+	//Scene2->AddObject(new CObject(PointLight1, glm::vec3(10.0f, 5.0f, 10.0f), g_physicsWorld, g_physicsCommon));
+	//Scene2->AddObject(new CObject(PointLight2, glm::vec3(10.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
+	//Scene2->AddObject(new CObject(PointLight3, glm::vec3(10.0f, 5.0f, -10.0f), g_physicsWorld, g_physicsCommon));
+	//Scene2->AddObject(new CObject(PointLight4, glm::vec3(0.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
+	//Scene2->AddObject(new CObject(PointLight5, glm::vec3(0.0f, 5.0f, -10.0f), g_physicsWorld, g_physicsCommon));
+	//Scene2->AddObject(new CObject(PointLight6, glm::vec3(-10.0f, 5.0f, 10.0f), g_physicsWorld, g_physicsCommon));
+	//Scene2->AddObject(new CObject(PointLight7, glm::vec3(-10.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
+	//Scene2->AddObject(new CObject(PointLight8, glm::vec3(-10.0f, 5.0f, -10.0f), g_physicsWorld, g_physicsCommon));
+	//Scene2->AddObject(new CObject(PointLight9, glm::vec3(-20.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
+	//Scene2->AddObject(new CObject(PointLight10, glm::vec3(0.0f, 5.0f, 10.0f), g_physicsWorld, g_physicsCommon));
 
 	g_CurrentScene = Scene3;
 
@@ -825,10 +767,7 @@ void Update()
 	//Camera->PrintCamPos();
 
 	// models update
-	Scene1->Update(Camera, deltaTime);
-	Scene2->Update(Camera, deltaTime);
-	Scene3->Update(Camera, deltaTime);
-	Scene4->Update(Camera, deltaTime);
+	g_CurrentScene->Update(Camera, deltaTime);
 
 	// height map
 	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), DeferredHeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
@@ -871,13 +810,34 @@ void RenderGUI()
 	ImGui::Text("poop poop popoppopopoopoooop");
 	ImGui::End();
 
-	ui.Render();
+	// custom buttons created inside this function
+	// Begin UI rendering
+	ImGui::Begin("Buttons");
+
+	// Create a simple button
+	if (ui.CreateButton("Click Me!", []() {
+		std::cout << "Button was clicked!" << std::endl;
+		Scene3->MoveObjects();
+		})) {
+		// Button was clicked (alternative way to handle click)
+	}
+
+	// Create a styled button
+	ui.CreateButton("Styled Button", []() {
+		std::cout << "Styled button clicked!" << std::endl;
+		}, ImVec2(120, 40),
+			ImVec4(0.2f, 0.5f, 0.8f, 1.0f),  // Normal color
+			ImVec4(0.3f, 0.6f, 0.9f, 1.0f));  // Hover color
+
+	ImGui::End();
 
 	ImGui::SetNextWindowSize(ImVec2(500, 500));
 	if (ImGui::Begin("Test", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
 	{
 		ImGui::Checkbox("Test Bool", &g_bPointLightActive);
-	}	ImGui::End();
+	}	
+	
+	ImGui::End();
 
 
 	ImGui::Render();

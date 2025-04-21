@@ -40,6 +40,8 @@ void CScene::Render()
 
 void CScene::Update(CCamera* Camera, float dt)
 {
+	
+
 	int i = 0;
 	for (auto Object : m_Objects)
 	{
@@ -83,6 +85,11 @@ void CScene::AddObject(CObject* _Model)
 void CScene::AddHeightMap(CHeightMap* _Heightmap)
 {
 	m_HeightMap = _Heightmap;
+}
+
+std::vector<CObject*> CScene::GetObjects()
+{
+	return m_Objects;
 }
 
 void CScene::MoveObjects()

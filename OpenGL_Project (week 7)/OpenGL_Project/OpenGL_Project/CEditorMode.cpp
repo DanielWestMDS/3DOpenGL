@@ -9,3 +9,13 @@ CEditorMode& CEditorMode::GetInstance()
 	static CEditorMode instance;
 	return instance;
 }
+
+bool CEditorMode::GetInEditor()
+{
+	return m_bInEditor;
+}
+
+void CEditorMode::SetInEditor(bool _inEditor)
+{
+	m_bInEditor = _inEditor;
+}

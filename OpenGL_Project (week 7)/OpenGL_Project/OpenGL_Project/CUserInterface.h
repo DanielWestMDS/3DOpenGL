@@ -11,10 +11,10 @@ public:
     // Destructor
     virtual ~CUserInterface() = default;
 
-    // Initialize the UI (call this after ImGui context is created)
+    // initialize the UI after ImGUI context created
     virtual void Initialize();
 
-    // Render the UI (to be called every frame)
+    // Render the UI to screen
     virtual void Render();
 
     // Create a simple button with a callback function

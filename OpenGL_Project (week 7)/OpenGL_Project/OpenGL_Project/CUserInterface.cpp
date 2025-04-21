@@ -3,7 +3,7 @@
 
 void CUserInterface::Initialize()
 {
-    // for default ui styles or configurations
+
 }
 
 void CUserInterface::Render()

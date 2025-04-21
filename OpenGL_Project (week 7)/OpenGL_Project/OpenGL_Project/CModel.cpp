@@ -2,7 +2,7 @@
 
 #include "Utils.h"
 
-CModel::CModel(std::string FilePath, GLint _program, GLint _texture, glm::mat4 _matrix)
+CModel::CModel(std::string FilePath, GLint _program, GLint _texture, glm::vec3 _position, float _scale, float _rotationAngle, glm::vec3 _rotationMat)
 {
     std::vector<VertexStandard> Vertices;
     tinyobj::ObjReader Reader;
@@ -94,7 +94,11 @@ CModel::CModel(std::string FilePath, GLint _program, GLint _texture, glm::mat4 _
 
     m_program = _program;
     m_texture = _texture;
-    m_modelMat = _matrix;
+    m_Position = _position;
+    m_fScale = _scale;
+    m_fRotationAngle = _rotationAngle;
+    m_RotationAxis = _rotationMat;
+    SetModelMat(MakeModelMatrix(m_Position, m_fScale, m_fRotationAngle, m_RotationAxis));;
     m_fShininess = 0.5f;
 }
 
@@ -109,7 +113,8 @@ void CModel::Update(glm::mat4 _projMat, glm::mat4 _viewMat, glm::vec3 _cameraPos
     m_viewMat = _viewMat;
     m_cameraPos = _cameraPos;
     // TODO: maybe make this not happen every frame for every single object?
-    MakeModelMatrix(m_Position, m_fScale, m_fRotationAngle, m_RotationAxis);
+    // making NaN
+    SetModelMat(MakeModelMatrix(m_Position, m_fScale, m_fRotationAngle, m_RotationAxis));
 }
 
 void CModel::Render()

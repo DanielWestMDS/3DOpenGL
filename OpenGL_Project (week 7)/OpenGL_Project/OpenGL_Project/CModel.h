@@ -50,7 +50,7 @@ public:
 	/// <param name="_program"></param>
 	/// <param name="_texture"></param>
 	/// <param name="_matrix"></param>
-	CModel(std::string FilePath, GLint _program, GLint _texture, glm::mat4 _matrix);
+	CModel(std::string FilePath, GLint _program, GLint _texture, glm::vec3 _position, float _scale, float _rotationAngle, glm::vec3 _rotationMat);
 
 	/// <summary>
 	/// destructor
@@ -145,8 +145,8 @@ protected:
 
 	float m_fScale;
 	glm::vec3 m_Position;
-	float m_fRotationAngle;
-	glm::vec3 m_RotationAxis;
+	float m_fRotationAngle = 0.0f;
+	glm::vec3 m_RotationAxis = glm::vec3(0.0f);
 
 	GLint m_program = 0;
 	GLint m_texture = 0;

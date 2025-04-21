@@ -42,4 +42,6 @@ private:
     rp3d::RigidBody* m_RigidBody = nullptr;
     rp3d::CollisionShape* m_CollisionShape = nullptr;
     rp3d::Collider* m_Collider = nullptr;
+
+    bool m_bPhysicsEnabled = false;
 };

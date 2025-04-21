@@ -16,6 +16,11 @@ class CEditorMode
 public:
 	static CEditorMode& GetInstance();
 
+	bool GetInEditor();
+
+	void SetInEditor(bool _inEditor);
+
+
 private:
 	// private singleton constructor
 	CEditorMode() = default;
