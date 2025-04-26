@@ -79,6 +79,7 @@ void CScene::Update(CCamera* Camera, float dt)
 
 void CScene::AddObject(CObject* _Model)
 {
+	//_Model.SetID(m_Objects.size());
 	m_Objects.push_back(_Model);
 }
 
@@ -92,10 +93,21 @@ std::vector<CObject*> CScene::GetObjects()
 	return m_Objects;
 }
 
+void CScene::RemoveObject(CObject* _Object)
+{
+	// remove the selected object to avoid referencing deleted object
+	m_Objects.erase(std::remove(m_Objects.begin(), m_Objects.end(), _Object), m_Objects.end());
+}
+
 void CScene::MoveObjects()
 {
 	for (auto Object : m_Objects)
 	{
 		Object->SetPosition(glm::vec3(Object->GetPosition().x + 100));
 	}
+}
+
+void CScene::LoadLevel()
+{
+	//TODO: reset everything to original position and 0 momentum
 }

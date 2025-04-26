@@ -36,6 +36,16 @@ CObject::~CObject()
     }
 }
 
+int CObject::GetID()
+{
+    return m_ID;
+}
+
+void CObject::SetID(int _ID)
+{
+    m_ID = _ID;
+}
+
 void CObject::CreateCollisionShape(CollisionShapeType shapeType, glm::vec3 dimensions)
 {
     if (!m_RigidBody) return;

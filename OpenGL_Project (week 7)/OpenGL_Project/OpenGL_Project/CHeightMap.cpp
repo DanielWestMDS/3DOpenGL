@@ -33,6 +33,9 @@ CHeightMap::CHeightMap(HeightMapInfo& _BuildInfo, GLint _program, GLint _texture
     m_fHeightLevels[1] = 30;
     m_fHeightLevels[2] = 150;
     //m_fHeightLevels[3] = 300;
+
+    // physics
+
 }
 
 CHeightMap::~CHeightMap()

@@ -33,6 +33,9 @@ public:
     rp3d::RigidBody* GetRigidBody() const { return m_RigidBody; };
     rp3d::Collider* GetCollider() const { return m_Collider; };
 
+    int GetID();
+    void SetID(int _ID);
+
 private:
     void CreateCollisionShape(CollisionShapeType shapeType, glm::vec3 dimensions);
 
@@ -42,6 +45,8 @@ private:
     rp3d::RigidBody* m_RigidBody = nullptr;
     rp3d::CollisionShape* m_CollisionShape = nullptr;
     rp3d::Collider* m_Collider = nullptr;
+
+    int m_ID;
 
     bool m_bPhysicsEnabled = false;
 };

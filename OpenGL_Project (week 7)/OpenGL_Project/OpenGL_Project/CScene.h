@@ -56,7 +56,11 @@ public:
 
 	std::vector<CObject*> GetObjects();
 
+	void RemoveObject(CObject* _Object);
+
 	void MoveObjects();
+
+	void LoadLevel();
 
 private:
 	std::vector<CObject*> m_Objects = {};

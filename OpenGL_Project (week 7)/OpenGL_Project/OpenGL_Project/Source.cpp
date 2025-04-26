@@ -225,6 +225,8 @@ std::vector<std::string> sFaces = {
 // physics 
 PhysicsCommon g_physicsCommon;
 
+int g_iPhysicsSteps = 20;
+
 // create the physics world
 PhysicsWorld* g_physicsWorld = g_physicsCommon.createPhysicsWorld();
 
@@ -827,6 +829,14 @@ void Update()
 	deltaTime = CurrentTime - PreviousTime;
 	PreviousTime = CurrentTime;
 
+	// update physics
+	// only if in play mode?
+	CEditorMode& Editor = CEditorMode::GetInstance();
+
+	if (!Editor.GetInEditor())
+	{
+		g_physicsWorld->update(deltaTime);
+	}
 
 	// calculate quad model matrix evert frame
 	HeightMapModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -895,17 +905,37 @@ void RenderGUI()
 	// custom buttons created inside this function
 	// Begin UI rendering
 	ImGui::Begin("Buttons");
+	
+	CEditorMode& Editor = CEditorMode::GetInstance();
 
-	// Play Button
-	if (ui.CreateButton("Play", []() {
-		std::cout << "Styled button clicked!" << std::endl;
-		}, ImVec2(120, 40),
-			ImVec4(0.1f, 0.8f, 0.1f, 1.0f),  // Normal color
-			ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // Hover color)
+	if (Editor.GetInEditor())
 	{
-		CEditorMode& Editor = CEditorMode::GetInstance();
-		Editor.SetInEditor(false);
+		// Play Button
+		if (ui.CreateButton("Play", []() {
+			std::cout << "Play button clicked" << std::endl;
+			}, ImVec2(120, 40),
+				ImVec4(0.1f, 0.8f, 0.1f, 1.0f),  // Normal color
+				ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // Hover color)
+		{
+
+			Editor.SetInEditor(false);
+		}
 	}
+	else
+	{
+		// Play Button
+		if (ui.CreateButton("Stop", []() {
+			std::cout << "Stop button clicked" << std::endl;
+			}, ImVec2(120, 40),
+				ImVec4(0.8f, 0.1f, 0.1f, 1.0f),  // Normal color
+				ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // Hover color)
+		{
+
+			Editor.SetInEditor(true);
+		}
+	}
+
+
 
 	// Create a styled button
 	if (ui.CreateButton("Print Position", []() {
@@ -938,6 +968,21 @@ void RenderGUI()
 
 			SelectedObject->SetGravityEnabled(bGravity);
 			SelectedObject->SetPosition(glm::vec3(xPos, yPos, zPos));
+
+			if (ui.CreateButton("Destroy", []() {
+				std::cout << "Destroy button clicked" << std::endl;
+				}, ImVec2(120, 40),
+					ImVec4(0.2f, 0.5f, 0.8f, 1.0f),  // color
+					ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // hover color)
+			{
+				// remove the object from the scene
+				g_CurrentScene->RemoveObject(SelectedObject);
+
+				// delete the object
+				delete SelectedObject;
+				// set the current object to null
+				SelectedObject = nullptr;
+			}
 		}
 	}	
 	
