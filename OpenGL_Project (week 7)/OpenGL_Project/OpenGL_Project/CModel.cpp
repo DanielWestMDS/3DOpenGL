@@ -2,6 +2,9 @@
 
 #include "Utils.h"
 
+
+
+
 CModel::CModel(std::string FilePath, GLint _program, GLint _texture, glm::vec3 _position, float _scale, float _rotationAngle, glm::vec3 _rotationMat)
 {
     std::vector<VertexStandard> Vertices;
@@ -91,6 +94,17 @@ CModel::CModel(std::string FilePath, GLint _program, GLint _texture, glm::vec3 _
 
     // Unbind the VAO to avoid accidental modifications
     glBindVertexArray(0);
+
+    // get an array of just vertices positions
+    std::vector<glm::vec3> VertPositions;
+
+    for (auto VertPos : Vertices)
+    {
+        VertPositions.push_back(VertPos.position);
+    }
+
+    // set values
+    m_LocalAABB = ComputeLocalAABB(VertPositions);
 
     m_program = _program;
     m_texture = _texture;
@@ -203,45 +217,6 @@ void CModel::RenderGeometryInstanced(GLint _program, GLint _texture, std::vector
     glBindVertexArray(0);
 }
 
-void CModel::RenderInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos, glm::mat4 _VP)
-{
-    // bind program and VAO
-    glUseProgram(_program);
-    glBindVertexArray(VAO);
-
-    // Model matrix
-    GLint ModelMatrix = glGetUniformLocation(_program, "ModelMat");
-    glUniformMatrix4fv(ModelMatrix, 1, GL_FALSE, glm::value_ptr(_modelMat));
-
-    // Activate and bind the textures
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, _texture);
-    glUniform1i(glGetUniformLocation(_program, "Texture0"), 0);
-
-    // pass camera position in via uniform
-    GLint CameraPosLoc = glGetUniformLocation(_program, "CameraPos");
-    glUniform3fv(CameraPosLoc, 1, glm::value_ptr(_cameraPos));
-
-    // pass in view projection
-    GLint VPMat = glGetUniformLocation(_program, "VP");
-    glUniformMatrix4fv(VPMat, 1, GL_FALSE, glm::value_ptr(_VP));
-
-    // Bind and fill the instance buffer
-    glBindBuffer(GL_ARRAY_BUFFER, InstanceBuffer);
-    glBufferData(GL_ARRAY_BUFFER, _instancePositions.size() * sizeof(glm::vec3), _instancePositions.data(), GL_DYNAMIC_DRAW);
-
-    // Set the instancePosition attribute (location 3)
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-    glEnableVertexAttribArray(3);
-   // glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-   // glVertexAttribDivisor(3, 1); // Divisor for instancing
-
-    // render
-    glDrawArraysInstanced(DrawType, 0, DrawCount, (GLsizei)_instancePositions.size());
-
-    glBindVertexArray(0);
-}
-
 void CModel::SetPosition(glm::vec3 _newPosition)
 {
     m_Position = _newPosition;
@@ -261,4 +236,47 @@ void CModel::SetScale(float _newScale)
 glm::vec3 CModel::GetPosition()
 {
     return m_Position;
+}
+
+AxisAlignedBoundingBox CModel::ComputeLocalAABB(const std::vector<glm::vec3>& vertices)
+{
+    glm::vec3 Min = vertices[0];
+    glm::vec3 Max = vertices[0];
+
+    for (const glm::vec3& v : vertices) 
+    {
+        Min = glm::min(Min, v);
+        Max = glm::max(Max, v);
+    }
+
+    return AxisAlignedBoundingBox{ Min, Max };
+}
+
+AxisAlignedBoundingBox CModel::GetWorldAABB()
+{
+    // local model var
+    glm::mat4 Model = GetModelMat();
+
+    // 8 corners of the box
+    glm::vec3 corners[8];
+    corners[0] = glm::vec3(Model * glm::vec4(m_LocalAABB.Min.x, m_LocalAABB.Min.y, m_LocalAABB.Min.z, 1.0));
+    corners[1] = glm::vec3(Model * glm::vec4(m_LocalAABB.Max.x, m_LocalAABB.Min.y, m_LocalAABB.Min.z, 1.0));
+    corners[2] = glm::vec3(Model * glm::vec4(m_LocalAABB.Min.x, m_LocalAABB.Max.y, m_LocalAABB.Min.z, 1.0));
+    corners[3] = glm::vec3(Model * glm::vec4(m_LocalAABB.Min.x, m_LocalAABB.Min.y, m_LocalAABB.Max.z, 1.0));
+    corners[4] = glm::vec3(Model * glm::vec4(m_LocalAABB.Max.x, m_LocalAABB.Max.y, m_LocalAABB.Min.z, 1.0));
+    corners[5] = glm::vec3(Model * glm::vec4(m_LocalAABB.Max.x, m_LocalAABB.Min.y, m_LocalAABB.Max.z, 1.0));
+    corners[6] = glm::vec3(Model * glm::vec4(m_LocalAABB.Min.x, m_LocalAABB.Max.y, m_LocalAABB.Max.z, 1.0));
+    corners[7] = glm::vec3(Model * glm::vec4(m_LocalAABB.Max.x, m_LocalAABB.Max.y, m_LocalAABB.Max.z, 1.0));
+
+    // new min/max from transformed corners
+    glm::vec3 newMin = corners[0];
+    glm::vec3 newMax = corners[0];
+
+    for (int i = 1; i < 8; ++i) 
+    {
+        newMin = glm::min(newMin, corners[i]);
+        newMax = glm::max(newMax, corners[i]);
+    }
+
+    return AxisAlignedBoundingBox{ newMin, newMax };
 }

@@ -15,6 +15,12 @@
 #include "CCamera.h"
 #include <iostream>
 
+struct AxisAlignedBoundingBox
+{
+	glm::vec3 Min;
+	glm::vec3 Max;
+};
+
 /// <summary>
 /// Holds vertex information for each point on the model.
 /// </summary>
@@ -86,9 +92,6 @@ public:
 	/// <param name="_VP"></param>
 	virtual void RenderGeometryInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos, glm::mat4 _VP);
 
-	// instanced rendering function
-	virtual void RenderInstanced(GLint _program, GLint _texture, std::vector<glm::vec3> _instancePositions, glm::mat4 _modelMat, glm::vec3 _cameraPos, glm::mat4 _VP);
-
 	/// <summary>
 	/// getter for VAO
 	/// </summary>
@@ -136,6 +139,10 @@ public:
 
 	glm::vec3 GetPosition();
 
+	AxisAlignedBoundingBox ComputeLocalAABB(const std::vector<glm::vec3>& vertices);
+
+	AxisAlignedBoundingBox GetWorldAABB();
+
 protected:
 	GLuint VAO;
 	GLuint DrawCount;
@@ -147,6 +154,8 @@ protected:
 	glm::vec3 m_Position;
 	float m_fRotationAngle = 0.0f;
 	glm::vec3 m_RotationAxis = glm::vec3(0.0f);
+
+	AxisAlignedBoundingBox m_LocalAABB;
 
 	GLint m_program = 0;
 	GLint m_texture = 0;

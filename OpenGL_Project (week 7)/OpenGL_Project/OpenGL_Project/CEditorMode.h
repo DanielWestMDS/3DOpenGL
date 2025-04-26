@@ -20,6 +20,8 @@ public:
 
 	void SetInEditor(bool _inEditor);
 
+	// TODO: when in editor mode be able to save a scene to a text file and load a scene
+
 
 private:
 	// private singleton constructor

@@ -28,6 +28,7 @@
 #include "CUserInterface.h"
 #include "CObject.h"
 #include "CContactListener.h"
+#include "CEditorMode.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -202,6 +203,9 @@ glm::mat4 QuadRotationMat;
 
 glm::vec3 QuadScale = glm::vec3(2.0f, 2.0f, 2.0f);
 glm::mat4 QuadScaleMat;
+
+bool g_bIsObjectSelected = false;
+CObject* SelectedObject = nullptr;
 
 // Vector for instanced matrices
 std::vector<glm::mat4> MVPVec;
@@ -397,6 +401,94 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 		g_bFKeyPressed = false;
 	}
 }
+
+/// <summary>
+/// Converts an openGL vector3 into a reactphysics3d vector3
+/// </summary>
+/// <param name="_GLMVec"></param>
+/// <returns></returns>
+Vector3 GLMVec3ToReactVec3(glm::vec3 _GLMVec)
+{
+	Vector3 ReactVec3;
+	ReactVec3.x = _GLMVec.x;
+	ReactVec3.y = _GLMVec.y;
+	ReactVec3.z = _GLMVec.z;
+
+	return ReactVec3;
+}
+
+struct Raycast
+{
+	glm::vec3 Origin;
+	glm::vec3 Direction;
+};
+
+Raycast GenerateRaycastFromMouse(float _mouseX, float _mouseY, int _screenWidth, int _screenHeight)
+{
+	glm::mat4 View = Camera->GetViewMat();
+	glm::mat4 Proj = Camera->GetProjMat();
+
+	float x = (2.0f * _mouseX) / _screenWidth - 1.0f;
+	float y = 1.0f - (2.0f * _mouseY) / _screenHeight;
+	glm::vec4 RayClip = glm::vec4(x, y, -1.0f, 1.0f);
+
+	glm::vec4 RayEye = glm::inverse(Proj) * RayClip;
+	RayEye = glm::vec4(RayEye.x, RayEye.y, -1.0f, 0.0f);
+
+	glm::vec3 rayDirWorld = glm::normalize(glm::vec3(glm::inverse(View) * RayEye));
+	glm::vec3 rayOrigin = Camera->GetPosition();
+
+	return Raycast{ rayOrigin, rayDirWorld };
+}
+
+// axis aligned bounding box
+bool RayIntersectsAABB(const glm::vec3& _rayOrigin, const glm::vec3& _rayDir, const glm::vec3& _aabbMin, const glm::vec3& _aabbMax, float& _tOut) 
+{
+	// minimum and maximum of the ray
+	float tMin = 0.0f;
+	float tMax = 10000.0f;
+
+	for (int i = 0; i < 3; ++i) 
+	{
+		float invD = 1.0f / _rayDir[i];
+		float t0 = (_aabbMin[i] - _rayOrigin[i]) * invD;
+		float t1 = (_aabbMax[i] - _rayOrigin[i]) * invD;
+
+		if (invD < 0.0f) std::swap(t0, t1);
+
+		tMin = std::max(tMin, t0);
+		tMax = std::min(tMax, t1);
+
+		if (tMax < tMin) return false;
+	}
+
+	_tOut = tMin;
+	return true;
+}
+
+void FindSelectedObject()
+{
+	// make t as big as possible to find the smallest t for closest object
+	float fClosestT = FLT_MAX;
+	Raycast MouseRay = GenerateRaycastFromMouse(g_MousePos.x, g_MousePos.y, iWindowSize, iWindowSize);
+
+	for (CObject* Object : g_CurrentScene->GetObjects())
+	{
+		float t;
+
+		if (RayIntersectsAABB(MouseRay.Origin, MouseRay.Direction, Object->GetModel()->GetWorldAABB().Min, Object->GetModel()->GetWorldAABB().Max, t))
+		{
+			if (t < fClosestT)
+			{
+				fClosestT = t;
+				SelectedObject = Object;
+				g_bIsObjectSelected = true;
+			}
+		}
+	}
+}
+
+
 
 /// <summary>
 /// Load an openGL texture from a filepath
@@ -735,23 +827,6 @@ void Update()
 	deltaTime = CurrentTime - PreviousTime;
 	PreviousTime = CurrentTime;
 
-	// physics
-
-	Vector3 position(0, 20, 0);
-	Quaternion orientation = Quaternion::identity();
-	Transform transform(position, orientation);
-	RigidBody* body = g_physicsWorld->createRigidBody(transform);
-
-	for (int i = 0; i < 20; i++)
-	{
-		g_physicsWorld->update(1.f / 60.f);
-		const Transform& transform = body->getTransform();
-		const Vector3& position = transform.getPosition();
-
-		//std::cout << "Body position: (" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
-	}
-
-
 
 	// calculate quad model matrix evert frame
 	HeightMapModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -796,10 +871,17 @@ void Update()
 
 	// UI perlin noise
 	//PerlinQuad->Update(Program_Squares, Texture_Awesome, PerlinHeightMapModelMat, Camera->GetUIProjMat(), Camera->GetViewMat());
+
+	// mouse click
+	if (glfwGetMouseButton(Window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	{
+		FindSelectedObject();
+	}
 }
 
 CUserInterface ui;
 
+// only happens in debug mode
 void RenderGUI()
 {
 	ImGui_ImplOpenGL3_NewFrame();
@@ -814,27 +896,49 @@ void RenderGUI()
 	// Begin UI rendering
 	ImGui::Begin("Buttons");
 
-	// Create a simple button
-	if (ui.CreateButton("Click Me!", []() {
-		std::cout << "Button was clicked!" << std::endl;
-		Scene3->MoveObjects();
-		})) {
-		// Button was clicked (alternative way to handle click)
+	// Play Button
+	if (ui.CreateButton("Play", []() {
+		std::cout << "Styled button clicked!" << std::endl;
+		}, ImVec2(120, 40),
+			ImVec4(0.1f, 0.8f, 0.1f, 1.0f),  // Normal color
+			ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // Hover color)
+	{
+		CEditorMode& Editor = CEditorMode::GetInstance();
+		Editor.SetInEditor(false);
 	}
 
 	// Create a styled button
-	ui.CreateButton("Styled Button", []() {
+	if (ui.CreateButton("Print Position", []() {
 		std::cout << "Styled button clicked!" << std::endl;
 		}, ImVec2(120, 40),
 			ImVec4(0.2f, 0.5f, 0.8f, 1.0f),  // Normal color
-			ImVec4(0.3f, 0.6f, 0.9f, 1.0f));  // Hover color
+			ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // Hover color)
+	{
+		std::cout << SelectedObject->GetPosition().x << ", " << SelectedObject->GetPosition().y << ", "  << SelectedObject->GetPosition().z << ", " << std::endl;
+	}
 
 	ImGui::End();
 
 	ImGui::SetNextWindowSize(ImVec2(500, 500));
-	if (ImGui::Begin("Test", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
+	if (ImGui::Begin("Selected Object", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
 	{
-		ImGui::Checkbox("Test Bool", &g_bPointLightActive);
+		if (SelectedObject != nullptr)
+		{
+			// get values to later set
+			float xPos = SelectedObject->GetPosition().x;
+			float yPos = SelectedObject->GetPosition().y;
+			float zPos = SelectedObject->GetPosition().z;
+
+			bool bGravity = SelectedObject->IsGravityEnabled();
+
+			ImGui::Checkbox("HasGravity", &bGravity);
+			ImGui::InputFloat("X: ", &xPos);
+			ImGui::InputFloat("Y: ", &yPos);
+			ImGui::InputFloat("Z: ", &zPos);
+
+			SelectedObject->SetGravityEnabled(bGravity);
+			SelectedObject->SetPosition(glm::vec3(xPos, yPos, zPos));
+		}
 	}	
 	
 	ImGui::End();

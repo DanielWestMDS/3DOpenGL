@@ -15,7 +15,7 @@ CObject::CObject(CModel* model, glm::vec3 position,
     // Create collision shape
     CreateCollisionShape(shapeType, shapeDimensions);
     SetPosition(position);
-    SetGravityEnabled(true);
+    SetGravityEnabled(false);
 }
 
 CObject::~CObject()
@@ -85,7 +85,6 @@ void CObject::Update(float dt)
         const rp3d::Transform& transform = m_RigidBody->getTransform();
         const rp3d::Vector3& position = transform.getPosition();
         m_Model->SetPosition(glm::vec3(position.x, position.y, position.z));
-        std::cout << position.x << std::endl;
 
         // TODO: sync rotation
         //rp3d::Quaternion rotation = transform.getOrientation();
