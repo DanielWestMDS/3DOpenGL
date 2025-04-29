@@ -92,7 +92,7 @@ public:
 
 	rp3d::HeightField* GetHeightField() const { return m_heightField; }
 
-	rp3d::RigidBody* GetRigidBody() const { return m_rigidBody; }
+	rp3d::RigidBody* GetRigidBody() const { return m_RigidBody; }
 
 	void CreateCollision(HeightMapInfo _BuildInfo, rp3d::PhysicsCommon* physicsCommon, rp3d::PhysicsWorld* physicsWorld);
 
@@ -141,7 +141,7 @@ private:
 	// physics
 
 	rp3d::HeightField* m_heightField;
-	rp3d::RigidBody* m_rigidBody;
+	rp3d::RigidBody* m_RigidBody;
 	rp3d::PhysicsCommon* m_physicsCommon;
 };
 

@@ -33,9 +33,6 @@ CHeightMap::CHeightMap(HeightMapInfo& _BuildInfo, GLint _program, GLint _texture
     m_fHeightLevels[1] = 30;
     m_fHeightLevels[2] = 150;
     //m_fHeightLevels[3] = 300;
-
-    // physics
-
 }
 
 CHeightMap::~CHeightMap()
@@ -167,6 +164,14 @@ void CHeightMap::CreateCollision(HeightMapInfo _BuildInfo, rp3d::PhysicsCommon* 
 {
     m_physicsCommon = physicsCommon;
 
+    // create rigid body
+    rp3d::Transform transform;
+    transform.setPosition(rp3d::Vector3(0.0f, 0.0f, 0.0f));
+    m_RigidBody = physicsWorld->createRigidBody(transform);
+
+    // set body to static (since terrain doesn't move)
+    m_RigidBody->setType(rp3d::BodyType::STATIC);
+
     // messages vector for error handling
     std::vector<rp3d::Message> messages;
 
@@ -210,20 +215,12 @@ void CHeightMap::CreateCollision(HeightMapInfo _BuildInfo, rp3d::PhysicsCommon* 
     assert(m_heightField != nullptr);
 
     // create collision shape
-    rp3d::HeightFieldShape* heightFieldShape = m_physicsCommon->createHeightFieldShape(
-        m_heightField,
-        rp3d::Vector3(_BuildInfo.CellSpacing, 1.0f, _BuildInfo.CellSpacing));
-
-    // create rigid body
-    rp3d::Transform transform;
-    transform.setPosition(rp3d::Vector3(0.0f, 0.0f, 0.0f));
-    m_rigidBody = physicsWorld->createRigidBody(transform);
-
-    // set body to static (since terrain doesn't move)
-    m_rigidBody->setType(rp3d::BodyType::STATIC);
+    rp3d::HeightFieldShape* heightFieldShape = m_physicsCommon->createHeightFieldShape(m_heightField);
 
     // add collision shape to body
-    rp3d::Collider* collider = m_rigidBody->addCollider(heightFieldShape, rp3d::Transform::identity());
+    rp3d::Collider* collider = m_RigidBody->addCollider(heightFieldShape, rp3d::Transform::identity());
+
+    //m_RigidBody->setIsDebugEnabled(true);
 }
 
 bool CHeightMap::LoadHeightMap(HeightMapInfo& _BuildInfo)

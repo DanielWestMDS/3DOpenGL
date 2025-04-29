@@ -36,6 +36,11 @@ CObject::~CObject()
     }
 }
 
+void CObject::SetCollisionDraw(bool _bIsEnabled)
+{
+    m_RigidBody->setIsDebugEnabled(_bIsEnabled);
+}
+
 int CObject::GetID()
 {
     return m_ID;
@@ -58,7 +63,7 @@ void CObject::CreateCollisionShape(CollisionShapeType shapeType, glm::vec3 dimen
     if (m_CollisionShape) 
     {
         //TODO: this too
-        //m_PhysicsCommon->destroyCollisionShape(m_CollisionShape);
+        //m_PhysicsCommon->deleteSphereShape(m_CollisionShape);
     }
 
     // Create new collision shape
@@ -138,4 +143,23 @@ bool CObject::IsGravityEnabled() const
 void CObject::SetCollisionShape(CollisionShapeType shapeType, glm::vec3 dimensions)
 {
     CreateCollisionShape(shapeType, dimensions);
+}
+
+void CObject::RemoveCollision(CollisionShapeType _shapeType)
+{
+    //// Create new collision shape
+    //switch (_shapeType)
+    //{
+    //case CollisionShapeType::BOX:
+    //    m_PhysicsCommon->destroyBoxShape(m_CollisionShape);
+    //    break;
+
+    //case CollisionShapeType::SPHERE:
+    //    m_CollisionShape = m_PhysicsCommon->createSphereShape(dimensions.x);
+    //    break;
+
+    //case CollisionShapeType::CAPSULE:
+    //    m_CollisionShape = m_PhysicsCommon->createCapsuleShape(
+    //        dimensions.x, dimensions.y);
+    //    break;
 }

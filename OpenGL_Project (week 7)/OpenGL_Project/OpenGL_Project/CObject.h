@@ -24,14 +24,17 @@ public:
     CModel* GetModel() { return m_Model; };
 
     void Update(float dt);
-    void SetPosition(glm::vec3 position);
+    void SetPosition(glm::vec3 _position);
     glm::vec3 GetPosition();
-    void SetGravityEnabled(bool enabled);
+    void SetGravityEnabled(bool _enabled);
     bool IsGravityEnabled() const;
 
-    void SetCollisionShape(CollisionShapeType shapeType, glm::vec3 dimensions);
+    void SetCollisionShape(CollisionShapeType _shapeType, glm::vec3 _dimensions);
+    void RemoveCollision(CollisionShapeType _shapeType);
     rp3d::RigidBody* GetRigidBody() const { return m_RigidBody; };
     rp3d::Collider* GetCollider() const { return m_Collider; };
+
+    void SetCollisionDraw(bool _bIsEnabled);
 
     int GetID();
     void SetID(int _ID);

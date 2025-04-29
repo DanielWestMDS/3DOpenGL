@@ -29,6 +29,7 @@
 #include "CObject.h"
 #include "CContactListener.h"
 #include "CEditorMode.h"
+#include "CLineRenderer.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -206,6 +207,8 @@ glm::mat4 QuadScaleMat;
 
 bool g_bIsObjectSelected = false;
 CObject* SelectedObject = nullptr;
+
+CLineRenderer* DebugLineRenderer;
 
 // Vector for instanced matrices
 std::vector<glm::mat4> MVPVec;
@@ -676,7 +679,7 @@ void InitialSetup()
 	TreeModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.005f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// for Perlin noise quad
-	PerlinHeightMapModelMat = MakeModelMatrix(glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	PerlinHeightMapModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	TessMatrix = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 100.0f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
@@ -684,6 +687,8 @@ void InitialSetup()
 	Camera = new CCamera();
 
 	LightManager = new CLightManager();
+
+	DebugLineRenderer = new CLineRenderer();
 
 	// change attenuation so you can see all the different point lights
 	float exponent = 0.1f;
@@ -754,7 +759,8 @@ void InitialSetup()
 
 	// noise texture
 	HeightMapNoise = new CHeightMap(infoNoise, Program_HeightMap, HeightMapTextures);
-	HeightMap = new CHeightMap(info, Program_HeightMap, HeightMapTextures);
+	HeightMapNoise->CreateCollision(infoNoise, &g_physicsCommon, g_physicsWorld);
+	//HeightMap = new CHeightMap(info, Program_HeightMap, HeightMapTextures);
 
 	// load noise texture after creating heightmap
 	Texture_PerlinMap = LoadTexture("Resources/Textures/Noise/COLOURED.jpg");														
@@ -782,13 +788,30 @@ void InitialSetup()
 
 	// physics 
 	g_physicsWorld->setGravity(Vector3(0.0f, -5.0f, 0.0f));
-	CContactListener listener;
-	g_physicsWorld->setEventListener(&listener);
+	//CContactListener listener;
+	//g_physicsWorld->setEventListener(&listener);
+
+	// Create a rigid body
+	reactphysics3d::RigidBody* body = g_physicsWorld->createRigidBody(reactphysics3d::Transform(
+		reactphysics3d::Vector3(0.0f, 5.0f, 0.0f),    // Position (Y=5 to float in air)
+		reactphysics3d::Quaternion::identity()         // No rotation
+	));
+
+	// Create a box shape
+	reactphysics3d::BoxShape* boxShape = g_physicsCommon.createBoxShape(reactphysics3d::Vector3(1.0f, 1.0f, 1.0f));
+
+	// Attach the shape to the body
+	reactphysics3d::Collider* collider = body->addCollider(boxShape, reactphysics3d::Transform::identity());
+
+	body->setType(reactphysics3d::BodyType::STATIC);
+
+	body->setIsDebugEnabled(true);
+
 
 	// set background colour															
-	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Map the ange of the window for when the buffer clears							
+	// Map the angle of the window for when the buffer clears							
 	glViewport(0, 0, iWindowSize, iWindowSize);
 
 	// Height map terrain																
@@ -829,17 +852,11 @@ void Update()
 	deltaTime = CurrentTime - PreviousTime;
 	PreviousTime = CurrentTime;
 
-	// update physics
-	// only if in play mode?
-	CEditorMode& Editor = CEditorMode::GetInstance();
-
-	if (!Editor.GetInEditor())
-	{
-		g_physicsWorld->update(deltaTime);
-	}
+	//g_physicsWorld->update(deltaTime);
 
 	// calculate quad model matrix evert frame
 	HeightMapModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
 	DeferredHeightMapModelMat = MakeModelMatrix(glm::vec3(-50.0f, 0.0f, -30.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	SoldierModelMat = MakeModelMatrix(SoldierPosition, 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -851,11 +868,25 @@ void Update()
 	Camera->Update(iWindowSize, Window, g_MousePos, deltaTime);	
 	//Camera->PrintCamPos();
 
+	// update physics
+	// only if in play mode?
+	CEditorMode& Editor = CEditorMode::GetInstance();
+
+	// play mode
+	if (!Editor.GetInEditor())
+	{
+		g_physicsWorld->update(deltaTime);
+	}
+	// editor mode
+	else
+	{
+	}
+
 	// models update
 	g_CurrentScene->Update(Camera, deltaTime);
 
 	// height map
-	HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), DeferredHeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
+	//HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), DeferredHeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
 	HeightMapNoise->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), HeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
 
 	// tessellation
@@ -936,16 +967,38 @@ void RenderGUI()
 	}
 
 
+	// checkbox
+	bool bCollisionShown = g_physicsWorld->getIsDebugRenderingEnabled();
+
+	ImGui::Checkbox("ShowCollisionCheckbox", &bCollisionShown);
+
+	g_physicsWorld->setIsDebugRenderingEnabled(bCollisionShown);
 
 	// Create a styled button
-	if (ui.CreateButton("Print Position", []() {
-		std::cout << "Styled button clicked!" << std::endl;
+	if (ui.CreateButton("ShowCollision", []() {
+		std::cout << "Collision Button Clicked" << std::endl;
 		}, ImVec2(120, 40),
 			ImVec4(0.2f, 0.5f, 0.8f, 1.0f),  // Normal color
 			ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // Hover color)
 	{
-		std::cout << SelectedObject->GetPosition().x << ", " << SelectedObject->GetPosition().y << ", "  << SelectedObject->GetPosition().z << ", " << std::endl;
+		// enable debug rendering
+		g_physicsWorld->setIsDebugRenderingEnabled(true);
+
+		// get the debug renderer
+		reactphysics3d::DebugRenderer& debugRenderer = g_physicsWorld->getDebugRenderer();
+
+		// enable debug rendering flags
+		debugRenderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, true);
+		debugRenderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, true);
+		debugRenderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, true);
+
+
+		for (CObject* Object : g_CurrentScene->GetObjects())
+		{
+			Object->SetCollisionDraw(true);
+		}
 	}
+
 
 	ImGui::End();
 
@@ -993,6 +1046,13 @@ void RenderGUI()
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
+void UnpackColor(reactphysics3d::uint32 color, float& r, float& g, float& b) 
+{
+	r = ((color >> 16) & 0xFF) / 255.0f; // red channel
+	g = ((color >> 8) & 0xFF) / 255.0f; // green channel
+	b = ((color) & 0xFF) / 255.0f; // blue channel
+}
+
 /// <summary>
 /// Runs once every tick. handles anything visual such as lighting and rendering
 /// </summary>
@@ -1006,60 +1066,44 @@ void Render()
 	LightManager->UpdateShader(Program_HeightMap, g_bPointLightActive);
 	LightManager->UpdateShader(Program_LightingPass, g_bPointLightActive);
 
-	g_CurrentScene->Render();
+	// draw collision
+	if (g_physicsWorld->getIsDebugRenderingEnabled())
+	{
+		for (CObject* Object : g_CurrentScene->GetObjects())
+		{
+			Object->SetCollisionDraw(true);
+		}
 
-	// scenes
-	//switch (g_iSceneNumber)
-	//{
-	//case 1:
-	//	ShadowMap->Bind();
+		reactphysics3d::DebugRenderer& debugRenderer = g_physicsWorld->getDebugRenderer();
 
-	//	//Scene3->RenderShadow(Program_ShadowMap, LightManager->GetVP());
+		debugRenderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, true);
+		debugRenderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, true);
+		debugRenderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, true);
+		debugRenderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_AABB, true);
 
-	//	ShadowMap->Unbind();
-	//	Scene3->Render();
+		debugRenderer.reset();
+		debugRenderer.computeDebugRenderingPrimitives(*g_physicsWorld);
 
-	//	break;
-	//case 2:
-	//	FrameBufferQuad->SetProgram(Program_LightingPass);
-	//	GeometryBuffer->Bind();
-	//	Tree->RenderGeometryInstanced(Program_GeometryPass, Texture_Quag, RandomLocations, TreeModelMat, Camera->GetPosition(), Camera->GetVP());
-	//	HeightMap->RenderGeometry(Program_GeometryPassHeightMap);
-	//	GeometryBuffer->PopulateProgram(Program_LightingPass, Camera->GetPosition());
-	//	GeometryBuffer->Unbind();
+		const auto& lines = debugRenderer.getLines();
 
-	//	FrameBufferQuad->RenderLightingPass();
+		// convert debugLines from reactPhysics to glm vec3 pairs
+		std::vector<std::pair<glm::vec3, glm::vec3>> glmLines;
 
-	//	GeometryBuffer->WriteDepth();
+		for (const auto& line : lines) 
+		{
+			glm::vec3 p1(line.point1.x, line.point1.y, line.point1.z);
+			glm::vec3 p2(line.point2.x, line.point2.y, line.point2.z);
+			glmLines.push_back({ p1, p2 });
+		}
 
-	//	// Enable blending for point lights
-	//	glEnable(GL_BLEND);
-	//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		DebugLineRenderer->SetLines(glmLines);
 
-	//	Scene2->Render();
+		DebugLineRenderer->Draw(Camera->GetViewMat(), Camera->GetProjMat());
+	}
 
-	//	glDisable(GL_BLEND);
+	// objects in the scene
+	//g_CurrentScene->Render();
 
-	//	break;
-	//case 3:
-
-	//	glEnable(GL_BLEND);
-	//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	//	RedFirework->Render();
-	//	CyanFirework->Render();
-	//	MagentaFirework->Render();
-	//	YellowFirework->Render();
-
-	//	glDisable(GL_BLEND);
-
-	//	break;
-	//case 4:
-	//	TessQuad->Render(Program_Tessellation, TessMVP);
-	//	break;
-	//default:
-	//	break;
-	//}
 
 	// unbind
 	glBindVertexArray(0);

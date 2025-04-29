@@ -90,6 +90,9 @@
     <ClCompile Include="CEditorMode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CLineRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderLoader.h">
@@ -162,6 +165,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CEditorMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CLineRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

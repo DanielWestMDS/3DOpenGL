@@ -8,6 +8,8 @@ CEditorMode& CEditorMode::GetInstance()
 {
 	static CEditorMode instance;
 	return instance;
+
+	//TODO: make mouse disappear in play mode
 }
 
 bool CEditorMode::GetInEditor()

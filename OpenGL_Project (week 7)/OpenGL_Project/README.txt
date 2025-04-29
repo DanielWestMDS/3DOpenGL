@@ -17,3 +17,6 @@ If you cannot see the tessellation triangle:
 you have probably moved the camera behind it. It should be visible if you restart and immediately switch to scene 4.
 
 - Daniel West
+
+
+https://stackoverflow.com/questions/14486291/how-to-draw-line-in-opengl

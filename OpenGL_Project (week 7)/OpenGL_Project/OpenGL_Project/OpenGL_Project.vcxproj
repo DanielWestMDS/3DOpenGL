@@ -152,6 +152,7 @@
     <ClCompile Include="CGeometryBuffer.cpp" />
     <ClCompile Include="CHeightMap.cpp" />
     <ClCompile Include="CLightManager.cpp" />
+    <ClCompile Include="CLineRenderer.cpp" />
     <ClCompile Include="CModel.cpp" />
     <ClCompile Include="CParticleSystem.cpp" />
     <ClCompile Include="CFrameBufferQuad.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="CGeometryBuffer.h" />
     <ClInclude Include="CHeightMap.h" />
     <ClInclude Include="CLightManager.h" />
+    <ClInclude Include="CLineRenderer.h" />
     <ClInclude Include="CModel.h" />
     <ClInclude Include="CParticleSystem.h" />
     <ClInclude Include="CFrameBufferQuad.h" />
