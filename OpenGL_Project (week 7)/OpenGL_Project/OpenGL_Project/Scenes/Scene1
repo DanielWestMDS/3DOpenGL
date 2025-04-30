@@ -3,15 +3,38 @@
         {
             "bodyType": 2,
             "collisionDimensions": [
-                20.0,
                 2.0,
+                10.0,
                 10.0
             ],
-            "modelPath": "Resources/Models/cube.obj",
+            "modelPath": "Resources/Models/SM_Env_Bone_Skull_02.obj",
             "position": [
-                0.42742156982421875,
-                5.351097583770752,
-                23.86322021484375
+                0.10100746154785156,
+                5.0,
+                23.984630584716797
+            ],
+            "program": 6,
+            "rotation": [
+                90.0,
+                1.0,
+                1.0
+            ],
+            "scale": 1.0,
+            "shapeType": 0,
+            "texture": 2
+        },
+        {
+            "bodyType": 2,
+            "collisionDimensions": [
+                2.0,
+                2.0,
+                2.0
+            ],
+            "modelPath": "Resources/Models/SM_Prop_Statue_02.obj",
+            "position": [
+                10.13555908203125,
+                1.1726374626159668,
+                12.385871887207031
             ],
             "program": 6,
             "rotation": [
@@ -20,6 +43,122 @@
                 1.0
             ],
             "scale": 1.0,
+            "shapeType": 0,
+            "texture": 2
+        },
+        {
+            "bodyType": 2,
+            "collisionDimensions": [
+                2.0,
+                2.0,
+                2.0
+            ],
+            "modelPath": "Resources/Models/SM_Prop_Statue_02.obj",
+            "position": [
+                9.979373931884766,
+                -1.405580997467041,
+                -17.288372039794922
+            ],
+            "program": 6,
+            "rotation": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": 1.0,
+            "shapeType": 0,
+            "texture": 2
+        },
+        {
+            "bodyType": 2,
+            "collisionDimensions": [
+                2.0,
+                2.0,
+                2.0
+            ],
+            "modelPath": "Resources/Models/SM_Prop_Statue_02.obj",
+            "position": [
+                -83.696533203125,
+                -7.614233493804932,
+                -16.445598602294922
+            ],
+            "program": 6,
+            "rotation": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": 1.0,
+            "shapeType": 0,
+            "texture": 2
+        },
+        {
+            "bodyType": 2,
+            "collisionDimensions": [
+                2.0,
+                2.0,
+                2.0
+            ],
+            "modelPath": "Resources/Models/SM_Prop_Statue_02.obj",
+            "position": [
+                -81.12571716308594,
+                -6.381762981414795,
+                -23.91431427001953
+            ],
+            "program": 6,
+            "rotation": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": 1.0,
+            "shapeType": 0,
+            "texture": 2
+        },
+        {
+            "bodyType": 2,
+            "collisionDimensions": [
+                2.0,
+                2.0,
+                2.0
+            ],
+            "modelPath": "Resources/Models/SM_Prop_Statue_02.obj",
+            "position": [
+                -0.8900222778320313,
+                37.81447982788086,
+                7.610266208648682
+            ],
+            "program": 6,
+            "rotation": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": 1.0,
+            "shapeType": 0,
+            "texture": 2
+        },
+        {
+            "bodyType": 2,
+            "collisionDimensions": [
+                2.0,
+                2.0,
+                2.0
+            ],
+            "modelPath": "Resources/Models/SM_Prop_Statue_02.obj",
+            "position": [
+                -33.28618621826172,
+                54.73332595825195,
+                2.8444576263427734
+            ],
+            "program": 6,
+            "rotation": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": 1.0,
+            "shapeType": 0,
             "texture": 2
         }
     ]

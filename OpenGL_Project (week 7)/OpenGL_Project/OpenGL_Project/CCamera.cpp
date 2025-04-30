@@ -11,6 +11,7 @@
 // Mail : daniel.west@mds.ac.nz
 
 #include "CCamera.h"
+#include "CEditorMode.h"
 
 CCamera::CCamera()
 {
@@ -54,8 +55,10 @@ void CCamera::Update(int _iWindowSize, GLFWwindow* _Window, glm::vec2 _MousePos,
 	mouseDelta.y = -mouseDelta.y;
 	m_lastMouse = _MousePos;
 
+	CEditorMode& Editor = CEditorMode::GetInstance();
+
 	// only update lookDir if left mouse pressed
-	if (m_bMousePressed)
+	if (m_bMousePressed || !Editor.GetInEditor())
 	{
 		mouseDelta *= _dt;
 		m_yaw += mouseDelta.x * m_mouseSpeed;

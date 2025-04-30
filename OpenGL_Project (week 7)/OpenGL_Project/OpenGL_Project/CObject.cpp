@@ -265,7 +265,10 @@ json CObject::ToJson() const
         {"modelPath", m_Model->GetMeshFilePath()},
         {"program", m_Model->GetProgram() },
         {"texture", m_Model->GetTexture() },
+        // static kinematic dynamic
         {"bodyType", m_RigidBody->getType() },
+        // box sphere capsule
+        {"shapeType", m_ShapeType },
         {"collisionDimensions", {m_CollisionDimensions.x, m_CollisionDimensions.y, m_CollisionDimensions.z}}
     };
 }
@@ -288,10 +291,7 @@ CObject* CObject::FromJson(const json& j, rp3d::PhysicsWorld* _physicsWorld, rp3
     CollisionShapeType shapeType = CollisionShapeType::BOX;
     if (j.contains("shapeType")) 
     {
-        std::string typeStr = j["shapeType"];
-        if (typeStr == "SPHERE") shapeType = CollisionShapeType::SPHERE;
-        else if (typeStr == "CAPSULE") shapeType = CollisionShapeType::CAPSULE;
-        // default is BOX
+        shapeType = j["shapeType"];
     }
 
     // dawg I hope this works
