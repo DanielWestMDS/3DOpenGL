@@ -26,7 +26,7 @@ public:
 
     CModel* GetModel() { return m_Model; };
 
-    void Update(float dt);
+    virtual void Update(float dt);
     void SetPosition(glm::vec3 _position);
     glm::vec3 GetPosition();
 
@@ -45,8 +45,8 @@ public:
     void SetProgram(GLint _Program);
     GLint GetProgram();
 
-    void SetCollisionShape(CollisionShapeType _shapeType, glm::vec3 _dimensions);
-    void RemoveCollision(CollisionShapeType _shapeType);
+    void SetCollisionShape(CollisionShapeType _shapeType);
+    void RemoveCollision();
     rp3d::RigidBody* GetRigidBody() const { return m_RigidBody; };
     rp3d::Collider* GetCollider() const { return m_Collider; };
 
@@ -55,13 +55,16 @@ public:
 
     void SetCollisionDraw(bool _bIsEnabled);
 
+    void SetCollisionDimensions(glm::vec3 _newDimensions);
+    glm::vec3 GetDimensions();
+
     json ToJson() const;
 
     static CObject* FromJson(const json& j,
         rp3d::PhysicsWorld* _physicsWorld,
         rp3d::PhysicsCommon& _physicsCommon);
 private:
-    void CreateCollisionShape(CollisionShapeType shapeType, glm::vec3 dimensions);
+    void CreateCollisionShape(CollisionShapeType shapeType);
 
     CModel* m_Model;
     rp3d::PhysicsWorld* m_PhysicsWorld;
@@ -70,6 +73,7 @@ private:
     rp3d::CollisionShape* m_CollisionShape = nullptr;
     CollisionShapeType m_ShapeType = CollisionShapeType::BOX; // Default to BOX
     rp3d::Collider* m_Collider = nullptr;
+    glm::vec3 m_CollisionDimensions;
 
     int m_ID;
 

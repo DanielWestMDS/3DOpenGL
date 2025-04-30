@@ -44,6 +44,8 @@ public:
 	void Input(GLFWwindow* _Window, float _dt);
 	void PrintCamPos();
 
+	void SetPosition(glm::vec3 _position);
+
 	// look at something
 	void LookAt(glm::vec3 _place);
 

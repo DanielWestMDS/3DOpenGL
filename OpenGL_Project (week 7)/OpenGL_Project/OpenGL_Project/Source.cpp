@@ -958,10 +958,6 @@ void RenderGUI()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	ImGui::Begin("My name is window bkvskfbsbf");
-	ImGui::Text("poop poop popoppopopoopoooop");
-	ImGui::End();
-
 	// custom buttons created inside this function
 	// Begin UI rendering
 	ImGui::SetNextWindowSize(ImVec2(150, 300));
@@ -1090,6 +1086,10 @@ void RenderGUI()
 			float yRot = SelectedObject->GetRotation().y;
 			float zRot = SelectedObject->GetRotation().z;
 
+			float xCollider = SelectedObject->GetDimensions().x;
+			float yCollider = SelectedObject->GetDimensions().y;
+			float zCollider = SelectedObject->GetDimensions().z;
+
 			float fScale = SelectedObject->GetScale();
 
 			bool bGravity = SelectedObject->IsGravityEnabled();
@@ -1104,6 +1104,10 @@ void RenderGUI()
 			ImGui::InputFloat("X Angle: ", &xRot);
 			ImGui::InputFloat("Y Angle: ", &yRot);
 			ImGui::InputFloat("Z Angle: ", &zRot);
+
+			ImGui::InputFloat("X Collider: ", &xCollider);
+			ImGui::InputFloat("Y Collider: ", &yCollider);
+			ImGui::InputFloat("Z Collider: ", &zCollider);
 
 			ImGui::InputFloat("Scale: ", &fScale);
 
@@ -1138,12 +1142,44 @@ void RenderGUI()
 				ImGui::TreePop();
 			}
 
+			// collider shape
+			if (ImGui::TreeNode("ColliderShape"))
+			{
+				static int selectedType = 0; // 0 = Static, 1 = Kinematic, 2 = Dynamic
+
+				const char* bodyTypes[] = { "Box", "Sphere", "Capsule" };
+
+				for (int n = 0; n < 3; n++)
+				{
+					if (ImGui::Selectable(bodyTypes[n], selectedType == n))
+					{
+						selectedType = n;
+
+						switch (selectedType)
+						{
+						case 0:
+							SelectedObject->SetCollisionShape(CObject::CollisionShapeType::BOX);
+							break;
+						case 1:
+							SelectedObject->SetCollisionShape(CObject::CollisionShapeType::SPHERE);
+							break;
+						case 2:
+							SelectedObject->SetCollisionShape(CObject::CollisionShapeType::CAPSULE);
+							break;
+						}
+					}
+				}
+
+				ImGui::TreePop();
+			}
+
 
 			// set values
 			SelectedObject->SetGravityEnabled(bGravity);
 			SelectedObject->SetPosition(glm::vec3(xPos, yPos, zPos));
 			SelectedObject->SetRotation(glm::vec3(xRot, yRot, zRot));
 			SelectedObject->SetScale(fScale);
+			SelectedObject->SetCollisionDimensions(glm::vec3(xCollider, yCollider, zCollider));
 			
 			// destroy button
 			if (ui.CreateButton("Destroy", []() {
@@ -1197,13 +1233,6 @@ void RenderGUI()
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-void UnpackColor(reactphysics3d::uint32 color, float& r, float& g, float& b) 
-{
-	r = ((color >> 16) & 0xFF) / 255.0f; // red channel
-	g = ((color >> 8) & 0xFF) / 255.0f; // green channel
-	b = ((color) & 0xFF) / 255.0f; // blue channel
 }
 
 /// <summary>

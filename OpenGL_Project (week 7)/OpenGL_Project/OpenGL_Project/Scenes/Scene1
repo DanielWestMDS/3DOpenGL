@@ -1,91 +1,17 @@
 {
     "objects": [
         {
+            "bodyType": 2,
+            "collisionDimensions": [
+                20.0,
+                2.0,
+                10.0
+            ],
             "modelPath": "Resources/Models/cube.obj",
             "position": [
-                0.10100746154785156,
-                5.0,
-                23.984630584716797
-            ],
-            "program": 6,
-            "rotation": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "scale": 1.0,
-            "texture": 2
-        },
-        {
-            "modelPath": "Resources/Models/cube.obj",
-            "position": [
-                7.233671188354492,
-                -3.825772285461426,
-                19.834972381591797
-            ],
-            "program": 6,
-            "rotation": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "scale": 1.0,
-            "texture": 2
-        },
-        {
-            "modelPath": "Resources/Models/cube.obj",
-            "position": [
-                -10.994513511657715,
-                -13.641305923461914,
-                23.004737854003906
-            ],
-            "program": 6,
-            "rotation": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "scale": 1.0,
-            "texture": 2
-        },
-        {
-            "modelPath": "Resources/Models/cube.obj",
-            "position": [
-                -5.110152244567871,
-                -11.77071762084961,
-                22.578227996826172
-            ],
-            "program": 6,
-            "rotation": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "scale": 1.0,
-            "texture": 2
-        },
-        {
-            "modelPath": "Resources/Models/cube.obj",
-            "position": [
-                -5.584795951843262,
-                -2.7344837188720703,
-                25.061119079589844
-            ],
-            "program": 6,
-            "rotation": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "scale": 1.0,
-            "texture": 2
-        },
-        {
-            "modelPath": "Resources/Models/cube.obj",
-            "position": [
-                -8.640344619750977,
-                2.8270323276519775,
-                26.248294830322266
+                0.42742156982421875,
+                5.351097583770752,
+                23.86322021484375
             ],
             "program": 6,
             "rotation": [

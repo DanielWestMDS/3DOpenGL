@@ -5,7 +5,7 @@
 CObject::CObject(std::string _filePath, GLint _program, GLint _texture, glm::vec3 _position,
     rp3d::PhysicsWorld* physicsWorld, rp3d::PhysicsCommon& physicsCommon,
     CollisionShapeType shapeType, glm::vec3 shapeDimensions)
-    : m_PhysicsWorld(physicsWorld), m_PhysicsCommon(&physicsCommon)
+    : m_PhysicsWorld(physicsWorld), m_PhysicsCommon(&physicsCommon), m_CollisionDimensions(shapeDimensions)
 {
     // Create the rigid body
     rp3d::Vector3 rpPosition(_position.x, _position.y, _position.z);
@@ -15,7 +15,7 @@ CObject::CObject(std::string _filePath, GLint _program, GLint _texture, glm::vec
     m_Model = new CModel(_filePath, _program, _texture, _position);
 
     // Create collision shape
-    CreateCollisionShape(shapeType, shapeDimensions);
+    CreateCollisionShape(shapeType);
     SetPosition(_position);
     SetGravityEnabled(false);
 }
@@ -72,9 +72,10 @@ void CObject::SetCollisionDraw(bool _bIsEnabled)
     m_RigidBody->setIsDebugEnabled(_bIsEnabled);
 }
 
-void CObject::CreateCollisionShape(CollisionShapeType shapeType, glm::vec3 dimensions)
+void CObject::CreateCollisionShape(CollisionShapeType shapeType)
 {
     if (!m_RigidBody) return;
+    if (GetScale() == 0) return;
 
     // Remove previous collider and shape
     if (m_Collider) 
@@ -85,7 +86,7 @@ void CObject::CreateCollisionShape(CollisionShapeType shapeType, glm::vec3 dimen
 
     if (m_CollisionShape) 
     {
-        RemoveCollision(m_ShapeType);
+        RemoveCollision();
     }
 
     // Create new collision shape
@@ -93,15 +94,17 @@ void CObject::CreateCollisionShape(CollisionShapeType shapeType, glm::vec3 dimen
     {
     case CollisionShapeType::BOX:
         m_CollisionShape = m_PhysicsCommon->createBoxShape(
-            rp3d::Vector3(dimensions.x / 2.0f, dimensions.y / 2.0f, dimensions.z / 2.0f));
+            rp3d::Vector3(m_CollisionDimensions.x / 2.0f * GetScale(),
+                m_CollisionDimensions.y / 2.0f * GetScale(),
+                m_CollisionDimensions.z / 2.0f * GetScale()));
         break;
 
     case CollisionShapeType::SPHERE:
-        m_CollisionShape = m_PhysicsCommon->createSphereShape(dimensions.x);
+        m_CollisionShape = m_PhysicsCommon->createSphereShape(m_CollisionDimensions.x);
         break;
 
     case CollisionShapeType::CAPSULE:
-        m_CollisionShape = m_PhysicsCommon->createCapsuleShape(dimensions.x, dimensions.y);
+        m_CollisionShape = m_PhysicsCommon->createCapsuleShape(m_CollisionDimensions.x, m_CollisionDimensions.y);
         break;
     }
 
@@ -177,6 +180,8 @@ bool CObject::IsGravityEnabled() const
 void CObject::SetScale(float _newScale)
 {
     m_Model->SetScale(_newScale);
+    // Create collision automatically destroys existing collision
+    CreateCollisionShape(m_ShapeType);
 }
 
 float CObject::GetScale()
@@ -204,12 +209,12 @@ GLint CObject::GetProgram()
     return m_Model->GetProgram();
 }
 
-void CObject::SetCollisionShape(CollisionShapeType shapeType, glm::vec3 dimensions)
+void CObject::SetCollisionShape(CollisionShapeType shapeType)
 {
-    CreateCollisionShape(shapeType, dimensions);
+    CreateCollisionShape(shapeType);
 }
 
-void CObject::RemoveCollision(CollisionShapeType _shapeType)
+void CObject::RemoveCollision()
 {
     if (!m_RigidBody || !m_CollisionShape) return;
 
@@ -219,7 +224,7 @@ void CObject::RemoveCollision(CollisionShapeType _shapeType)
         m_Collider = nullptr;
     }
 
-    switch (_shapeType)
+    switch (m_ShapeType)
     {
     case CollisionShapeType::BOX:
         m_PhysicsCommon->destroyBoxShape(static_cast<rp3d::BoxShape*>(m_CollisionShape));
@@ -238,7 +243,16 @@ void CObject::RemoveCollision(CollisionShapeType _shapeType)
     m_CollisionShape = nullptr;
 }
 
+void CObject::SetCollisionDimensions(glm::vec3 _newDimensions)
+{
+    m_CollisionDimensions = _newDimensions;
+    SetCollisionShape(m_ShapeType);
+}
 
+glm::vec3 CObject::GetDimensions()
+{
+    return m_CollisionDimensions;
+}
 
 json CObject::ToJson() const 
 {
@@ -251,7 +265,8 @@ json CObject::ToJson() const
         {"modelPath", m_Model->GetMeshFilePath()},
         {"program", m_Model->GetProgram() },
         {"texture", m_Model->GetTexture() },
-        {"bodyType", m_RigidBody->getType() }
+        {"bodyType", m_RigidBody->getType() },
+        {"collisionDimensions", {m_CollisionDimensions.x, m_CollisionDimensions.y, m_CollisionDimensions.z}}
     };
 }
 
@@ -262,11 +277,11 @@ CObject* CObject::FromJson(const json& j, rp3d::PhysicsWorld* _physicsWorld, rp3
 
     // collision dimensions
     glm::vec3 shapeDimensions(1.0f); // default
-    if (j.contains("shapeDimensions")) 
+    if (j.contains("collisionDimensions")) 
     {
-        shapeDimensions = glm::vec3(j["shapeDimensions"][0],
-            j["shapeDimensions"][1],
-            j["shapeDimensions"][2]);
+        shapeDimensions = glm::vec3(j["collisionDimensions"][0],
+            j["collisionDimensions"][1],
+            j["collisionDimensions"][2]);
     }
 
     // collision shape
@@ -294,6 +309,7 @@ CObject* CObject::FromJson(const json& j, rp3d::PhysicsWorld* _physicsWorld, rp3
      LoadedObject->SetRotation(glm::vec3(j["rotation"][0], j["rotation"][1], j["rotation"][2]));
      LoadedObject->SetScale(fScale);
      LoadedObject->SetPhysicsBodyType(j["bodyType"]);
+     LoadedObject->SetCollisionDimensions(shapeDimensions);
 
      return LoadedObject;
 }

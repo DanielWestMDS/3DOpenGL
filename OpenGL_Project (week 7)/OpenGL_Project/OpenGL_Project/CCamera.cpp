@@ -144,6 +144,11 @@ void CCamera::PrintCamPos()
 	std::cout << "X: " << m_position.x << "Y: " << m_position.y << "Z: " << m_position.z << std::endl;
 }
 
+void CCamera::SetPosition(glm::vec3 _position)
+{
+	m_position = _position;
+}
+
 void CCamera::LookAt(glm::vec3 _place)
 {
 	m_lookDir = glm::normalize(_place - m_position);
