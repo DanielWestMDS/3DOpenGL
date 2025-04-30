@@ -35,6 +35,9 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+// need c++ 17 or newer for this
+#include <filesystem>
+
 //#include <reactphysics3d/reactphysics3d.h>
 using namespace reactphysics3d;
 
@@ -233,6 +236,31 @@ int g_iPhysicsSteps = 20;
 // create the physics world
 PhysicsWorld* g_physicsWorld = g_physicsCommon.createPhysicsWorld();
 
+std::vector<std::string> objFiles;
+int g_iSelectedObjIndex = -1;
+
+std::string g_CurrentSelectedObjPath;
+
+namespace fs = std::filesystem;
+
+/// <summary>
+/// Load files to be displayed in editor
+/// </summary>
+/// <param name="folderPath"></param>
+void LoadObjFiles(const std::string& folderPath) 
+{
+	objFiles.clear();
+	for (const auto& entry : fs::directory_iterator(folderPath))
+	{
+		if (entry.path().extension() == ".obj") 
+		{
+			objFiles.push_back(entry.path().filename().string());
+
+			std::cout << folderPath + entry.path().filename().string() << std::endl;
+		}
+	}
+}
+
 /// <summary>
 /// Creates a model matrix for objects in the scene
 /// </summary>
@@ -253,13 +281,13 @@ glm::mat4 MakeModelMatrix(glm::vec3 _position, float _scale, float _rotationAngl
 	return OutputMat;
 }
 
-void CreateActor()
+void CreateActor(std::string _model)
 {
 	glm::vec3 newActorPosition;
 	// set new position to be in front of camera
 	newActorPosition = Camera->GetPosition() + (Camera->GetForward() * -50.f);
 
-	CObject* NewObject = new CObject("Resources/Models/SM_Prop_Statue_02.obj", Program_Lighting, Texture_Quag, newActorPosition, g_physicsWorld, g_physicsCommon);
+	CObject* NewObject = new CObject(_model, Program_Lighting, Texture_Quag, newActorPosition, g_physicsWorld, g_physicsCommon);
 
 	// add the object to the scene
 	g_CurrentScene->AddObject(NewObject);
@@ -370,7 +398,7 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 	// create actor
 	if (_Key == GLFW_KEY_O && _Action == GLFW_PRESS)
 	{
-		CreateActor();
+		CreateActor("Resources/Models/SM_Prop_Statue_02.obj");
 	}
 
 	// testing
@@ -536,6 +564,9 @@ GLuint LoadTexture(std::string _filepath)
 /// </summary>
 void InitialSetup()
 {
+	// load the obj files
+	LoadObjFiles("Resources/Models/");
+
 	// program for 3d model
 	Program_3DModel = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
 		"Resources/Shaders/3DModel.frag");
@@ -1025,12 +1056,28 @@ void RenderGUI()
 		SelectedObject = nullptr;
 	}
 
+	// add cube
+	if (ui.CreateButton("Add Object", []() {
+		std::cout << "Add Cube button clicked" << std::endl;
+		}, ImVec2(120, 40),
+			ImVec4(0.2f, 0.5f, 0.8f, 1.0f),  // color
+			ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // hover color)
+	{
+		if (g_iSelectedObjIndex < objFiles.size() && g_iSelectedObjIndex != -1)
+		{
+			CreateActor("Resources/Models/" + objFiles[g_iSelectedObjIndex]);
+		}
+		else
+		{
+			CreateActor("Resources/Models/cube.obj");
+		}
+	}
 
 	ImGui::End();
 
 	// object data
 	ImGui::SetNextWindowSize(ImVec2(500, 500));
-	if (ImGui::Begin("Selected Object", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
+	if (ImGui::Begin("Selected Object", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse) && Editor.GetInEditor())
 	{
 		if (SelectedObject != nullptr)
 		{
@@ -1047,7 +1094,9 @@ void RenderGUI()
 
 			bool bGravity = SelectedObject->IsGravityEnabled();
 
+			// user input
 			ImGui::Checkbox("HasGravity", &bGravity);
+
 			ImGui::InputFloat("X Pos: ", &xPos);
 			ImGui::InputFloat("Y Pos: ", &yPos);
 			ImGui::InputFloat("Z Pos: ", &zPos);
@@ -1058,11 +1107,45 @@ void RenderGUI()
 
 			ImGui::InputFloat("Scale: ", &fScale);
 
+			// physics type
+			if (ImGui::TreeNode("Physics Type"))
+			{
+				static int selectedType = 0; // 0 = Static, 1 = Kinematic, 2 = Dynamic
+
+				const char* bodyTypes[] = { "Static", "Kinematic", "Dynamic" };
+
+				for (int n = 0; n < 3; n++)
+				{
+					if (ImGui::Selectable(bodyTypes[n], selectedType == n))
+					{
+						selectedType = n;
+
+						switch (selectedType)
+						{
+						case 0:
+							SelectedObject->SetPhysicsBodyType(reactphysics3d::BodyType::STATIC);
+							break;
+						case 1:
+							SelectedObject->SetPhysicsBodyType(reactphysics3d::BodyType::KINEMATIC);
+							break;
+						case 2:
+							SelectedObject->SetPhysicsBodyType(reactphysics3d::BodyType::DYNAMIC);
+							break;
+						}
+					}
+				}
+
+				ImGui::TreePop();
+			}
+
+
+			// set values
 			SelectedObject->SetGravityEnabled(bGravity);
 			SelectedObject->SetPosition(glm::vec3(xPos, yPos, zPos));
 			SelectedObject->SetRotation(glm::vec3(xRot, yRot, zRot));
 			SelectedObject->SetScale(fScale);
 			
+			// destroy button
 			if (ui.CreateButton("Destroy", []() {
 				std::cout << "Destroy button clicked" << std::endl;
 				}, ImVec2(120, 40),
@@ -1077,9 +1160,38 @@ void RenderGUI()
 				// set the current object to null
 				SelectedObject = nullptr;
 			}
+
+			// duplicate button
+			if (ui.CreateButton("Duplicate", []() {
+				std::cout << "Duplicate button clicked" << std::endl;
+				}, ImVec2(120, 40),
+					ImVec4(0.2f, 0.5f, 0.8f, 1.0f),  // color
+					ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // hover color)
+			{
+				// create a duplicate using Json data
+				if (SelectedObject)
+				{
+					CObject* NewObject = CObject::FromJson(SelectedObject->ToJson(), g_physicsWorld, g_physicsCommon);
+					g_CurrentScene->AddObject(NewObject);
+				}
+			}
 		}
 	}	
 	
+	ImGui::End();
+
+	// file selector
+	ImGui::Begin("OBJ File Selector");
+
+	for (int i = 0; i < objFiles.size(); ++i)
+	{
+		bool isSelected = (i == g_iSelectedObjIndex);
+		if (ImGui::Selectable(objFiles[i].c_str(), isSelected))
+		{
+			g_iSelectedObjIndex = i;
+		}
+	}
+
 	ImGui::End();
 
 

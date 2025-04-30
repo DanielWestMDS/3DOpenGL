@@ -117,6 +117,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)\Dependencies</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,6 +157,7 @@
     <ClCompile Include="CModel.cpp" />
     <ClCompile Include="CParticleSystem.cpp" />
     <ClCompile Include="CFrameBufferQuad.cpp" />
+    <ClCompile Include="CPlayer.cpp" />
     <ClCompile Include="CScene.cpp" />
     <ClCompile Include="CShadowMap.cpp" />
     <ClCompile Include="CTessellationMesh.cpp" />
@@ -182,6 +184,7 @@
     <ClInclude Include="CModel.h" />
     <ClInclude Include="CParticleSystem.h" />
     <ClInclude Include="CFrameBufferQuad.h" />
+    <ClInclude Include="CPlayer.h" />
     <ClInclude Include="CScene.h" />
     <ClInclude Include="CShadowMap.h" />
     <ClInclude Include="CTessellationMesh.h" />

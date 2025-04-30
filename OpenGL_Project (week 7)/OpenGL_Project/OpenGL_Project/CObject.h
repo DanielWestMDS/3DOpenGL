@@ -21,7 +21,7 @@ public:
     CObject(std::string FilePath, GLint _program, GLint _texture, glm::vec3 position,
         rp3d::PhysicsWorld* physicsWorld, rp3d::PhysicsCommon& physicsCommon,
         CollisionShapeType shapeType = CollisionShapeType::BOX,
-        glm::vec3 shapeDimensions = glm::vec3(1.0f));
+        glm::vec3 shapeDimensions = glm::vec3(2.f));
     ~CObject();
 
     CModel* GetModel() { return m_Model; };
@@ -50,13 +50,12 @@ public:
     rp3d::RigidBody* GetRigidBody() const { return m_RigidBody; };
     rp3d::Collider* GetCollider() const { return m_Collider; };
 
+    void SetPhysicsBodyType(rp3d::BodyType _bodyType);
+    rp3d::BodyType GetPhysicsBodyType();
+
     void SetCollisionDraw(bool _bIsEnabled);
 
-    int GetID();
-    void SetID(int _ID);
-
     json ToJson() const;
-
 
     static CObject* FromJson(const json& j,
         rp3d::PhysicsWorld* _physicsWorld,
@@ -69,6 +68,7 @@ private:
     rp3d::PhysicsCommon* m_PhysicsCommon;
     rp3d::RigidBody* m_RigidBody = nullptr;
     rp3d::CollisionShape* m_CollisionShape = nullptr;
+    CollisionShapeType m_ShapeType = CollisionShapeType::BOX; // Default to BOX
     rp3d::Collider* m_Collider = nullptr;
 
     int m_ID;

@@ -138,6 +138,7 @@ void CScene::LoadSceneFromJson(const std::string& filename,
 	rp3d::PhysicsWorld* physicsWorld,
 	rp3d::PhysicsCommon& physicsCommon) 
 {
+	// could prolly multithread this
 	std::ifstream file(filename);
 	if (!file.is_open())
 	{
