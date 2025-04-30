@@ -2,19 +2,21 @@
 #include "CModel.h"
 #include <iostream>
 
-CObject::CObject(CModel* model, glm::vec3 position,
+CObject::CObject(std::string _filePath, GLint _program, GLint _texture, glm::vec3 _position,
     rp3d::PhysicsWorld* physicsWorld, rp3d::PhysicsCommon& physicsCommon,
     CollisionShapeType shapeType, glm::vec3 shapeDimensions)
-    : m_Model(model), m_PhysicsWorld(physicsWorld), m_PhysicsCommon(&physicsCommon)
+    : m_PhysicsWorld(physicsWorld), m_PhysicsCommon(&physicsCommon)
 {
     // Create the rigid body
-    rp3d::Vector3 rpPosition(position.x, position.y, position.z);
+    rp3d::Vector3 rpPosition(_position.x, _position.y, _position.z);
     rp3d::Transform transform(rpPosition, rp3d::Quaternion::identity());
     m_RigidBody = physicsWorld->createRigidBody(transform);
 
+    m_Model = new CModel(_filePath, _program, _texture, _position);
+
     // Create collision shape
     CreateCollisionShape(shapeType, shapeDimensions);
-    SetPosition(position);
+    SetPosition(_position);
     SetGravityEnabled(false);
 }
 
@@ -50,6 +52,7 @@ void CObject::SetID(int _ID)
 {
     m_ID = _ID;
 }
+
 
 void CObject::CreateCollisionShape(CollisionShapeType shapeType, glm::vec3 dimensions)
 {
@@ -123,6 +126,16 @@ glm::vec3 CObject::GetPosition()
     return m_Model->GetPosition();
 }
 
+void CObject::SetRotation(glm::vec3 _rotationAxis)
+{
+    m_Model->SetRotation(_rotationAxis, 360.0f);
+}
+
+glm::vec3 CObject::GetRotation()
+{
+    return m_Model->GetRotation();
+}
+
 void CObject::SetGravityEnabled(bool enabled)
 {
     if (m_RigidBody) 
@@ -138,6 +151,36 @@ bool CObject::IsGravityEnabled() const
         return m_RigidBody->isGravityEnabled();
     }
     return false;
+}
+
+void CObject::SetScale(float _newScale)
+{
+    m_Model->SetScale(_newScale);
+}
+
+float CObject::GetScale()
+{
+    return m_Model->GetScale();
+}
+
+void CObject::SetMeshFilePath(std::string _FilePath)
+{
+    m_Model->SetMeshFilePath(_FilePath);
+}
+
+std::string CObject::GetMeshFilePath()
+{
+    return m_Model->GetMeshFilePath();
+}
+
+void CObject::SetProgram(GLint _Program)
+{
+    m_Model->SetProgram(_Program);
+}
+
+GLint CObject::GetProgram()
+{
+    return m_Model->GetProgram();
 }
 
 void CObject::SetCollisionShape(CollisionShapeType shapeType, glm::vec3 dimensions)
@@ -162,4 +205,60 @@ void CObject::RemoveCollision(CollisionShapeType _shapeType)
     //    m_CollisionShape = m_PhysicsCommon->createCapsuleShape(
     //        dimensions.x, dimensions.y);
     //    break;
+}
+
+json CObject::ToJson() const 
+{
+    // add object data to a json file
+    return 
+    {
+        {"position", {m_Model->GetPosition().x, m_Model->GetPosition().y, m_Model->GetPosition().z}},
+        {"rotation", {m_Model->GetRotation().x, m_Model->GetRotation().y, m_Model->GetRotation().z}},
+        {"scale", m_Model->GetScale()},
+        {"modelPath", m_Model->GetMeshFilePath()},
+        {"program", m_Model->GetProgram() },
+        {"texture", m_Model->GetTexture() }
+    };
+}
+
+CObject* CObject::FromJson(const json& j, rp3d::PhysicsWorld* _physicsWorld, rp3d::PhysicsCommon& _physicsCommon)
+{
+    std::string filePath = j["modelPath"];
+    glm::vec3 position(j["position"][0], j["position"][1], j["position"][2]);
+
+    // collision dimensions
+    glm::vec3 shapeDimensions(1.0f); // default
+    if (j.contains("shapeDimensions")) 
+    {
+        shapeDimensions = glm::vec3(j["shapeDimensions"][0],
+            j["shapeDimensions"][1],
+            j["shapeDimensions"][2]);
+    }
+
+    // collision shape
+    CollisionShapeType shapeType = CollisionShapeType::BOX;
+    if (j.contains("shapeType")) 
+    {
+        std::string typeStr = j["shapeType"];
+        if (typeStr == "SPHERE") shapeType = CollisionShapeType::SPHERE;
+        else if (typeStr == "CAPSULE") shapeType = CollisionShapeType::CAPSULE;
+        // default is BOX
+    }
+
+    // dawg I hope this works
+    GLint program = (GLint)j["program"];
+
+    GLint texture = (GLint)j["texture"];
+
+    float fScale = j["scale"];
+
+    // create the object with parameters from json
+     CObject* LoadedObject = new CObject(filePath, program, texture, position,
+        _physicsWorld, _physicsCommon, shapeType, shapeDimensions);
+
+     // update rotation and scale
+     LoadedObject->SetRotation(glm::vec3(j["rotation"][0], j["rotation"][1], j["rotation"][2]));
+     LoadedObject->SetScale(fScale);
+
+     return LoadedObject;
 }

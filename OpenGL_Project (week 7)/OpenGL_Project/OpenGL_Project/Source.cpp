@@ -259,9 +259,7 @@ void CreateActor()
 	// set new position to be in front of camera
 	newActorPosition = Camera->GetPosition() + (Camera->GetForward() * -50.f);
 
-	CModel* NewModel = new CModel("Resources/Models/SM_Prop_Statue_02.obj", Program_Lighting, Texture_Quag, newActorPosition, 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	CObject* NewObject = new CObject(NewModel, newActorPosition, g_physicsWorld, g_physicsCommon);
+	CObject* NewObject = new CObject("Resources/Models/SM_Prop_Statue_02.obj", Program_Lighting, Texture_Quag, newActorPosition, g_physicsWorld, g_physicsCommon);
 
 	// add the object to the scene
 	g_CurrentScene->AddObject(NewObject);
@@ -935,6 +933,7 @@ void RenderGUI()
 
 	// custom buttons created inside this function
 	// Begin UI rendering
+	ImGui::SetNextWindowSize(ImVec2(150, 300));
 	ImGui::Begin("Buttons");
 	
 	CEditorMode& Editor = CEditorMode::GetInstance();
@@ -999,9 +998,37 @@ void RenderGUI()
 		}
 	}
 
+	// Save scene button
+	if (ui.CreateButton("Save Scene", []() {
+		std::cout << "Save button clicked" << std::endl;
+		}, ImVec2(120, 40),
+			ImVec4(0.1f, 0.8f, 0.1f, 1.0f),  // Normal color
+			ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // Hover color)
+	{
+
+		g_CurrentScene->SaveSceneToJson("Scenes/Scene1");
+	}
+
+	// Load scene button
+	if (ui.CreateButton("Load Scene", []() {
+		std::cout << "Save button clicked" << std::endl;
+		}, ImVec2(120, 40),
+			ImVec4(0.1f, 0.8f, 0.1f, 1.0f),  // Normal color
+			ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // Hover color)
+	{
+
+		g_CurrentScene->LoadSceneFromJson("Scenes/Scene1", g_physicsWorld, g_physicsCommon);
+
+		// everything in scene is reloaded so delete selected object
+		delete SelectedObject;
+		// set the current object to null
+		SelectedObject = nullptr;
+	}
+
 
 	ImGui::End();
 
+	// object data
 	ImGui::SetNextWindowSize(ImVec2(500, 500));
 	if (ImGui::Begin("Selected Object", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
 	{
@@ -1012,16 +1039,30 @@ void RenderGUI()
 			float yPos = SelectedObject->GetPosition().y;
 			float zPos = SelectedObject->GetPosition().z;
 
+			float xRot = SelectedObject->GetRotation().x;
+			float yRot = SelectedObject->GetRotation().y;
+			float zRot = SelectedObject->GetRotation().z;
+
+			float fScale = SelectedObject->GetScale();
+
 			bool bGravity = SelectedObject->IsGravityEnabled();
 
 			ImGui::Checkbox("HasGravity", &bGravity);
-			ImGui::InputFloat("X: ", &xPos);
-			ImGui::InputFloat("Y: ", &yPos);
-			ImGui::InputFloat("Z: ", &zPos);
+			ImGui::InputFloat("X Pos: ", &xPos);
+			ImGui::InputFloat("Y Pos: ", &yPos);
+			ImGui::InputFloat("Z Pos: ", &zPos);
+
+			ImGui::InputFloat("X Angle: ", &xRot);
+			ImGui::InputFloat("Y Angle: ", &yRot);
+			ImGui::InputFloat("Z Angle: ", &zRot);
+
+			ImGui::InputFloat("Scale: ", &fScale);
 
 			SelectedObject->SetGravityEnabled(bGravity);
 			SelectedObject->SetPosition(glm::vec3(xPos, yPos, zPos));
-
+			SelectedObject->SetRotation(glm::vec3(xRot, yRot, zRot));
+			SelectedObject->SetScale(fScale);
+			
 			if (ui.CreateButton("Destroy", []() {
 				std::cout << "Destroy button clicked" << std::endl;
 				}, ImVec2(120, 40),
@@ -1102,7 +1143,7 @@ void Render()
 	}
 
 	// objects in the scene
-	//g_CurrentScene->Render();
+	g_CurrentScene->Render();
 
 
 	// unbind

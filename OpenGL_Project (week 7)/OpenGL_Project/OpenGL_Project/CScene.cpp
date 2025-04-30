@@ -111,3 +111,51 @@ void CScene::LoadLevel()
 {
 	//TODO: reset everything to original position and 0 momentum
 }
+
+void CScene::SaveSceneToJson(const std::string& _FileName) 
+{
+	json sceneJson;
+
+	for (const auto& obj : m_Objects)
+	{
+		sceneJson["objects"].push_back(obj->ToJson());
+	}
+
+	std::ofstream file(_FileName);
+	if (file.is_open()) 
+	{
+		// 4 space indentation
+		file << sceneJson.dump(4); 
+		file.close();
+	}
+	else 
+	{
+		std::cerr << "Failed to open " << _FileName << " for writing!" << std::endl;
+	}
+}
+
+void CScene::LoadSceneFromJson(const std::string& filename,
+	rp3d::PhysicsWorld* physicsWorld,
+	rp3d::PhysicsCommon& physicsCommon) 
+{
+	std::ifstream file(filename);
+	if (!file.is_open())
+	{
+		std::cerr << "Failed to open scene file: " << filename << std::endl;
+		return;
+	}
+
+	json sceneJson;
+	file >> sceneJson;
+	file.close();
+
+	m_Objects.clear();
+
+	for (const auto& objJson : sceneJson["objects"])
+	{
+		CObject* obj = CObject::FromJson(objJson, physicsWorld, physicsCommon);
+		m_Objects.push_back(obj);
+	}
+}
+
+

@@ -13,6 +13,8 @@
 #pragma once
 
 #include <vector>
+#include "reactphysics3d/reactphysics3d.h"
+
 #include "CCamera.h"
 
 class CScene
@@ -61,6 +63,11 @@ public:
 	void MoveObjects();
 
 	void LoadLevel();
+
+	void SaveSceneToJson(const std::string& _FileName);
+
+	void LoadSceneFromJson(const std::string& filename, rp3d::PhysicsWorld* physicsWorld, rp3d::PhysicsCommon& physicsCommon);
+
 
 private:
 	std::vector<CObject*> m_Objects = {};

@@ -5,7 +5,7 @@
 
 
 
-CModel::CModel(std::string FilePath, GLint _program, GLint _texture, glm::vec3 _position, float _scale, float _rotationAngle, glm::vec3 _rotationMat)
+CModel::CModel(std::string FilePath, GLint _program, GLint _texture, glm::vec3 _position)
 {
     std::vector<VertexStandard> Vertices;
     tinyobj::ObjReader Reader;
@@ -106,12 +106,13 @@ CModel::CModel(std::string FilePath, GLint _program, GLint _texture, glm::vec3 _
     // set values
     m_LocalAABB = ComputeLocalAABB(VertPositions);
 
+    m_sFilePath = FilePath;
     m_program = _program;
     m_texture = _texture;
     m_Position = _position;
-    m_fScale = _scale;
-    m_fRotationAngle = _rotationAngle;
-    m_RotationAxis = _rotationMat;
+    m_fScale = 1.0f;
+    m_fRotationAngle = 1.0f;
+    m_RotationAxis = glm::vec3(1.0f, 1.0f, 1.0f);
     SetModelMat(MakeModelMatrix(m_Position, m_fScale, m_fRotationAngle, m_RotationAxis));;
     m_fShininess = 0.5f;
 }
@@ -217,6 +218,11 @@ void CModel::RenderGeometryInstanced(GLint _program, GLint _texture, std::vector
     glBindVertexArray(0);
 }
 
+void CModel::SetMeshFilePath(std::string _path)
+{
+    m_sFilePath = _path;
+}
+
 void CModel::SetPosition(glm::vec3 _newPosition)
 {
     m_Position = _newPosition;
@@ -233,9 +239,44 @@ void CModel::SetScale(float _newScale)
     m_fScale = _newScale;
 }
 
+void CModel::SetProgram(GLint _program)
+{
+    m_program = _program;
+}
+
+void CModel::SetTexture(GLint _texture)
+{
+    m_texture = _texture;
+}
+
 glm::vec3 CModel::GetPosition()
 {
     return m_Position;
+}
+
+glm::vec3 CModel::GetRotation()
+{
+    return m_RotationAxis;
+}
+
+std::string CModel::GetMeshFilePath()
+{
+    return m_sFilePath;
+}
+
+float CModel::GetScale()
+{
+    return m_fScale;
+}
+
+GLint CModel::GetProgram()
+{
+    return m_program;
+}
+
+GLint CModel::GetTexture()
+{
+    return m_texture;
 }
 
 AxisAlignedBoundingBox CModel::ComputeLocalAABB(const std::vector<glm::vec3>& vertices)

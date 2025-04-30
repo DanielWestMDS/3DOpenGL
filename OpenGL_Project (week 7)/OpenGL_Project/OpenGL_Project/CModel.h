@@ -56,7 +56,7 @@ public:
 	/// <param name="_program"></param>
 	/// <param name="_texture"></param>
 	/// <param name="_matrix"></param>
-	CModel(std::string FilePath, GLint _program, GLint _texture, glm::vec3 _position, float _scale, float _rotationAngle, glm::vec3 _rotationMat);
+	CModel(std::string FilePath, GLint _program, GLint _texture, glm::vec3 _position);
 
 	/// <summary>
 	/// destructor
@@ -117,7 +117,10 @@ public:
 	{
 		// calculate model matrix
 		glm::mat4 TranslationMat = glm::translate(glm::mat4(1.0f), _position);
-		glm::mat4 RotationMat = glm::rotate(glm::mat4(1.0f), glm::radians(_rotationAngle), _rotationMat);
+		glm::mat4 RotationMat = glm::mat4(1.0f);
+		RotationMat = glm::rotate(RotationMat, glm::radians(_rotationMat.z), glm::vec3(0.0f, 0.0f, 1.0f)); // Roll
+		RotationMat = glm::rotate(RotationMat, glm::radians(_rotationMat.y), glm::vec3(0.0f, 1.0f, 0.0f)); // Yaw
+		RotationMat = glm::rotate(RotationMat, glm::radians(_rotationMat.x), glm::vec3(1.0f, 0.0f, 0.0f)); // Pitch
 		glm::mat4 ScaleMat = glm::scale(glm::mat4(1.0f), glm::vec3(_scale, _scale, _scale));
 		glm::mat4 OutputMat = TranslationMat * RotationMat * ScaleMat;
 
@@ -131,13 +134,29 @@ public:
 	/// <param name="_newMatrix"></param>
 	void SetModelMat(glm::mat4 _newMatrix) { m_modelMat = _newMatrix; };
 
+	void SetMeshFilePath(std::string _path);
+
 	void SetPosition(glm::vec3 _newPosition);
 
 	void SetRotation(glm::vec3 _axis, float _amount);
 
 	void SetScale(float _newScale);
 
+	void SetProgram(GLint _program);
+
+	void SetTexture(GLint _texture);
+
 	glm::vec3 GetPosition();
+
+	glm::vec3 GetRotation();
+
+	std::string GetMeshFilePath();
+
+	float GetScale();
+
+	GLint GetProgram();
+
+	GLint GetTexture();
 
 	AxisAlignedBoundingBox ComputeLocalAABB(const std::vector<glm::vec3>& vertices);
 
@@ -150,7 +169,9 @@ protected:
 	int DrawType;
 	int m_CountInstanced;
 
-	float m_fScale;
+	std::string m_sFilePath;
+
+	float m_fScale = 1.0f;
 	glm::vec3 m_Position;
 	float m_fRotationAngle = 0.0f;
 	glm::vec3 m_RotationAxis = glm::vec3(0.0f);

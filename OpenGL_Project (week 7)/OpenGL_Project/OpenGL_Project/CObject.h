@@ -3,6 +3,9 @@
 #include <glm/glm.hpp>
 #include "reactphysics3d/reactphysics3d.h"
 #include "CModel.h"
+#include "json.hpp"
+
+using json = nlohmann::json;
 
 class CModel;
 
@@ -15,7 +18,7 @@ public:
         CAPSULE
     };
 
-    CObject(CModel* model, glm::vec3 position,
+    CObject(std::string FilePath, GLint _program, GLint _texture, glm::vec3 position,
         rp3d::PhysicsWorld* physicsWorld, rp3d::PhysicsCommon& physicsCommon,
         CollisionShapeType shapeType = CollisionShapeType::BOX,
         glm::vec3 shapeDimensions = glm::vec3(1.0f));
@@ -26,8 +29,21 @@ public:
     void Update(float dt);
     void SetPosition(glm::vec3 _position);
     glm::vec3 GetPosition();
+
+    void SetRotation(glm::vec3 _rotationAxis);
+    glm::vec3 GetRotation();
+
     void SetGravityEnabled(bool _enabled);
     bool IsGravityEnabled() const;
+
+    void SetScale(float _newScale);
+    float GetScale();
+
+    void SetMeshFilePath(std::string _FilePath);
+    std::string GetMeshFilePath();
+
+    void SetProgram(GLint _Program);
+    GLint GetProgram();
 
     void SetCollisionShape(CollisionShapeType _shapeType, glm::vec3 _dimensions);
     void RemoveCollision(CollisionShapeType _shapeType);
@@ -39,6 +55,12 @@ public:
     int GetID();
     void SetID(int _ID);
 
+    json ToJson() const;
+
+
+    static CObject* FromJson(const json& j,
+        rp3d::PhysicsWorld* _physicsWorld,
+        rp3d::PhysicsCommon& _physicsCommon);
 private:
     void CreateCollisionShape(CollisionShapeType shapeType, glm::vec3 dimensions);
 
