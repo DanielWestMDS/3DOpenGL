@@ -43,3 +43,13 @@ void CEditorMode::SetPlayer(CPlayer* _player)
 {
 	m_Player = _player;
 }
+
+bool CEditorMode::IsGameWon()
+{
+	return m_bGameWon;
+}
+
+void CEditorMode::SetGameWon(bool _isWon)
+{
+	m_bGameWon = _isWon;
+}

@@ -65,6 +65,7 @@ CPlayer* CPlayer::FromJson(const json& j, rp3d::PhysicsWorld* _physicsWorld, rp3
 	LoadedPlayer->SetScale(fScale);
 	LoadedPlayer->SetPhysicsBodyType(j["bodyType"]);
 	LoadedPlayer->SetCollisionDimensions(shapeDimensions);
+	LoadedPlayer->SetGravityEnabled(j["gravity"]);
 
 	return LoadedPlayer;
 }

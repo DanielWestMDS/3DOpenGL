@@ -209,6 +209,8 @@ std::vector<std::string> sFaces = {
 // physics 
 PhysicsCommon g_physicsCommon;
 
+CContactListener* g_ContactListener = new CContactListener();
+
 int g_iPhysicsSteps = 20;
 
 // create the physics world
@@ -772,8 +774,7 @@ void InitialSetup()
 
 	// physics 
 	g_physicsWorld->setGravity(Vector3(0.0f, -5.0f, 0.0f));
-	//CContactListener listener;
-	//g_physicsWorld->setEventListener(&listener);
+	g_physicsWorld->setEventListener(g_ContactListener);
 
 	// set background colour															
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -848,7 +849,7 @@ void Update()
 	// update physics
 
 	// play mode
-	if (!Editor.GetInEditor())
+	if (!Editor.GetInEditor() && !Editor.IsGameWon())
 	{
 		g_physicsWorld->update(deltaTime);
 	}
@@ -885,12 +886,53 @@ void RenderGUI()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
+	CEditorMode& Editor = CEditorMode::GetInstance();
+
+	// if in play mode, do not render gui
+	if (!Editor.GetInEditor())
+	{
+		// if game is won, allow player to exit or replay
+		if (Editor.IsGameWon())
+		{
+			ImGui::Begin("You Won");
+
+			// show cursor again
+			glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+			// Play Button
+			if (ui.CreateButton("Play Again", []() {
+				std::cout << "Play button clicked" << std::endl;
+				}, ImVec2(120, 40),
+					ImVec4(0.1f, 0.8f, 0.1f, 1.0f),  // Normal color
+					ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // Hover color)
+			{
+				//Editor.SetInEditor(true);
+				Editor.SetGameWon(false);
+				g_CurrentScene->LoadSceneFromJson("Scenes/" + g_SceneFiles[g_iSelecetedSceneIndex], g_physicsWorld, g_physicsCommon);
+			}
+
+			if (ui.CreateButton("Quit", []() {
+				std::cout << "Play button clicked" << std::endl;
+				}, ImVec2(120, 40),
+					ImVec4(0.1f, 0.8f, 0.1f, 1.0f),  // Normal color
+					ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // Hover color)
+			{
+				//TODO: add quit code here
+			}
+
+			ImGui::End();
+		}
+
+		// no gui in play mode
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		return;
+	}
+
 	// custom buttons created inside this function
 	// Begin UI rendering
 	ImGui::SetNextWindowSize(ImVec2(150, 300));
 	ImGui::Begin("Buttons");
-	
-	CEditorMode& Editor = CEditorMode::GetInstance();
 
 	if (Editor.GetInEditor())
 	{
@@ -908,15 +950,24 @@ void RenderGUI()
 	}
 	else
 	{
-		// Play Button
+		// Stop Button
 		if (ui.CreateButton("Stop", []() {
 			std::cout << "Stop button clicked" << std::endl;
 			}, ImVec2(120, 40),
 				ImVec4(0.8f, 0.1f, 0.1f, 1.0f),  // Normal color
 				ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // Hover color)
 		{
-
 			Editor.SetInEditor(true);
+
+			// if no scene selected, just save scene 1
+			if (g_iSelecetedSceneIndex == -1)
+			{
+				g_CurrentScene->SaveSceneToJson("Scenes/Scene1");
+			}
+			else
+			{
+				g_CurrentScene->SaveSceneToJson("Scenes/" + g_SceneFiles[g_iSelecetedSceneIndex]);
+			}
 		}
 	}
 

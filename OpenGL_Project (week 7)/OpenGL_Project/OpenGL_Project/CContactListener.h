@@ -3,7 +3,6 @@
 
 class CObject;
 
-// Add this to your project (could be in CObject.h or separate file)
 class CContactListener : public rp3d::EventListener 
 {
 public:
@@ -11,6 +10,8 @@ public:
     //void unregisterObject(rp3d::CollisionBody* body);
 
     virtual void onContact(const CollisionCallback::CallbackData& callbackData) override;
+
+    virtual void onTrigger(const reactphysics3d::OverlapCallback::CallbackData& _callbackData) override;
 
 private:
 };

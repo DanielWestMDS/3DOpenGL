@@ -31,6 +31,10 @@ public:
 
 	void SetPlayer(CPlayer* _player);
 
+	bool IsGameWon();
+
+	void SetGameWon(bool _isWon);
+
 	// TODO: when in editor mode be able to save a scene to a text file and load a scene
 
 
@@ -46,5 +50,7 @@ private:
 	CCamera* m_Camera = nullptr;
 
 	CPlayer* m_Player = nullptr;
+
+	bool m_bGameWon = false;
 };
 

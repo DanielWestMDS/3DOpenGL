@@ -1,5 +1,9 @@
 #include "CContactListener.h"
 
+#include "CEditorMode.h"
+
+#include <iostream>
+
 void CContactListener::onContact(const CollisionCallback::CallbackData& callbackData)
 {
     // For each contact pair
@@ -19,4 +23,12 @@ void CContactListener::onContact(const CollisionCallback::CallbackData& callback
             rp3d::Vector3 worldPoint = contactPair.getCollider1()->getLocalToWorldTransform() * contactPoint.getLocalPointOnCollider1();
         }
     }
+}
+
+void CContactListener::onTrigger(const reactphysics3d::OverlapCallback::CallbackData& callbackData)
+{
+    CEditorMode& Editor = CEditorMode::GetInstance();
+
+    Editor.SetGameWon(true);
+
 }
