@@ -81,40 +81,37 @@ void CPlayer::Update(float dt, GLFWwindow* _window)
 	if (Editor.GetInEditor()) return;
 
 	// set the camera to the player's position
-	Editor.GetCamera()->SetPosition(GetPosition());
+	Editor.GetCamera()->SetPosition(glm::vec3(GetPosition().x, GetPosition().y + 0.5f, GetPosition().z));
 
-	// movement
-		// go right with D key
-	if (glfwGetKey(_window, GLFW_KEY_D))
+	// movement direction in glm
+	glm::vec3 moveDir(0.0f);
+
+	// input handling
+	if (glfwGetKey(_window, GLFW_KEY_W)) moveDir -= Editor.GetCamera()->GetForward();
+	if (glfwGetKey(_window, GLFW_KEY_S)) moveDir += Editor.GetCamera()->GetForward();
+	if (glfwGetKey(_window, GLFW_KEY_D)) moveDir -= Editor.GetCamera()->GetRight();
+	if (glfwGetKey(_window, GLFW_KEY_A)) moveDir += Editor.GetCamera()->GetRight();
+
+	// Only Jump should change Y
+	moveDir.y = 0.0f;
+
+	if (glm::length(moveDir) > 0.01f)
 	{
-		m_RigidBody->applyLocalForceAtCenterOfMass(reactphysics3d::Vector3(-Editor.GetCamera()->GetRight().x,
-			-Editor.GetCamera()->GetRight().y,
-			-Editor.GetCamera()->GetRight().z));
+		moveDir = glm::normalize(moveDir);
+
+		// Convert to reactphysics3d vector
+		reactphysics3d::Vector3 force(moveDir.x, moveDir.y, moveDir.z);
+
+		// Smaller force for better control (adjust to tune feel)
+		const float moveForce = 5.0f;
+		m_RigidBody->applyWorldForceAtCenterOfMass(force * moveForce);
 	}
 
-	// go left with A key
-	if (glfwGetKey(_window, GLFW_KEY_A))
-	{
-		m_RigidBody->applyLocalForceAtCenterOfMass(reactphysics3d::Vector3(Editor.GetCamera()->GetRight().x,
-			Editor.GetCamera()->GetRight().y,
-			Editor.GetCamera()->GetRight().z));
-	}
-
-	// go Backwards with S
-	if (glfwGetKey(_window, GLFW_KEY_S))
-	{
-		m_RigidBody->applyLocalForceAtCenterOfMass(reactphysics3d::Vector3(Editor.GetCamera()->GetForward().x,
-			Editor.GetCamera()->GetForward().y,
-			Editor.GetCamera()->GetForward().z));
-	}
-
-	// go forwards with W
-	if (glfwGetKey(_window, GLFW_KEY_W))
-	{
-		m_RigidBody->applyLocalForceAtCenterOfMass(reactphysics3d::Vector3(-Editor.GetCamera()->GetForward().x,
-			-Editor.GetCamera()->GetForward().y,
-			-Editor.GetCamera()->GetForward().z));
-	}
+	// Optional: Apply some damping to prevent sliding forever
+	reactphysics3d::Vector3 velocity = m_RigidBody->getLinearVelocity();
+	velocity.x *= 0.95f;
+	velocity.z *= 0.95f;
+	m_RigidBody->setLinearVelocity(reactphysics3d::Vector3(velocity.x, velocity.y, velocity.z));
 }
 
 

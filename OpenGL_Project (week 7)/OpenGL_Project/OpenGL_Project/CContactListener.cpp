@@ -29,6 +29,13 @@ void CContactListener::onTrigger(const reactphysics3d::OverlapCallback::Callback
 {
     CEditorMode& Editor = CEditorMode::GetInstance();
 
-    Editor.SetGameWon(true);
+    for (int i = 0; i < callbackData.getNbOverlappingPairs(); i++)
+    {
+        if (callbackData.getOverlappingPair(i).getCollider1()->getIsTrigger() ||
+            callbackData.getOverlappingPair(i).getCollider2()->getIsTrigger())
+        {
+            Editor.SetGameWon(true);
 
+        }
+    }
 }

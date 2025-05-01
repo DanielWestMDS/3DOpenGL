@@ -8,7 +8,7 @@
                 2.0
             ],
             "gravity": true,
-            "modelPath": "Resources/Models/SM_Prop_Statue_02.obj",
+            "modelPath": "Resources/Models/cube.obj",
             "position": [
                 -14.919268608093262,
                 5.0,
@@ -50,7 +50,7 @@
             "shapeType": 0,
             "texture": 2,
             "type": "CObject",
-            "winCondition": true
+            "winCondition": false
         }
     ]
 }

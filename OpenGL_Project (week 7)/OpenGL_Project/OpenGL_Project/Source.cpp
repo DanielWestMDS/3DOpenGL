@@ -440,6 +440,18 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 		Editor.SetInEditor(true);
 
 		glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+		SelectedObject = nullptr;
+
+		// if no scene selected, just load scene 1
+		if (g_iSelecetedSceneIndex == -1)
+		{
+			g_CurrentScene->LoadSceneFromJson("Scenes/Scene1", g_physicsWorld, g_physicsCommon);
+		}
+		else
+		{
+			g_CurrentScene->LoadSceneFromJson("Scenes/" + g_SceneFiles[g_iSelecetedSceneIndex], g_physicsWorld, g_physicsCommon);
+		}
 	}
 }
 
@@ -776,6 +788,9 @@ void InitialSetup()
 	g_physicsWorld->setGravity(Vector3(0.0f, -5.0f, 0.0f));
 	g_physicsWorld->setEventListener(g_ContactListener);
 
+	g_CurrentScene->LoadSceneFromJson("Scenes/Scene1", g_physicsWorld, g_physicsCommon);
+
+
 	// set background colour															
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -908,7 +923,16 @@ void RenderGUI()
 			{
 				//Editor.SetInEditor(true);
 				Editor.SetGameWon(false);
-				g_CurrentScene->LoadSceneFromJson("Scenes/" + g_SceneFiles[g_iSelecetedSceneIndex], g_physicsWorld, g_physicsCommon);
+
+				// if no scene selected, just load scene 1
+				if (g_iSelecetedSceneIndex == -1)
+				{
+					g_CurrentScene->LoadSceneFromJson("Scenes/Scene1", g_physicsWorld, g_physicsCommon);
+				}
+				else
+				{
+					g_CurrentScene->LoadSceneFromJson("Scenes/" + g_SceneFiles[g_iSelecetedSceneIndex], g_physicsWorld, g_physicsCommon);
+				}
 			}
 
 			if (ui.CreateButton("Quit", []() {
