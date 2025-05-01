@@ -26,7 +26,7 @@ public:
 
     CModel* GetModel() { return m_Model; };
 
-    virtual void Update(float dt);
+    virtual void Update(float dt, GLFWwindow* _window);
     void SetPosition(glm::vec3 _position);
     glm::vec3 GetPosition();
 
@@ -58,12 +58,13 @@ public:
     void SetCollisionDimensions(glm::vec3 _newDimensions);
     glm::vec3 GetDimensions();
 
-    json ToJson() const;
+    virtual json ToJson() const;
 
     static CObject* FromJson(const json& j,
         rp3d::PhysicsWorld* _physicsWorld,
         rp3d::PhysicsCommon& _physicsCommon);
-private:
+
+protected:
     void CreateCollisionShape(CollisionShapeType shapeType);
 
     CModel* m_Model;

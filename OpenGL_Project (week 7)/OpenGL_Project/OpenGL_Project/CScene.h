@@ -35,7 +35,7 @@ public:
 	/// </summary>
 	void Render();
 
-	void Update(CCamera* Camera, float dt);
+	void Update(CCamera* Camera, float dt, GLFWwindow* _window);
 
 	/// <summary>
 	/// Render for shadowmap buffer
@@ -66,7 +66,7 @@ public:
 
 	void SaveSceneToJson(const std::string& _FileName);
 
-	void LoadSceneFromJson(const std::string& filename, rp3d::PhysicsWorld* physicsWorld, rp3d::PhysicsCommon& physicsCommon);
+	void LoadSceneFromJson(const std::string& _filename, rp3d::PhysicsWorld* _physicsWorld, rp3d::PhysicsCommon& _physicsCommon);
 
 
 private:

@@ -5,15 +5,15 @@ class CPlayer : public CObject
 {
 public:
 
-	CPlayer(std::string FilePath, GLint _program, GLint _texture, glm::vec3 position, rp3d::PhysicsWorld* physicsWorld, rp3d::PhysicsCommon& physicsCommon, CCamera& _camera, GLFWwindow* _Window);
+	CPlayer(std::string FilePath, GLint _program, GLint _texture, glm::vec3 position, rp3d::PhysicsWorld* physicsWorld, rp3d::PhysicsCommon& physicsCommon);
 
 	~CPlayer();
 
-	void Update(float dt) override;
+	json ToJson() const override;
+
+	void Update(float dt, GLFWwindow* _window) override;
 
 protected:
-
-	CCamera& m_Camera;
 
 private:
 

@@ -26,7 +26,7 @@ public:
 	CCamera();
 	~CCamera();
 
-	void Update(int _iWindowSize, GLFWwindow* _Window, glm::vec2 _MousePos, float _dt);
+	void Update(int _iWindowSize, GLFWwindow* _Window, glm::vec2 _MousePos, float _dt, glm::vec3 _PlayerPos);
 	// view matrix passed into object render functions for MVP matrixs
 	glm::mat4 GetViewMat();
 	// projection matrix passed into object render functions for MVP matrixs

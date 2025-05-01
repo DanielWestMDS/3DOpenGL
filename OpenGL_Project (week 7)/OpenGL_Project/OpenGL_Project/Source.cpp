@@ -26,7 +26,7 @@
 #include "CGeometryBuffer.h"
 #include "CTessellationMesh.h"
 #include "CUserInterface.h"
-#include "CObject.h"
+#include "CPlayer.h"
 #include "CContactListener.h"
 #include "CEditorMode.h"
 #include "CLineRenderer.h"
@@ -239,7 +239,10 @@ PhysicsWorld* g_physicsWorld = g_physicsCommon.createPhysicsWorld();
 std::vector<std::string> objFiles;
 int g_iSelectedObjIndex = -1;
 
+// file path to the selected model in editor
 std::string g_CurrentSelectedObjPath;
+
+CPlayer* Player;
 
 namespace fs = std::filesystem;
 
@@ -285,7 +288,7 @@ void CreateActor(std::string _model)
 {
 	glm::vec3 newActorPosition;
 	// set new position to be in front of camera
-	newActorPosition = Camera->GetPosition() + (Camera->GetForward() * -50.f);
+	newActorPosition = Camera->GetPosition() + (Camera->GetForward() * -25.f);
 
 	CObject* NewObject = new CObject(_model, Program_Lighting, Texture_Quag, newActorPosition, g_physicsWorld, g_physicsCommon);
 
@@ -712,12 +715,24 @@ void InitialSetup()
 
 	TessMatrix = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 100.0f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
+	CEditorMode& Editor = CEditorMode::GetInstance();
+
 	// initialise objects
 	Camera = new CCamera();
+
+	Editor.SetCamera(Camera);
 
 	LightManager = new CLightManager();
 
 	DebugLineRenderer = new CLineRenderer();
+
+	glm::vec3 newActorPosition;
+	// set new position to be in front of camera
+	newActorPosition = Camera->GetPosition() + (Camera->GetForward() * -10.f);
+
+	Player = new CPlayer("Resources/Models/SM_Prop_Statue_02.obj", Program_Lighting, Texture_Quag, newActorPosition, g_physicsWorld, g_physicsCommon);
+
+	Player->SetScale(0.1f);
 
 	// change attenuation so you can see all the different point lights
 	float exponent = 0.1f;
@@ -800,6 +815,9 @@ void InitialSetup()
 	//Scene1->AddObject(PointLight1);
 	//Scene1->AddObject(PointLight2);													
 	Scene3->AddHeightMap(HeightMapNoise);
+
+	Scene3->AddObject(Player);
+	Editor.SetPlayer(Player);
 	//Scene3->AddObject(Soldier);
 																						
 	//Scene2->AddObject(new CObject(PointLight1, glm::vec3(10.0f, 5.0f, 10.0f), g_physicsWorld, g_physicsCommon));
@@ -819,23 +837,6 @@ void InitialSetup()
 	g_physicsWorld->setGravity(Vector3(0.0f, -5.0f, 0.0f));
 	//CContactListener listener;
 	//g_physicsWorld->setEventListener(&listener);
-
-	// Create a rigid body
-	reactphysics3d::RigidBody* body = g_physicsWorld->createRigidBody(reactphysics3d::Transform(
-		reactphysics3d::Vector3(0.0f, 5.0f, 0.0f),    // Position (Y=5 to float in air)
-		reactphysics3d::Quaternion::identity()         // No rotation
-	));
-
-	// Create a box shape
-	reactphysics3d::BoxShape* boxShape = g_physicsCommon.createBoxShape(reactphysics3d::Vector3(1.0f, 1.0f, 1.0f));
-
-	// Attach the shape to the body
-	reactphysics3d::Collider* collider = body->addCollider(boxShape, reactphysics3d::Transform::identity());
-
-	body->setType(reactphysics3d::BodyType::STATIC);
-
-	body->setIsDebugEnabled(true);
-
 
 	// set background colour															
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -893,13 +894,21 @@ void Update()
 	// combine for MVP
 	//HeightMapModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ HeightMapModelMat;
 
+	CEditorMode& Editor = CEditorMode::GetInstance();
+
 	// camera update
-	Camera->Update(iWindowSize, Window, g_MousePos, deltaTime);	
+	if (Editor.GetPlayer())
+	{
+		Camera->Update(iWindowSize, Window, g_MousePos, deltaTime, Editor.GetPlayer()->GetPosition());
+	}
+	else
+	{
+		Camera->Update(iWindowSize, Window, g_MousePos, deltaTime, glm::vec3());
+	}
+
 	//Camera->PrintCamPos();
 
 	// update physics
-	// only if in play mode?
-	CEditorMode& Editor = CEditorMode::GetInstance();
 
 	// play mode
 	if (!Editor.GetInEditor())
@@ -912,31 +921,12 @@ void Update()
 	}
 
 	// models update
-	g_CurrentScene->Update(Camera, deltaTime);
+	g_CurrentScene->Update(Camera, deltaTime, Window);
 
 	// height map
 	//HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), DeferredHeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
 	HeightMapNoise->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), HeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
 
-	// tessellation
-	TessMVP = Camera->GetVP() * TessMatrix;
-
-	// scenes
-	switch (g_iSceneNumber)
-	{
-	case 1:
-
-		break;
-	case 2:
-		break;
-	case 3:
-		// particles
-		RedFirework->Update(deltaTime, g_bFKeyPressed);
-		CyanFirework->Update(deltaTime, g_bFKeyPressed);
-		MagentaFirework->Update(deltaTime, g_bFKeyPressed);
-		YellowFirework->Update(deltaTime, g_bFKeyPressed);
-		break;
-	}
 	//NoiseMap->AnimationGrowth(Texture_Quag, Texture_Awesome);
 
 	// UI perlin noise
@@ -976,6 +966,7 @@ void RenderGUI()
 		{
 
 			Editor.SetInEditor(false);
+			glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		}
 	}
 	else
@@ -1052,7 +1043,7 @@ void RenderGUI()
 		SelectedObject = nullptr;
 	}
 
-	// add cube
+	// add object based on selected file
 	if (ui.CreateButton("Add Object", []() {
 		std::cout << "Add Cube button clicked" << std::endl;
 		}, ImVec2(120, 40),
@@ -1065,6 +1056,7 @@ void RenderGUI()
 		}
 		else
 		{
+			// if no file selected just make a cube
 			CreateActor("Resources/Models/cube.obj");
 		}
 	}
@@ -1192,7 +1184,16 @@ void RenderGUI()
 				g_CurrentScene->RemoveObject(SelectedObject);
 
 				// delete the object
-				delete SelectedObject;
+				if (static_cast<CPlayer*>(SelectedObject))
+				{
+					// cast so that the child destructor is called
+					delete static_cast<CPlayer*>(SelectedObject);
+				}
+				else
+				{
+					delete SelectedObject;
+				}
+
 				// set the current object to null
 				SelectedObject = nullptr;
 			}

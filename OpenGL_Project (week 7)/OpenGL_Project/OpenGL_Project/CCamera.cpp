@@ -43,7 +43,8 @@ CCamera::~CCamera()
 {
 }
 
-void CCamera::Update(int _iWindowSize, GLFWwindow* _Window, glm::vec2 _MousePos, float _dt)
+// put moving player here
+void CCamera::Update(int _iWindowSize, GLFWwindow* _Window, glm::vec2 _MousePos, float _dt, glm::vec3 _PlayerPos)
 {
 	float  HalfWindow = (float)_iWindowSize * 0.5f;
 	m_projMat = glm::perspective(glm::radians(45.0f), (HalfWindow * 2) / (HalfWindow * 2), 0.1f, 1000.0f);
@@ -97,7 +98,15 @@ void CCamera::Update(int _iWindowSize, GLFWwindow* _Window, glm::vec2 _MousePos,
 	// update input for movement every frame
 	Input(_Window, _dt);
 	ChangeHeight(_Window, _dt);
-	m_position += (GetMove(_Window, _dt) * _dt * m_moveSpeed);
+
+	if (Editor.GetInEditor())
+	{
+		m_position += (GetMove(_Window, _dt) * _dt * m_moveSpeed);
+	}
+	else
+	{
+		m_position = _PlayerPos;
+	}
 }
 
 glm::mat4 CCamera::GetViewMat()

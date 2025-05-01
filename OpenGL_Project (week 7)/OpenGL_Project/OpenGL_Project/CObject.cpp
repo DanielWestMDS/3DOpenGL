@@ -1,5 +1,6 @@
 #include "CObject.h"
 #include "CModel.h"
+#include "CPlayer.h"
 #include <iostream>
 
 CObject::CObject(std::string _filePath, GLint _program, GLint _texture, glm::vec3 _position,
@@ -119,7 +120,7 @@ void CObject::CreateCollisionShape(CollisionShapeType shapeType)
 
 
 
-void CObject::Update(float dt)
+void CObject::Update(float dt, GLFWwindow* _window)
 {
     if (m_RigidBody) 
     {
@@ -259,6 +260,8 @@ json CObject::ToJson() const
     // add object data to a json file
     return 
     {
+        // base object
+        {"type", "CObject"},
         {"position", {m_Model->GetPosition().x, m_Model->GetPosition().y, m_Model->GetPosition().z}},
         {"rotation", {m_Model->GetRotation().x, m_Model->GetRotation().y, m_Model->GetRotation().z}},
         {"scale", m_Model->GetScale()},
@@ -275,6 +278,13 @@ json CObject::ToJson() const
 
 CObject* CObject::FromJson(const json& j, rp3d::PhysicsWorld* _physicsWorld, rp3d::PhysicsCommon& _physicsCommon)
 {
+    std::string type = j.value("type", "CObject");
+
+    if (type == "CPlayer") 
+    {
+        return CPlayer::FromJson(j, _physicsWorld, _physicsCommon);
+    }
+
     std::string filePath = j["modelPath"];
     glm::vec3 position(j["position"][0], j["position"][1], j["position"][2]);
 

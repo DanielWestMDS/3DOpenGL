@@ -38,7 +38,7 @@ void CScene::Render()
 	}
 }
 
-void CScene::Update(CCamera* Camera, float dt)
+void CScene::Update(CCamera* Camera, float dt, GLFWwindow* _window)
 {
 	
 
@@ -49,7 +49,7 @@ void CScene::Update(CCamera* Camera, float dt)
 		Object->GetModel()->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition());
 
 		// update object
-		Object->Update(dt);
+		Object->Update(dt, _window);
 		//std::cout << "should have just updated object" << i << std::endl;
 
 		i++;
@@ -134,15 +134,14 @@ void CScene::SaveSceneToJson(const std::string& _FileName)
 	}
 }
 
-void CScene::LoadSceneFromJson(const std::string& filename,
-	rp3d::PhysicsWorld* physicsWorld,
-	rp3d::PhysicsCommon& physicsCommon) 
+void CScene::LoadSceneFromJson(const std::string& _filename,
+	rp3d::PhysicsWorld* _physicsWorld,
+	rp3d::PhysicsCommon& _physicsCommon)
 {
-	// could prolly multithread this
-	std::ifstream file(filename);
+	std::ifstream file(_filename);
 	if (!file.is_open())
 	{
-		std::cerr << "Failed to open scene file: " << filename << std::endl;
+		std::cerr << "Failed to open scene file: " << _filename << std::endl;
 		return;
 	}
 
@@ -152,9 +151,10 @@ void CScene::LoadSceneFromJson(const std::string& filename,
 
 	m_Objects.clear();
 
+	// could prolly multithread this
 	for (const auto& objJson : sceneJson["objects"])
 	{
-		CObject* obj = CObject::FromJson(objJson, physicsWorld, physicsCommon);
+		CObject* obj = CObject::FromJson(objJson, _physicsWorld, _physicsCommon);
 		m_Objects.push_back(obj);
 	}
 }
