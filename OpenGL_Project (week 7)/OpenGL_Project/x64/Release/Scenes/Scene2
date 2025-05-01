@@ -1,0 +1,56 @@
+{
+    "objects": [
+        {
+            "bodyType": 2,
+            "collisionDimensions": [
+                2.0,
+                2.0,
+                2.0
+            ],
+            "gravity": true,
+            "modelPath": "Resources/Models/cube.obj",
+            "position": [
+                -14.919268608093262,
+                5.0,
+                -13.476652145385742
+            ],
+            "program": 6,
+            "rotation": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": 0.10000000149011612,
+            "shapeType": 0,
+            "texture": 2,
+            "type": "CPlayer",
+            "winCondition": false
+        },
+        {
+            "bodyType": 2,
+            "collisionDimensions": [
+                2.0,
+                2.0,
+                2.0
+            ],
+            "gravity": false,
+            "modelPath": "Resources/Models/cube.obj",
+            "position": [
+                -9.350013732910156,
+                -10.0,
+                -13.23878288269043
+            ],
+            "program": 6,
+            "rotation": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": 10.0,
+            "shapeType": 0,
+            "texture": 2,
+            "type": "CObject",
+            "winCondition": false
+        }
+    ]
+}
