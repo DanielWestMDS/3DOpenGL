@@ -257,6 +257,18 @@ glm::vec3 CObject::GetDimensions()
     return m_CollisionDimensions;
 }
 
+void CObject::SetAsWinCondition(bool _IsWinCondition)
+{
+    m_bIsWinCon = _IsWinCondition;
+
+    m_Collider->setIsTrigger(m_bIsWinCon);
+}
+
+bool CObject::IsWinCondition()
+{
+    return m_bIsWinCon;
+}
+
 json CObject::ToJson() const 
 {
     // add object data to a json file
@@ -274,7 +286,9 @@ json CObject::ToJson() const
         {"bodyType", m_RigidBody->getType() },
         // box sphere capsule
         {"shapeType", m_ShapeType },
-        {"collisionDimensions", {m_CollisionDimensions.x, m_CollisionDimensions.y, m_CollisionDimensions.z}}
+        {"collisionDimensions", {m_CollisionDimensions.x, m_CollisionDimensions.y, m_CollisionDimensions.z}},
+        {"gravity", m_RigidBody->isGravityEnabled()},
+        {"winCondition", m_bIsWinCon}
     };
 }
 
@@ -322,6 +336,8 @@ CObject* CObject::FromJson(const json& j, rp3d::PhysicsWorld* _physicsWorld, rp3
      LoadedObject->SetScale(fScale);
      LoadedObject->SetPhysicsBodyType(j["bodyType"]);
      LoadedObject->SetCollisionDimensions(shapeDimensions);
+     LoadedObject->SetGravityEnabled(j["gravity"]);
+     LoadedObject->SetAsWinCondition(j["winCondition"]);
 
      return LoadedObject;
 }

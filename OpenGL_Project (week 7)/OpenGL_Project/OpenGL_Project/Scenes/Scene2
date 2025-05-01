@@ -7,10 +7,11 @@
                 2.0,
                 2.0
             ],
+            "gravity": true,
             "modelPath": "Resources/Models/SM_Prop_Statue_02.obj",
             "position": [
                 -14.919268608093262,
-                2.7692155838012695,
+                5.0,
                 -13.476652145385742
             ],
             "program": 6,
@@ -22,20 +23,22 @@
             "scale": 0.10000000149011612,
             "shapeType": 0,
             "texture": 2,
-            "type": "CPlayer"
+            "type": "CPlayer",
+            "winCondition": false
         },
         {
             "bodyType": 2,
             "collisionDimensions": [
-                20.0,
+                2.0,
                 2.0,
                 2.0
             ],
+            "gravity": false,
             "modelPath": "Resources/Models/cube.obj",
             "position": [
-                -7.797731399536133,
+                -9.350013732910156,
                 -10.0,
-                -14.403255462646484
+                -13.23878288269043
             ],
             "program": 6,
             "rotation": [
@@ -46,7 +49,8 @@
             "scale": 10.0,
             "shapeType": 0,
             "texture": 2,
-            "type": "CObject"
+            "type": "CObject",
+            "winCondition": true
         }
     ]
 }

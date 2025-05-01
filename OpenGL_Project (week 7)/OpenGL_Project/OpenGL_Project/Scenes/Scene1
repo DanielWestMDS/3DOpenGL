@@ -7,6 +7,7 @@
                 2.0,
                 2.0
             ],
+            "gravity": false,
             "modelPath": "Resources/Models/SM_Prop_Statue_02.obj",
             "position": [
                 -14.919268608093262,
@@ -22,7 +23,8 @@
             "scale": 0.10000000149011612,
             "shapeType": 0,
             "texture": 2,
-            "type": "CPlayer"
+            "type": "CPlayer",
+            "winCondition": false
         }
     ]
 }

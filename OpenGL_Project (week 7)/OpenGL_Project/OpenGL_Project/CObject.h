@@ -58,6 +58,9 @@ public:
     void SetCollisionDimensions(glm::vec3 _newDimensions);
     glm::vec3 GetDimensions();
 
+    void SetAsWinCondition(bool _IsWinCondition);
+    bool IsWinCondition();
+
     virtual json ToJson() const;
 
     static CObject* FromJson(const json& j,
@@ -77,6 +80,7 @@ protected:
     glm::vec3 m_CollisionDimensions;
 
     // do trigger stuff 
+    bool m_bIsWinCon = false;
     
     bool m_bPhysicsEnabled = false;
 };

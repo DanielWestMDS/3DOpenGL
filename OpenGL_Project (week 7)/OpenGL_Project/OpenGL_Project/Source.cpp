@@ -998,7 +998,7 @@ void RenderGUI()
 		std::cout << "Add Cube button clicked" << std::endl;
 		}, ImVec2(120, 40),
 			ImVec4(0.2f, 0.5f, 0.8f, 1.0f),  // color
-			ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // hover color)
+			ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // hover color
 	{
 		if (g_iSelectedObjIndex < objFiles.size() && g_iSelectedObjIndex != -1)
 		{
@@ -1036,6 +1036,8 @@ void RenderGUI()
 
 			bool bGravity = SelectedObject->IsGravityEnabled();
 
+			bool bWinCon = SelectedObject->IsWinCondition();
+
 			// user input
 			ImGui::Checkbox("HasGravity", &bGravity);
 
@@ -1052,6 +1054,8 @@ void RenderGUI()
 			ImGui::InputFloat("Z Collider: ", &zCollider);
 
 			ImGui::InputFloat("Scale: ", &fScale);
+
+			ImGui::Checkbox("Win Condition?", &bWinCon);
 
 			// physics type
 			if (ImGui::TreeNode("Physics Type"))
@@ -1122,6 +1126,7 @@ void RenderGUI()
 			SelectedObject->SetRotation(glm::vec3(xRot, yRot, zRot));
 			SelectedObject->SetScale(fScale);
 			SelectedObject->SetCollisionDimensions(glm::vec3(xCollider, yCollider, zCollider));
+			SelectedObject->SetAsWinCondition(bWinCon);
 			
 			// destroy button
 			if (ui.CreateButton("Destroy", []() {
@@ -1176,7 +1181,6 @@ void RenderGUI()
 	}
 
 	ImGui::End();
-
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
