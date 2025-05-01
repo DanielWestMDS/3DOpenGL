@@ -90,23 +90,27 @@ void CObject::CreateCollisionShape(CollisionShapeType shapeType)
         RemoveCollision();
     }
 
-    // Create new collision shape
-    switch (shapeType) 
+    // make sure to not divide 0
+    if (m_CollisionDimensions.x != 0 && m_CollisionDimensions.y != 0 && m_CollisionDimensions.z != 0)
     {
-    case CollisionShapeType::BOX:
-        m_CollisionShape = m_PhysicsCommon->createBoxShape(
-            rp3d::Vector3(m_CollisionDimensions.x / 2.0f * GetScale(),
-                m_CollisionDimensions.y / 2.0f * GetScale(),
-                m_CollisionDimensions.z / 2.0f * GetScale()));
-        break;
+        // Create new collision shape
+        switch (shapeType)
+        {
+        case CollisionShapeType::BOX:
+            m_CollisionShape = m_PhysicsCommon->createBoxShape(
+                rp3d::Vector3(m_CollisionDimensions.x / 2.0f * GetScale(),
+                    m_CollisionDimensions.y / 2.0f * GetScale(),
+                    m_CollisionDimensions.z / 2.0f * GetScale()));
+            break;
 
-    case CollisionShapeType::SPHERE:
-        m_CollisionShape = m_PhysicsCommon->createSphereShape(m_CollisionDimensions.x);
-        break;
+        case CollisionShapeType::SPHERE:
+            m_CollisionShape = m_PhysicsCommon->createSphereShape(m_CollisionDimensions.x);
+            break;
 
-    case CollisionShapeType::CAPSULE:
-        m_CollisionShape = m_PhysicsCommon->createCapsuleShape(m_CollisionDimensions.x, m_CollisionDimensions.y);
-        break;
+        case CollisionShapeType::CAPSULE:
+            m_CollisionShape = m_PhysicsCommon->createCapsuleShape(m_CollisionDimensions.x, m_CollisionDimensions.y);
+            break;
+        }
     }
 
     m_ShapeType = shapeType;
@@ -117,8 +121,6 @@ void CObject::CreateCollisionShape(CollisionShapeType shapeType)
     // Update mass properties
     m_RigidBody->updateMassPropertiesFromColliders();
 }
-
-
 
 void CObject::Update(float dt, GLFWwindow* _window)
 {

@@ -76,7 +76,7 @@ protected:
     rp3d::Collider* m_Collider = nullptr;
     glm::vec3 m_CollisionDimensions;
 
-    int m_ID;
-
+    // do trigger stuff 
+    
     bool m_bPhysicsEnabled = false;
 };

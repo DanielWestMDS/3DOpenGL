@@ -100,17 +100,6 @@ GLuint Program_3DModel;
 GLuint Program_Lighting;
 GLuint Program_InstancedLighting;
 
-GLuint Program_PointLight1;
-GLuint Program_PointLight2;
-GLuint Program_PointLight3;
-GLuint Program_PointLight4;
-GLuint Program_PointLight5;
-GLuint Program_PointLight6;
-GLuint Program_PointLight7;
-GLuint Program_PointLight8;
-GLuint Program_PointLight9;
-GLuint Program_PointLight10;
-
 GLuint Program_HeightMap;
 GLuint Program_Squares;
 GLuint Program_ShadowMap;
@@ -144,17 +133,6 @@ glm::mat4 PLScaleMat;
 
 // model to be combined with view and projection
 glm::mat4 PLModelMat1;
-
-// model to be combined with view and projection
-glm::mat4 PLModelMat2;
-glm::mat4 PLModelMat3;
-glm::mat4 PLModelMat4;
-glm::mat4 PLModelMat5;
-glm::mat4 PLModelMat6;
-glm::mat4 PLModelMat7;
-glm::mat4 PLModelMat8;
-glm::mat4 PLModelMat9;
-glm::mat4 PLModelMat10;
 
 glm::mat4 TreeModelMat;
 
@@ -239,6 +217,9 @@ PhysicsWorld* g_physicsWorld = g_physicsCommon.createPhysicsWorld();
 std::vector<std::string> objFiles;
 int g_iSelectedObjIndex = -1;
 
+std::vector<std::string> g_SceneFiles;
+int g_iSelecetedSceneIndex = -1;
+
 // file path to the selected model in editor
 std::string g_CurrentSelectedObjPath;
 
@@ -261,6 +242,21 @@ void LoadObjFiles(const std::string& folderPath)
 
 			std::cout << folderPath + entry.path().filename().string() << std::endl;
 		}
+	}
+}
+
+/// <summary>
+/// Load json scene files (they have no file extension)
+/// </summary>
+/// <param name="folderPath"></param>
+void LoadSceneFiles(const std::string& folderPath)
+{
+	g_SceneFiles.clear();
+	for (const auto& entry : fs::directory_iterator(folderPath))
+	{
+		g_SceneFiles.push_back(entry.path().filename().string());
+
+		std::cout << folderPath + entry.path().filename().string() << std::endl;
 	}
 }
 
@@ -579,6 +575,9 @@ void InitialSetup()
 	// load the obj files
 	LoadObjFiles("Resources/Models/");
 
+	// load the scene files
+	LoadSceneFiles("Scenes/");
+
 	// program for 3d model
 	Program_3DModel = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
 		"Resources/Shaders/3DModel.frag");
@@ -590,46 +589,6 @@ void InitialSetup()
 	// program for lighting
 	Program_InstancedLighting = ShaderLoader::CreateProgram("Resources/Shaders/InstancedArray_Standard.vert",
 		"Resources/Shaders/Lighting_PointLights.frag");
-
-	// program for point light 1
-	Program_PointLight1 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
-		"Resources/Shaders/PointLights/PointLight1.frag");
-
-	// program for point light 2
-	Program_PointLight2 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
-		"Resources/Shaders/PointLights/PointLight2.frag");
-
-	// program for point light 3
-	Program_PointLight3 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
-		"Resources/Shaders/PointLights/PointLight3.frag");
-
-	// program for point light 4
-	Program_PointLight4 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
-		"Resources/Shaders/PointLights/PointLight4.frag");
-
-	// program for point light 5
-	Program_PointLight5 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
-		"Resources/Shaders/PointLights/PointLight5.frag");
-
-	// program for point light 6
-	Program_PointLight6 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
-		"Resources/Shaders/PointLights/PointLight6.frag");
-
-	// program for point light 7
-	Program_PointLight7 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
-		"Resources/Shaders/PointLights/PointLight7.frag");
-
-	// program for point light 8
-	Program_PointLight8 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
-		"Resources/Shaders/PointLights/PointLight8.frag");
-
-	// program for point light 9
-	Program_PointLight9 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
-		"Resources/Shaders/PointLights/PointLight9.frag");
-
-	// program for point light 10
-	Program_PointLight10 = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
-		"Resources/Shaders/PointLights/PointLight10.frag");
 
 	Program_HeightMap = ShaderLoader::CreateProgram("Resources/Shaders/HeightMap.vert",
 		"Resources/Shaders/Lighting_HeightMap.frag");
@@ -685,36 +644,6 @@ void InitialSetup()
 
 	// calculate model matrix
 	SoldierModelMat = MakeModelMatrix(SoldierPosition, 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	// for point lights
-	PLModelMat1 = MakeModelMatrix(glm::vec3(10.0f, 5.0f, 10.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	// point light 2
-	PLModelMat2 = MakeModelMatrix(glm::vec3(10.0f, 5.0f, 0.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	// point light 3
-	PLModelMat3 = MakeModelMatrix(glm::vec3(10.0f, 5.0f, -10.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	// point light 4
-	PLModelMat4 = MakeModelMatrix(glm::vec3(0.0f, 5.0f, 10.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-												  
-	// point light 5							  
-	PLModelMat5 = MakeModelMatrix(glm::vec3(0.0f, 5.0f, 0.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-												  
-	// point light 6							  
-	PLModelMat6 = MakeModelMatrix(glm::vec3(0.0f, 5.0f, -10.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	// point light 7
-	PLModelMat7 = MakeModelMatrix(glm::vec3(-10.0f, 5.0f, 10.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	// point light 8
-	PLModelMat8 = MakeModelMatrix(glm::vec3(-10.0f, 5.0f, 0.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	// point light 9
-	PLModelMat9 = MakeModelMatrix(glm::vec3(-10.0f, 5.0f, -10.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	// point light 10
-	PLModelMat10 = MakeModelMatrix(glm::vec3(-20.0f, 5.0f, 0.0f), 0.008f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// for instanced matrices
 	TreeModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.005f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -1032,22 +961,37 @@ void RenderGUI()
 			ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // Hover color)
 	{
 
-		g_CurrentScene->SaveSceneToJson("Scenes/Scene1");
+		// if no scene selected, just save scene 1
+		if (g_iSelecetedSceneIndex == -1)
+		{
+			g_CurrentScene->SaveSceneToJson("Scenes/Scene1");
+		}
+		else
+		{
+			g_CurrentScene->SaveSceneToJson("Scenes/" + g_SceneFiles[g_iSelecetedSceneIndex]);
+		}
 	}
 
-	// Load scene button
-	if (ui.CreateButton("Load Scene", []() {
-		std::cout << "Save button clicked" << std::endl;
-		}, ImVec2(120, 40),
-			ImVec4(0.1f, 0.8f, 0.1f, 1.0f),  // Normal color
-			ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // Hover color)
+	// Level Select
+	if (ImGui::TreeNode("Level Select"))
 	{
+		// load scene
+		for (int i = 0; i < g_SceneFiles.size(); ++i)
+		{
+			bool isSelected = (i == g_iSelecetedSceneIndex);
+			if (ImGui::Selectable(g_SceneFiles[i].c_str(), isSelected))
+			{
+				g_iSelecetedSceneIndex = i;
+				g_CurrentScene->LoadSceneFromJson("Scenes/" + g_SceneFiles[g_iSelecetedSceneIndex], g_physicsWorld, g_physicsCommon);
+				
+				// reset selected object to avoid referencing from a scene where it doesn't exist
+				SelectedObject = nullptr;
+			}
+		}
 
-		g_CurrentScene->LoadSceneFromJson("Scenes/Scene1", g_physicsWorld, g_physicsCommon);
-
-		// set the current object to null
-		SelectedObject = nullptr;
+		ImGui::TreePop();
 	}
+
 
 	// add object based on selected file
 	if (ui.CreateButton("Add Object", []() {
@@ -1066,53 +1010,6 @@ void RenderGUI()
 			CreateActor("Resources/Models/cube.obj");
 		}
 	}
-
-	// make a player
-	//if (ui.CreateButton("Add Player", []() {
-	//	std::cout << "Add player button clicked" << std::endl;
-	//	}, ImVec2(120, 40),
-	//		ImVec4(0.2f, 0.5f, 0.8f, 1.0f),  // color
-	//		ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // hover color)
-	//{
-	//	for (auto PotentialPlayer : g_CurrentScene->GetObjects())
-	//	{
-	//		if (static_cast<CPlayer*>(PotentialPlayer))
-	//		{
-	//			// cast so that the child destructor is called
-	//			delete static_cast<CPlayer*>(PotentialPlayer);
-	//		}
-	//	}
-
-	//	if (g_iSelectedObjIndex < objFiles.size() && g_iSelectedObjIndex != -1)
-	//	{
-	//		glm::vec3 newActorPosition;
-	//		// set new position to be in front of camera
-	//		newActorPosition = Camera->GetPosition() + (Camera->GetForward() * -25.f);
-
-	//		CPlayer* NewObject = new CPlayer("Resources/Models/" + objFiles[g_iSelectedObjIndex],
-	//			Program_Lighting, Texture_Quag,
-	//			newActorPosition, g_physicsWorld,
-	//			g_physicsCommon);
-
-	//		// add the object to the scene
-	//		g_CurrentScene->AddObject(NewObject);
-	//	}
-	//	else
-	//	{
-	//		// if no file selected just make a cube
-	//		glm::vec3 newActorPosition;
-	//		// set new position to be in front of camera
-	//		newActorPosition = Camera->GetPosition() + (Camera->GetForward() * -25.f);
-
-	//		CPlayer* NewObject = new CPlayer("Resources/Models/cube.obj",
-	//			Program_Lighting, Texture_Quag,
-	//			newActorPosition, g_physicsWorld,
-	//			g_physicsCommon);
-
-	//		// add the object to the scene
-	//		g_CurrentScene->AddObject(NewObject);
-	//	}
-	//}
 
 	ImGui::End();
 
@@ -1233,13 +1130,8 @@ void RenderGUI()
 					ImVec4(0.2f, 0.5f, 0.8f, 1.0f),  // color
 					ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // hover color)
 			{
-				// delete the object
-				if (static_cast<CPlayer*>(SelectedObject))
-				{
-					// don't kill the player
-					//delete static_cast<CPlayer*>(SelectedObject);
-				}
-				else
+				// delete the selected object that isn't the player
+				if (dynamic_cast<CPlayer*>(SelectedObject) == nullptr)
 				{
 					// remove the object from the scene
 					g_CurrentScene->RemoveObject(SelectedObject);

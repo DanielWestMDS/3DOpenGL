@@ -23,30 +23,6 @@
             "shapeType": 0,
             "texture": 2,
             "type": "CPlayer"
-        },
-        {
-            "bodyType": 2,
-            "collisionDimensions": [
-                2.0,
-                2.0,
-                2.0
-            ],
-            "modelPath": "Resources/Models/cube.obj",
-            "position": [
-                -7.797731399536133,
-                -10.0,
-                -14.403255462646484
-            ],
-            "program": 6,
-            "rotation": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "scale": 10.0,
-            "shapeType": 0,
-            "texture": 2,
-            "type": "CObject"
         }
     ]
 }
