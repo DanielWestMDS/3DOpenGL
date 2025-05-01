@@ -434,6 +434,15 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 	{
 		g_bFKeyPressed = false;
 	}
+
+	if (_Key == GLFW_KEY_ESCAPE && _Action == GLFW_PRESS)
+	{
+		CEditorMode& Editor = CEditorMode::GetInstance();
+
+		Editor.SetInEditor(true);
+
+		glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
 }
 
 /// <summary>
@@ -817,7 +826,6 @@ void InitialSetup()
 	Scene3->AddHeightMap(HeightMapNoise);
 
 	Scene3->AddObject(Player);
-	Editor.SetPlayer(Player);
 	//Scene3->AddObject(Soldier);
 																						
 	//Scene2->AddObject(new CObject(PointLight1, glm::vec3(10.0f, 5.0f, 10.0f), g_physicsWorld, g_physicsCommon));
@@ -1037,8 +1045,6 @@ void RenderGUI()
 
 		g_CurrentScene->LoadSceneFromJson("Scenes/Scene1", g_physicsWorld, g_physicsCommon);
 
-		// everything in scene is reloaded so delete selected object
-		delete SelectedObject;
 		// set the current object to null
 		SelectedObject = nullptr;
 	}
@@ -1060,6 +1066,53 @@ void RenderGUI()
 			CreateActor("Resources/Models/cube.obj");
 		}
 	}
+
+	// make a player
+	//if (ui.CreateButton("Add Player", []() {
+	//	std::cout << "Add player button clicked" << std::endl;
+	//	}, ImVec2(120, 40),
+	//		ImVec4(0.2f, 0.5f, 0.8f, 1.0f),  // color
+	//		ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // hover color)
+	//{
+	//	for (auto PotentialPlayer : g_CurrentScene->GetObjects())
+	//	{
+	//		if (static_cast<CPlayer*>(PotentialPlayer))
+	//		{
+	//			// cast so that the child destructor is called
+	//			delete static_cast<CPlayer*>(PotentialPlayer);
+	//		}
+	//	}
+
+	//	if (g_iSelectedObjIndex < objFiles.size() && g_iSelectedObjIndex != -1)
+	//	{
+	//		glm::vec3 newActorPosition;
+	//		// set new position to be in front of camera
+	//		newActorPosition = Camera->GetPosition() + (Camera->GetForward() * -25.f);
+
+	//		CPlayer* NewObject = new CPlayer("Resources/Models/" + objFiles[g_iSelectedObjIndex],
+	//			Program_Lighting, Texture_Quag,
+	//			newActorPosition, g_physicsWorld,
+	//			g_physicsCommon);
+
+	//		// add the object to the scene
+	//		g_CurrentScene->AddObject(NewObject);
+	//	}
+	//	else
+	//	{
+	//		// if no file selected just make a cube
+	//		glm::vec3 newActorPosition;
+	//		// set new position to be in front of camera
+	//		newActorPosition = Camera->GetPosition() + (Camera->GetForward() * -25.f);
+
+	//		CPlayer* NewObject = new CPlayer("Resources/Models/cube.obj",
+	//			Program_Lighting, Texture_Quag,
+	//			newActorPosition, g_physicsWorld,
+	//			g_physicsCommon);
+
+	//		// add the object to the scene
+	//		g_CurrentScene->AddObject(NewObject);
+	//	}
+	//}
 
 	ImGui::End();
 
@@ -1180,22 +1233,23 @@ void RenderGUI()
 					ImVec4(0.2f, 0.5f, 0.8f, 1.0f),  // color
 					ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // hover color)
 			{
-				// remove the object from the scene
-				g_CurrentScene->RemoveObject(SelectedObject);
-
 				// delete the object
 				if (static_cast<CPlayer*>(SelectedObject))
 				{
-					// cast so that the child destructor is called
-					delete static_cast<CPlayer*>(SelectedObject);
+					// don't kill the player
+					//delete static_cast<CPlayer*>(SelectedObject);
 				}
 				else
 				{
+					// remove the object from the scene
+					g_CurrentScene->RemoveObject(SelectedObject);
+
 					delete SelectedObject;
+
+					// set the current object to null
+					SelectedObject = nullptr;
 				}
 
-				// set the current object to null
-				SelectedObject = nullptr;
 			}
 
 			// duplicate button

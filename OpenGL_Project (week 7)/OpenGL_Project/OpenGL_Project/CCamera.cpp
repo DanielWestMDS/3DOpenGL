@@ -99,13 +99,13 @@ void CCamera::Update(int _iWindowSize, GLFWwindow* _Window, glm::vec2 _MousePos,
 	Input(_Window, _dt);
 	ChangeHeight(_Window, _dt);
 
-	if (Editor.GetInEditor())
+	if (!Editor.GetInEditor())
 	{
-		m_position += (GetMove(_Window, _dt) * _dt * m_moveSpeed);
+		m_position = _PlayerPos;
 	}
 	else
 	{
-		m_position = _PlayerPos;
+		m_position += (GetMove(_Window, _dt) * _dt * m_moveSpeed);
 	}
 }
 

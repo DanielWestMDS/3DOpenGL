@@ -15,7 +15,7 @@
 #include "CCamera.h"
 //#include "CModel.h"
 #include "CHeightMap.h"
-#include "CObject.h"
+#include "CPlayer.h"
 
 CScene::CScene()
 {
@@ -148,6 +148,16 @@ void CScene::LoadSceneFromJson(const std::string& _filename,
 	json sceneJson;
 	file >> sceneJson;
 	file.close();
+
+	// find the player and KILL IT !!!!!!!!
+	for (auto PotentialPlayer : m_Objects)
+	{
+		if (static_cast<CPlayer*>(PotentialPlayer))
+		{
+			// cast so that the child destructor is called
+			delete static_cast<CPlayer*>(PotentialPlayer);
+		}
+	}
 
 	m_Objects.clear();
 
