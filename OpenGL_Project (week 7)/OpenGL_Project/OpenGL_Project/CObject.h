@@ -5,7 +5,7 @@ Auckland
 New Zealand
 (c) 2025 Media Design School
 File Name : CObject.h
-Description : A singleton class. Setting window and camera in this class is probably not the correct thing but the way I was doing it before, the player could not be saved to a json file.
+Description : Basic object class which contains data for a model and collision. Could maybe have had this class inherit from CModel but you live and learn. 
 Author : Daniel West
 Mail : daniel.west@mds.ac.nz
 **************************************************************************/

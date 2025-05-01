@@ -1,3 +1,15 @@
+/***********************************************************************
+Bachelor of Software Engineering
+Media Design School
+Auckland
+New Zealand
+(c) 2025 Media Design School
+File Name : CLineRenderer.h
+Description : Class used for rendering collision
+Author : Daniel West
+Mail : daniel.west@mds.ac.nz
+**************************************************************************/
+
 #pragma once
 #include <vector>
 #include <glm/glm.hpp>

@@ -11,14 +11,14 @@ void CUserInterface::Render()
     // Begin UI rendering
     ImGui::Begin("My UI Window");
 
-    // Create a simple button
+    // Creates a simple button
     if (CreateButton("Click Me!", []() {
         std::cout << "Button was clicked!" << std::endl;
         })) {
         // Button was clicked (alternative way to handle click)
     }
 
-    // Create a styled button
+    // Creates a styled button
     CreateButton("Styled Button", []() {
         std::cout << "Styled button clicked!" << std::endl;
         }, ImVec2(120, 40),
@@ -30,22 +30,25 @@ void CUserInterface::Render()
 
 bool CUserInterface::CreateButton(const std::string& label, const std::function<void()>& onClick, const ImVec2& size)
 {
-    // Debug check - is ImGui working at all?
-    if (!ImGui::GetCurrentContext()) {
+    // make sure imgui working
+    if (!ImGui::GetCurrentContext())
+    {
         std::cerr << "Error: No ImGui context!" << std::endl;
         return false;
     }
 
     // Actual button
-    if (ImGui::Button(label.c_str(), size)) {
-        // Debug output to verify click detection
+    if (ImGui::Button(label.c_str(), size)) 
+    {
         std::cout << "Button '" << label << "' detected click" << std::endl;
 
-        // Verify callback exists before calling
-        if (onClick) {
+        // make sure callback exists before calling
+        if (onClick) 
+        {
             onClick();
         }
-        else {
+        else 
+        {
             std::cerr << "Warning: Button '" << label << "' has no callback!" << std::endl;
         }
         return true;

@@ -1,3 +1,15 @@
+/***********************************************************************
+Bachelor of Software Engineering
+Media Design School
+Auckland
+New Zealand
+(c) 2025 Media Design School
+File Name : CUserInterface.h
+Description : Class I made at the beginning of the project then stopped adding to. 
+Author : Daniel West
+Mail : daniel.west@mds.ac.nz
+**************************************************************************/
+
 #pragma once
 #include "imgui/imgui.h"
 #include <string>
@@ -11,18 +23,37 @@ public:
     // Destructor
     virtual ~CUserInterface() = default;
 
-    // initialize the UI after ImGUI context created
+    /// <summary>
+    /// initialises UI after imgui context created. Didn't end up using it though
+    /// </summary>
     virtual void Initialize();
 
-    // Render the UI to screen
+    /// <summary>
+    /// I mean you know what this does right
+    /// </summary>
     virtual void Render();
 
-    // Create a simple button with a callback function
+    /// <summary>
+    /// simple button with callback
+    /// </summary>
+    /// <param name="label"></param>
+    /// <param name="onClick"></param>
+    /// <param name="size"></param>
+    /// <returns></returns>
     bool CreateButton(const std::string& label,
         const std::function<void()>& onClick,
         const ImVec2& size = ImVec2(0, 0));
 
-    // Create a button with custom styling
+    
+    /// <summary>
+    /// Custom styling
+    /// </summary>
+    /// <param name="label"></param>
+    /// <param name="onClick"></param>
+    /// <param name="size"></param>
+    /// <param name="color"></param>
+    /// <param name="hoverColor"></param>
+    /// <returns></returns>
     bool CreateButton(const std::string& label,
         const std::function<void()>& onClick,
         const ImVec2& size,
@@ -30,5 +61,4 @@ public:
         const ImVec4& hoverColor);
 
 protected:
-    // You can add protected helper functions here as needed
 };

@@ -1,3 +1,15 @@
+/***********************************************************************
+Bachelor of Software Engineering
+Media Design School
+Auckland
+New Zealand
+(c) 2025 Media Design School
+File Name : CObject.cpp
+Description : Object cpp file. Object loads in with model and physics information. Json used to save and load object data. 
+Author : Daniel West
+Mail : daniel.west@mds.ac.nz
+**************************************************************************/
+
 #include "CObject.h"
 #include "CModel.h"
 #include "CPlayer.h"

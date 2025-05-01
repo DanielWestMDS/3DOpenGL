@@ -4,8 +4,8 @@ Media Design School
 Auckland
 New Zealand
 (c) 2025 Media Design School
-File Name : CPlayer.h
-Description : Child of Object class. first person player that the camera is attached to
+File Name : CPlayer.cpp
+Description : Child of Object class. update contains basic movement functionality
 Author : Daniel West
 Mail : daniel.west@mds.ac.nz
 **************************************************************************/

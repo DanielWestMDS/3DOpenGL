@@ -17,7 +17,8 @@ Scenes are saved between play sessions as long as the "Save Scene" button is pre
 
 don't mind the height map
 
-REUSED CONTENT: Mostly reused from Advanced Graphics for rendering but I did make CLineRenderer class to draw collisions in debug mode. 
+REUSED CONTENT: Mostly reused from Advanced Graphics for rendering but I did make CLineRenderer class to draw collisions in debug mode.
+File headers that are all // were probably reused but some have been edited. Classes with /**** file headers were created for this assessment
 
 referenced this to make my debug line renderer class
 https://stackoverflow.com/questions/14486291/how-to-draw-line-in-opengl

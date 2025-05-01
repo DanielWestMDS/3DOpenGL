@@ -1,14 +1,14 @@
-// Bachelor of Software Engineering
-// Media Design School
-// Auckland
-// New Zealand
-//
-// (c) Media Design School
-//
-// File Name : CScene
-// Description : Holds objects for a scene to all be rendered in one function call
-// Author : Daniel West
-// Mail : daniel.west@mds.ac.nz
+/***********************************************************************
+Bachelor of Software Engineering
+Media Design School
+Auckland
+New Zealand
+(c) 2025 Media Design School
+File Name : CScene.h
+Description : Contains all object information within a level. Uses Json to load and save level data.
+Author : Daniel West
+Mail : daniel.west@mds.ac.nz
+**************************************************************************/
 
 #pragma once
 

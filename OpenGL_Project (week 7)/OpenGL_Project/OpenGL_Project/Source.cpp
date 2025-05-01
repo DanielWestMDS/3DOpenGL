@@ -309,53 +309,10 @@ void CursorPositionInput(GLFWwindow* _Window, double _PosX, double _PosY)
 // for single key press
 void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mods)
 {
-
-	// for object
-// move forward
-	if (glfwGetKey(_Window, GLFW_KEY_UP))
-	{
-		// use camera forward
-		SoldierPosition.x += deltaTime * MoveSpeed;
-	}
-
-	// move back
-	if (glfwGetKey(_Window, GLFW_KEY_DOWN))
-	{
-		// use camera forward but reverse
-		SoldierPosition.x -= deltaTime * MoveSpeed;
-	}
-
-	// move left
-	if (glfwGetKey(_Window, GLFW_KEY_LEFT))
-	{
-		// use camera right but reverse
-		SoldierPosition.z -= deltaTime * MoveSpeed;
-	}
-
-	// move right
-	if (glfwGetKey(_Window, GLFW_KEY_RIGHT))
-	{
-		// use camera forward
-		SoldierPosition.z += deltaTime * MoveSpeed;
-	}
-
-
-	// toggle lighting
-	if (_Key == GLFW_KEY_P && _Action == GLFW_PRESS)
-	{
-		g_bPointLightActive = !g_bPointLightActive;
-	}
-
 	// create actor
 	if (_Key == GLFW_KEY_O && _Action == GLFW_PRESS)
 	{
 		CreateActor("Resources/Models/SM_Prop_Statue_02.obj");
-	}
-
-	// testing
-	if (_Key == GLFW_KEY_I && _Action == GLFW_PRESS)
-	{
-		Scene3->MoveObjects();
 	}
 
 	// toggle wireframe
@@ -371,16 +328,6 @@ void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mo
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
-	}
-
-	// fireworks
-	if (_Key == GLFW_KEY_F && _Action == GLFW_PRESS)
-	{
-		g_bFKeyPressed = true;
-	}
-	else
-	{
-		g_bFKeyPressed = false;
 	}
 
 	if (_Key == GLFW_KEY_ESCAPE && _Action == GLFW_PRESS)
@@ -550,50 +497,17 @@ void InitialSetup()
 	Program_Lighting = ShaderLoader::CreateProgram("Resources/Shaders/3DModel.vert",
 		"Resources/Shaders/Lighting_BlinnPhong.frag");
 
-	// program for lighting
-	Program_InstancedLighting = ShaderLoader::CreateProgram("Resources/Shaders/InstancedArray_Standard.vert",
-		"Resources/Shaders/Lighting_PointLights.frag");
-
 	Program_HeightMap = ShaderLoader::CreateProgram("Resources/Shaders/HeightMap.vert",
 		"Resources/Shaders/Lighting_HeightMap.frag");
-
-	// for orthographic squares
-	Program_Squares = ShaderLoader::CreateProgram("Resources/Shaders/Squares.vert",
-		"Resources/Shaders/Squares.frag");
 
 	// renderbuffer for shadow texture
 	Program_ShadowMap = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/ShadowPass.vert",
 		"Resources/Shaders/FrameBuffer/ShadowPass.frag");
 
-	// particles
-	Program_Particles = ShaderLoader::CreateProgram("Resources/Shaders/Particles.vert",
-		"Resources/Shaders/Particles.frag");
-
-	// particle compute shader
-	Program_ComputeParticles = ShaderLoader::CreateProgram_C("ComputeParticles.comp");
-
-	// geometry buffer
-	Program_GeometryPass = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/GeometryPass.vert",
-		"Resources/Shaders/FrameBuffer/GeometryPass.frag");
-
-	Program_GeometryPassHeightMap = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/GeometryPassHeightMap.vert",
-		"Resources/Shaders/FrameBuffer/GeometryPassHeightMap.frag");
-
-	// screen space render pass buffer
-	Program_LightingPass = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/LightingPass.vert",
-		"Resources/Shaders/FrameBuffer/LightingPass.frag");
-
-	Program_LightingPassHeightMap = ShaderLoader::CreateProgram("Resources/Shaders/FrameBuffer/LightingPassHeightMap.vert",
-		"Resources/Shaders/FrameBuffer/LightingPassHeightMap.frag");
-
-	// tessellation program
-	Program_Tessellation = ShaderLoader::CreateProgram_VTF("Tessellation.vert", 
-		"Tessellation.tcs", 
-		"Tessellation.tes", 
-		"Tessellation.frag");
-
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
+
+	glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	Texture_Awesome = LoadTexture("Resources/Textures/SkyboxBack.jpg");
 	Texture_Quag = LoadTexture("Resources/Textures/PolygonAncientWorlds_Texture_01_A.png");
