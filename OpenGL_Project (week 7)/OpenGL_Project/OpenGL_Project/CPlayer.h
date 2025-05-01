@@ -11,6 +11,8 @@ public:
 
 	json ToJson() const override;
 
+	static CPlayer* FromJson(const json& j, rp3d::PhysicsWorld* _physicsWorld, rp3d::PhysicsCommon& _physicsCommon);
+
 	void Update(float dt, GLFWwindow* _window) override;
 
 protected:

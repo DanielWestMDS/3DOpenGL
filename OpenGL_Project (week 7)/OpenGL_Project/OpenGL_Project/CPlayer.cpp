@@ -22,11 +22,51 @@ json CPlayer::ToJson() const
 	json j = CObject::ToJson(); 
 
 	// player specific data
-	j["type"] = "CPlayer"; 
+	j["type"] = "CPlayer";
 
 	// I didn't have time but I would put health and stuff here
 
 	return j;
+}
+
+CPlayer* CPlayer::FromJson(const json& j, rp3d::PhysicsWorld* _physicsWorld, rp3d::PhysicsCommon& _physicsCommon)
+{
+	std::string filePath = j["modelPath"];
+	glm::vec3 position(j["position"][0], j["position"][1], j["position"][2]);
+
+	// collision dimensions
+	glm::vec3 shapeDimensions(1.0f); // default
+	if (j.contains("collisionDimensions"))
+	{
+		shapeDimensions = glm::vec3(j["collisionDimensions"][0],
+			j["collisionDimensions"][1],
+			j["collisionDimensions"][2]);
+	}
+
+	// collision shape
+	CollisionShapeType shapeType = CollisionShapeType::BOX;
+	if (j.contains("shapeType"))
+	{
+		shapeType = j["shapeType"];
+	}
+
+	// dawg I hope this works
+	GLint program = (GLint)j["program"];
+
+	GLint texture = (GLint)j["texture"];
+
+	float fScale = j["scale"];
+
+	// create the object with parameters from json
+	CPlayer* LoadedPlayer = new CPlayer(filePath, program, texture, position, _physicsWorld, _physicsCommon);
+
+	// update rotation and scale
+	LoadedPlayer->SetRotation(glm::vec3(j["rotation"][0], j["rotation"][1], j["rotation"][2]));
+	LoadedPlayer->SetScale(fScale);
+	LoadedPlayer->SetPhysicsBodyType(j["bodyType"]);
+	LoadedPlayer->SetCollisionDimensions(shapeDimensions);
+
+	return LoadedPlayer;
 }
 
 void CPlayer::Update(float dt, GLFWwindow* _window)

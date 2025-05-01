@@ -22,7 +22,7 @@
             "scale": 0.10000000149011612,
             "shapeType": 0,
             "texture": 2,
-            "type": "CObject"
+            "type": "CPlayer"
         },
         {
             "bodyType": 2,
@@ -33,9 +33,9 @@
             ],
             "modelPath": "Resources/Models/cube.obj",
             "position": [
-                -11.063272476196289,
+                -7.797731399536133,
                 -10.0,
-                -11.164533615112305
+                -14.403255462646484
             ],
             "program": 6,
             "rotation": [
