@@ -17,22 +17,59 @@ Mail : daniel.west@mds.ac.nz
 class CEditorMode
 {
 public:
+
+	/// <summary>
+	/// Gets an instance of the singleton
+	/// </summary>
+	/// <returns></returns>
 	static CEditorMode& GetInstance();
 
+	/// <summary>
+	/// Returns whether the game engine is in editing mode
+	/// </summary>
+	/// <returns></returns>
 	bool GetInEditor();
 
+	/// <summary>
+	/// Changes the mode from play to editor / vice versa
+	/// </summary>
+	/// <param name="_inEditor"></param>
 	void SetInEditor(bool _inEditor);
 
+	/// <summary>
+	/// returns a pointer to the camera
+	/// </summary>
+	/// <returns></returns>
 	CCamera* GetCamera();
 
+	/// <summary>
+	/// Sets the pointer to the camera
+	/// </summary>
+	/// <param name="_camera"></param>
 	void SetCamera(CCamera* _camera);
 
+	/// <summary>
+	/// Returns the player
+	/// </summary>
+	/// <returns></returns>
 	class CPlayer* GetPlayer();
 
+	/// <summary>
+	/// Sets the current player
+	/// </summary>
+	/// <param name="_player"></param>
 	void SetPlayer(CPlayer* _player);
 
+	/// <summary>
+	/// Returns whether the game has been finished
+	/// </summary>
+	/// <returns></returns>
 	bool IsGameWon();
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_isWon"></param>
 	void SetGameWon(bool _isWon);
 
 	// TODO: when in editor mode be able to save a scene to a text file and load a scene

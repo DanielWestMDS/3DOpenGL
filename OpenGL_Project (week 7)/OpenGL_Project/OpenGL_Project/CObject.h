@@ -1,3 +1,15 @@
+/***********************************************************************
+Bachelor of Software Engineering
+Media Design School
+Auckland
+New Zealand
+(c) 2025 Media Design School
+File Name : CObject.h
+Description : A singleton class. Setting window and camera in this class is probably not the correct thing but the way I was doing it before, the player could not be saved to a json file.
+Author : Daniel West
+Mail : daniel.west@mds.ac.nz
+**************************************************************************/
+
 #pragma once
 
 #include <glm/glm.hpp>

@@ -55,17 +55,6 @@ CCamera* Camera;
 CModel* Tree;
 // light manager
 CLightManager* LightManager;
-// point lights
-CModel* PointLight1;
-CModel* PointLight2;
-CModel* PointLight3;
-CModel* PointLight4;
-CModel* PointLight5;
-CModel* PointLight6;
-CModel* PointLight7;
-CModel* PointLight8;
-CModel* PointLight9;
-CModel* PointLight10;
 
 // shadow model
 CModel* Soldier;
@@ -320,45 +309,6 @@ void CursorPositionInput(GLFWwindow* _Window, double _PosX, double _PosY)
 // for single key press
 void KeyInput(GLFWwindow* _Window, int _Key, int _ScanCode, int _Action, int _Mods)
 {
-	//// for sxene rendering
-	//if (_Key == GLFW_KEY_1 && _Action == GLFW_PRESS)
-	//{
-	//	g_iSceneNumber = 1;
-	//	g_CurrentScene = Scene1;
-	//}
-
-	//if (_Key == GLFW_KEY_2 && _Action == GLFW_PRESS)
-	//{
-	//	g_iSceneNumber = 2;
-	//	g_CurrentScene = Scene2;
-	//}
-
-	if (_Key == GLFW_KEY_3 && _Action == GLFW_PRESS)
-	{
-		g_iSceneNumber = 3;
-		g_CurrentScene = Scene3;
-	}
-
-	//if (_Key == GLFW_KEY_4 && _Action == GLFW_PRESS)
-	//{
-	//	g_iSceneNumber = 4;
-	//	g_CurrentScene = Scene4;
-	//}
-
-
-	if (_Key == GLFW_KEY_5 && _Action == GLFW_PRESS)
-	{
-		//g_iSceneNumber = 5;
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glLineWidth(4.0f);
-	}
-
-
-	if (_Key == GLFW_KEY_6 && _Action == GLFW_PRESS)
-	{
-		//g_iSceneNumber = 6;
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
 
 	// for object
 // move forward
@@ -686,55 +636,11 @@ void InitialSetup()
 
 	Player->SetScale(0.1f);
 
-	// change attenuation so you can see all the different point lights
-	float exponent = 0.1f;
-
-	// blue
-	LightManager->AddPointLight(glm::vec3(10.0f, 5.0f, 10.0f), glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, 1.4f, 0.045f, exponent);
-	// green
-	LightManager->AddPointLight(glm::vec3(10.0f, 5.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, 1.4f, 0.045f, exponent);
-	// red
-	LightManager->AddPointLight(glm::vec3(10.0f, 5.0f, -10.0f), glm::vec3(1.0f, 0.0f, 0.0f), 1.0f, 1.5f, 0.045f, exponent);
-	// cyan
-	LightManager->AddPointLight(glm::vec3(0.0f, 5.0f, 10.0f), glm::vec3(0.0f, 1.0f, 1.0f), 1.0f, 1.4f, 0.045f, exponent);
-	// yellow
-	LightManager->AddPointLight(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), 1.0f, 1.4f, 0.045f, exponent);
-	// magenta
-	LightManager->AddPointLight(glm::vec3(0.0f, 5.0f, -10.0f), glm::vec3(1.0f, 0.0f, 1.0f), 1.0f, 1.4f, 0.045f, exponent);
-	// white
-	LightManager->AddPointLight(glm::vec3(-10.0f, 5.0f, 10.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 1.6f, 0.045f, exponent);
-	// purple?
-	LightManager->AddPointLight(glm::vec3(-10.0f, 5.0f, 0.0f), glm::vec3(0.5f, 0.0f, 1.0f), 1.0f, 1.4f, 0.045f, exponent);
-	// orange?
-	LightManager->AddPointLight(glm::vec3(-10.0f, 5.0f, -10.0f), glm::vec3(1.0f, 0.5f, 0.5f), 1.0f, 1.4f, 0.045f, exponent);
-	// dark blue
-	LightManager->AddPointLight(glm::vec3(-20.0f, 5.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.5f), 1.0f, 1.4f, 0.045f, exponent);
-
 	FrameBufferQuad = new CFrameBufferQuad(Texture_Awesome, Texture_RainNoise, Program_LightingPass);
 
 	GeometryBuffer = new CGeometryBuffer();
 
 	ShadowMap = new CShadowMap(iWindowSize, iWindowSize);
-
-	RedFirework = new CParticleSystem(Camera, Program_Particles, 
-		Program_ComputeParticles, 
-		glm::vec3((int)rand() % 40, (int)rand() % 40, (int)rand() % 40),
-		glm::vec3(1.0f, 0.0f, 0.0f));
-
-	CyanFirework = new CParticleSystem(Camera, Program_Particles,
-		Program_ComputeParticles,
-		glm::vec3((int)rand() % 40, (int)rand() % 40, (int)rand() % 40), 
-		glm::vec3(0.0f, 1.0f, 1.0f));
-
-	MagentaFirework = new CParticleSystem(Camera, Program_Particles,
-		Program_ComputeParticles,
-		glm::vec3((int)rand() % 40, (int)rand() % 40, (int)rand() % 40),
-		glm::vec3(1.0f, 0.0f, 1.0f));
-
-	YellowFirework = new CParticleSystem(Camera, Program_Particles,
-		Program_ComputeParticles,
-		glm::vec3((int)rand() % 40, (int)rand() % 40, (int)rand() % 40),
-		glm::vec3(1.0f, 1.0f, 0.0f));
 	
 	TessQuad = new CTessellationMesh(Texture_Quag);
 
@@ -941,7 +847,7 @@ void RenderGUI()
 					ImVec4(0.1f, 0.8f, 0.1f, 1.0f),  // Normal color
 					ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // Hover color)
 			{
-				//TODO: add quit code here
+				glfwSetWindowShouldClose(Window, true);
 			}
 
 			ImGui::End();
@@ -1003,31 +909,6 @@ void RenderGUI()
 
 	g_physicsWorld->setIsDebugRenderingEnabled(bCollisionShown);
 
-	// Create a styled button
-	if (ui.CreateButton("ShowCollision", []() {
-		std::cout << "Collision Button Clicked" << std::endl;
-		}, ImVec2(120, 40),
-			ImVec4(0.2f, 0.5f, 0.8f, 1.0f),  // Normal color
-			ImVec4(0.3f, 0.6f, 0.9f, 1.0f)))  // Hover color)
-	{
-		// enable debug rendering
-		g_physicsWorld->setIsDebugRenderingEnabled(true);
-
-		// get the debug renderer
-		reactphysics3d::DebugRenderer& debugRenderer = g_physicsWorld->getDebugRenderer();
-
-		// enable debug rendering flags
-		debugRenderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, true);
-		debugRenderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, true);
-		debugRenderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, true);
-
-
-		for (CObject* Object : g_CurrentScene->GetObjects())
-		{
-			Object->SetCollisionDraw(true);
-		}
-	}
-
 	// Save scene button
 	if (ui.CreateButton("Save Scene", []() {
 		std::cout << "Save button clicked" << std::endl;
@@ -1086,11 +967,24 @@ void RenderGUI()
 		}
 	}
 
+	if (ImGui::Checkbox("WireframeMode", &g_bWireframe))
+	{
+		if (g_bWireframe)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		else
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+	}
+
+
 	ImGui::End();
 
 	// object data
 	ImGui::SetNextWindowSize(ImVec2(500, 500));
-	if (ImGui::Begin("Selected Object", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse) && Editor.GetInEditor())
+	ImGui::Begin("Selected Object");
 	{
 		if (SelectedObject != nullptr)
 		{
@@ -1398,9 +1292,6 @@ int main()
 	delete Tree;
 
 	delete LightManager;
-
-	delete PointLight1;
-	delete PointLight2;
 
 	delete HeightMap;
 	delete HeightMapNoise;

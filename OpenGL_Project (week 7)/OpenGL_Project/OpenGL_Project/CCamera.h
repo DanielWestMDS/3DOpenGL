@@ -23,9 +23,25 @@
 class CCamera
 {
 public:
+
+	/// <summary>
+	/// Constructor
+	/// </summary>
 	CCamera();
+
+	/// <summary>
+	/// Destructor
+	/// </summary>
 	~CCamera();
 
+	/// <summary>
+	/// Update called every frame
+	/// </summary>
+	/// <param name="_iWindowSize"></param>
+	/// <param name="_Window"></param>
+	/// <param name="_MousePos"></param>
+	/// <param name="_dt"></param>
+	/// <param name="_PlayerPos"></param>
 	void Update(int _iWindowSize, GLFWwindow* _Window, glm::vec2 _MousePos, float _dt, glm::vec3 _PlayerPos);
 	// view matrix passed into object render functions for MVP matrixs
 	glm::mat4 GetViewMat();
@@ -44,6 +60,10 @@ public:
 	void Input(GLFWwindow* _Window, float _dt);
 	void PrintCamPos();
 
+	/// <summary>
+	/// Sets the camera's position
+	/// </summary>
+	/// <param name="_position"></param>
 	void SetPosition(glm::vec3 _position);
 
 	// look at something

@@ -1,3 +1,15 @@
+/***********************************************************************
+Bachelor of Software Engineering
+Media Design School
+Auckland
+New Zealand
+(c) 2025 Media Design School
+File Name : CPlayer.h
+Description : Child of Object class. first person player that the camera is attached to
+Author : Daniel West
+Mail : daniel.west@mds.ac.nz
+**************************************************************************/
+
 #pragma once
 #include "CObject.h"
 
