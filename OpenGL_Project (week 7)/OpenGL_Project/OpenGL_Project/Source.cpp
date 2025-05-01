@@ -68,18 +68,6 @@ CFrameBufferQuad* FrameBufferQuad;
 // Shadows
 CShadowMap* ShadowMap;
 
-// particle effects
-CParticleSystem* RedFirework;
-CParticleSystem* CyanFirework;
-CParticleSystem* YellowFirework;
-CParticleSystem* MagentaFirework;
-
-// geometry buffer
-CGeometryBuffer* GeometryBuffer;
-
-// tessellation
-CTessellationMesh* TessQuad;
-
 // scenes
 CScene* Scene3;
 CScene* g_CurrentScene;
@@ -507,8 +495,6 @@ void InitialSetup()
 	// flip image
 	stbi_set_flip_vertically_on_load(true);
 
-	glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
 	Texture_Awesome = LoadTexture("Resources/Textures/SkyboxBack.jpg");
 	Texture_Quag = LoadTexture("Resources/Textures/PolygonAncientWorlds_Texture_01_A.png");
 	Texture_3 = LoadTexture("Resources/Textures/Halfrack logo.png");
@@ -550,14 +536,8 @@ void InitialSetup()
 
 	Player->SetScale(0.1f);
 
-	FrameBufferQuad = new CFrameBufferQuad(Texture_Awesome, Texture_RainNoise, Program_LightingPass);
-
-	GeometryBuffer = new CGeometryBuffer();
-
 	ShadowMap = new CShadowMap(iWindowSize, iWindowSize);
 	
-	TessQuad = new CTessellationMesh(Texture_Quag);
-
 	// scenes
 	Scene3 = new CScene();
 
@@ -582,25 +562,10 @@ void InitialSetup()
 	Texture_PerlinMap = LoadTexture("Resources/Textures/Noise/COLOURED.jpg");														
 
 
-	// add objects to scenes															
-	//Scene1->AddObject(Skybox);
-	//Scene1->AddObject(PointLight1);
-	//Scene1->AddObject(PointLight2);													
+	// add objects to scenes																											
 	Scene3->AddHeightMap(HeightMapNoise);
 
 	Scene3->AddObject(Player);
-	//Scene3->AddObject(Soldier);
-																						
-	//Scene2->AddObject(new CObject(PointLight1, glm::vec3(10.0f, 5.0f, 10.0f), g_physicsWorld, g_physicsCommon));
-	//Scene2->AddObject(new CObject(PointLight2, glm::vec3(10.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
-	//Scene2->AddObject(new CObject(PointLight3, glm::vec3(10.0f, 5.0f, -10.0f), g_physicsWorld, g_physicsCommon));
-	//Scene2->AddObject(new CObject(PointLight4, glm::vec3(0.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
-	//Scene2->AddObject(new CObject(PointLight5, glm::vec3(0.0f, 5.0f, -10.0f), g_physicsWorld, g_physicsCommon));
-	//Scene2->AddObject(new CObject(PointLight6, glm::vec3(-10.0f, 5.0f, 10.0f), g_physicsWorld, g_physicsCommon));
-	//Scene2->AddObject(new CObject(PointLight7, glm::vec3(-10.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
-	//Scene2->AddObject(new CObject(PointLight8, glm::vec3(-10.0f, 5.0f, -10.0f), g_physicsWorld, g_physicsCommon));
-	//Scene2->AddObject(new CObject(PointLight9, glm::vec3(-20.0f, 5.0f, 0.0f), g_physicsWorld, g_physicsCommon));
-	//Scene2->AddObject(new CObject(PointLight10, glm::vec3(0.0f, 5.0f, 10.0f), g_physicsWorld, g_physicsCommon));
 
 	g_CurrentScene = Scene3;
 
@@ -657,16 +622,6 @@ void Update()
 
 	//g_physicsWorld->update(deltaTime);
 
-	// calculate quad model matrix evert frame
-	HeightMapModelMat = MakeModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	DeferredHeightMapModelMat = MakeModelMatrix(glm::vec3(-50.0f, 0.0f, -30.0f), 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	SoldierModelMat = MakeModelMatrix(SoldierPosition, 0.15f, 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	// combine for MVP
-	//HeightMapModelMat = Camera->GetUIProjMat() * /*Camera->GetUIViewMat() **/ HeightMapModelMat;
-
 	CEditorMode& Editor = CEditorMode::GetInstance();
 
 	// camera update
@@ -697,13 +652,7 @@ void Update()
 	g_CurrentScene->Update(Camera, deltaTime, Window);
 
 	// height map
-	//HeightMap->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), DeferredHeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
 	HeightMapNoise->Update(Camera->GetProjMat(), Camera->GetViewMat(), Camera->GetPosition(), HeightMapModelMat, LightManager->GetVP(), ShadowMap->GetShadowTexture());
-
-	//NoiseMap->AnimationGrowth(Texture_Quag, Texture_Awesome);
-
-	// UI perlin noise
-	//PerlinQuad->Update(Program_Squares, Texture_Awesome, PerlinHeightMapModelMat, Camera->GetUIProjMat(), Camera->GetViewMat());
 
 	// mouse click
 	if (glfwGetMouseButton(Window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
@@ -1210,7 +1159,14 @@ int main()
 	delete HeightMap;
 	delete HeightMapNoise;
 
-	delete TessQuad;
+	delete Scene3;
+
+	// player cleans itself up
+	//delete Player;
+
+	delete ShadowMap;
+
+	delete g_ContactListener;
 
 	return 0;
 }

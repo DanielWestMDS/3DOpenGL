@@ -82,7 +82,7 @@ private:
 	CEditorMode(const CEditorMode&) = delete;
 	CEditorMode& operator = (const CEditorMode&) = delete;
 
-	bool m_bInEditor = false;
+	bool m_bInEditor = true;
 
 	CCamera* m_Camera = nullptr;
 
